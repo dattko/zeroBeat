@@ -1,0 +1,97 @@
+// fonts
+@font-face {
+	font-family: 'NanumGothic';
+	font-weight: 300;
+	font-display: swap;
+	src: local('Pretendard Black'), url('/public/font/nanumGothic/NanumGothicLight.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'NanumGothic';
+	font-weight: 400;
+	font-display: swap;
+	src: local('Pretendard Black'), url('/public/font/nanumGothic/NanumGothic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'NanumGothic';
+	font-weight: 700;
+	font-display: swap;
+	src: local('Pretendard Black'), url('/public/font/nanumGothic/NanumGothicBold.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'NanumGothic';
+	font-weight: 800;
+	font-display: swap;
+	src: local('Pretendard Black'), url('/public/font/nanumGothic/NanumGothicExtraBold.ttf') format('truetype');
+}
+
+//  루트
+:root{
+    // 사이즈
+    --wrap-padding: 0 20px;
+
+    // 폰트사이즈
+    --f-s: 16px;
+    --f-m: 16px;
+    --f-l: 16px;
+    --f-m-title: 25px;
+    --f-l-title: 25px;
+    --f-s-title: 16px;
+}
+
+body{
+	font-family: 'Nanum Gothic', sans-serif; 
+}
+// 공통 css
+.flex-space{
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex-center{
+    display: flex;
+    justify-content: center;
+}
+
+.flex-h-center{
+    align-items: center;
+}
+
+// 인풋
+.input-box{
+	display: flex;
+	border: 1px solid #cdd3dd;
+	border-radius: 4px;
+}
+
+input{
+	border: none;
+	border-radius: 4px;
+	outline: none;
+	padding: 0 12px;
+	flex: 1;
+}
+
+
+
+
+//헤더
+.main-header{
+	display: flex;
+	// justify-content: space-between;
+	height: 68px;
+	align-items: center;
+	&-inner{
+		flex: 1;
+		display: flex;
+		justify-content: space-between;
+		padding:  0 30px ;
+	}
+	.logo{
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		width: 240px;
+		border: 1px solid;
+	}
+}

@@ -1,0 +1,53 @@
+$mc:#FFD230 ;
+$sc: #FEDF89 ;
+$mb:#F3F6F9;
+$w: #fff;
+$b: #000;
+$g: #8D99A8;
+$dg: #4A4A52;
+
+@function px($size) {
+    @return calc(calc($size / 16)  *  1rem);
+    }
+
+@mixin responsive($num) {
+    @media (max-width: $num) {
+        @content;
+    }
+}
+
+@mixin ellipsis($lines: 1) {
+    @if ($lines==1) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    } @else {
+      display: -webkit-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: $lines;
+      -webkit-box-orient: vertical;
+    }
+  }
+
+// for 문
+//   $_length: 10;
+//   $_color: #b2c0d5;
+ 
+//   @for $i from 1 through $_length {
+//     &:nth-child(#{$i}) {
+//       z-index: ($_length + 1) - $i;
+//       background-color: color.scale($_color,  $lightness: $i * -5%);
+//     }
+//   }
+
+
+
+//  each문
+// $_list: text, text, text;
+ 
+//   @each $text in $_list {
+//     &.#{$sns} {
+//       background-image: url(./img/icon-#{$text}.png);
+//     }
+//   }
