@@ -1,0 +1,21 @@
+.sidebar{
+    width: 240px;
+    padding: 40px 20px;
+    ul{
+        display: flex;
+        flex-direction: column;
+        gap:4px;
+        a{
+            height: 46px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            >img{
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+}

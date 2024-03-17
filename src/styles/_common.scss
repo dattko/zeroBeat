@@ -73,25 +73,31 @@ input{
 
 
 
-
+.wrap{
+background-color: $BackColor;
+}
 //헤더
-.main-header{
-	display: flex;
-	// justify-content: space-between;
-	height: 68px;
-	align-items: center;
-	&-inner{
-		flex: 1;
+.main{
+	&-header{
 		display: flex;
-		justify-content: space-between;
-		padding:  0 30px ;
-	}
-	.logo{
-		display: flex;
+		// justify-content: space-between;
+		height: 68px;
 		align-items: center;
-		justify-content: center;
-		height: 100%;
-		width: 240px;
-		border: 1px solid;
+		background-color: $MainColor;
+		&-inner{
+			flex: 1;
+			display: flex;
+			justify-content: space-between;
+			padding:  0 30px ;
+		}
+		.logo{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			width: 240px;
+			// border: 1px solid;
+		}
 	}
 }
+

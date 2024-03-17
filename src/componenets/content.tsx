@@ -1,12 +1,16 @@
-import React, { useState} from 'react';
+// content.tsx
+import React from 'react';
 
-const Sidebar = ()=>{
 
-    return(
-        <div>
-            s1298190238192038
+export const Content = ({
+  children
+}: {
+  children: React.ReactNode
+}) => (
+        <div className='main-content'>
+          <div className='main-content-inner'>
+            {children}
+          </div>
         </div>
-)
-}
+  );
 
-export default Sidebar

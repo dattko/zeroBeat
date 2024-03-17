@@ -1,7 +1,7 @@
 'use client';
 import React, {useState} from 'react';
 
-const Header: React.FC = () => {
+export const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
     return (
@@ -13,12 +13,14 @@ const Header: React.FC = () => {
                 <div className='main-search'>
                     <div className='input-box'>
                         <input type="text" />
-                        <button className='icon-btn n-b'>zz</button>
+                        <button className='icon-btn n-b' style={{width: '34px'}}>
+                        <img src="/images/search.svg" alt="로고" />
+                        </button>
                     </div>
                 </div>
                 <div className='main-my-info'>
                     <div className='main-my-info-profile'>
-                        <img src="/images/profile.png" alt="프로필" />
+                        <img src="/images/user.svg" alt="프로필" />
                     </div>
                     <div className='main-my-info-id'>
                         {/* 닉네임 또는 로그인하기 버튼 */}
@@ -33,5 +35,3 @@ const Header: React.FC = () => {
         </header>
     );
 };
-
-export default Header;

@@ -17,6 +17,7 @@
       "@/*": ["src/*"],
       "@style/*": ["src/styles/*"],
       "@component/*": ["src/componenets/*"],
+      "@page/*": ["src/pages/*"],
     },
     "plugins": [
       {

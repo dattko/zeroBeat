@@ -1,10 +1,13 @@
-$mc:#FFD230 ;
-$sc: #FEDF89 ;
-$mb:#F3F6F9;
-$w: #fff;
+$LightBackColor:#FAF3F0 ;
+$BackColor:#FEECE2 ;
+$MainColor: #F7DED0 ;
+$SubColor: #E2BFB3;
+$PointColor: #FFBE98;
 $b: #000;
+$w: #fff;
 $g: #8D99A8;
 $dg: #4A4A52;
+$padding: 20px;
 
 @function px($size) {
     @return calc(calc($size / 16)  *  1rem);
