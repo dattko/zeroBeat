@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from "next";
 import '@style/globals.scss'; 
 import { Wrap } from '@/componenets/wrap';
+
 export const metadata: Metadata = {
   title: "HM NEXT",
   description: "HM portfolio",
@@ -15,7 +16,7 @@ const RootLayout = ({
   <html lang='en'>
     <body>
       <Wrap>
-        {children}
+        {children} 
       </Wrap>
     </body>
   </html>

@@ -19,6 +19,8 @@
       "@component/*": ["src/componenets/*"],
       "@page/*": ["src/pages/*"],
       "@type/*": ["src/types/*"],
+      "@modal/*": ["src/componenets/modal/*"],
+      "@redux/*": ["src/redux/*"],
     },
     "plugins": [
       {
