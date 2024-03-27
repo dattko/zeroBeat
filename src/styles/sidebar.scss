@@ -1,20 +1,50 @@
+$sidebarW: 200px;
 .sidebar{
-    width: 240px;
-    padding: 40px 20px;
+    width: $sidebarW;
+    min-width: $sidebarW;
+    display: flex;
+    flex-direction: column;
+    .logo{
+        height: $headerH;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        background-color: $MainColor;
+    }
     ul{
+        padding: 10px 10px;
         display: flex;
         flex-direction: column;
+        flex: 1;
         gap:4px;
-        a{
-            height: 46px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            border-radius: 4px;
-            >img{
-                width: 18px;
-                height: 18px;
+        border-right: 2px solid $LightBackColor;
+        li{
+            a{
+                height: 42px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+                border-radius: 4px;
+                padding: 0 12px;
+                font-size: var(--f-s);
+                &:hover{
+                    background-color: $LightBackColor;
+                    border-radius: 8px;
+                }
+    
+                >img{
+                    width: 14px;
+                    height: 14px;
+                }
+            }
+            &.active{
+                a{
+                    background-color: $LightBackColor;
+                    border-radius: 8px;}
             }
         }
     }

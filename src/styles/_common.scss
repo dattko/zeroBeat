@@ -30,8 +30,8 @@
     --wrap-padding: 0 20px;
 
     // 폰트사이즈
-    --f-s: 16px;
-    --f-m: 16px;
+    --f-s: 12px;
+    --f-m: 14px;
     --f-l: 16px;
     --f-m-title: 25px;
     --f-l-title: 25px;
@@ -61,6 +61,8 @@ body{
 	display: flex;
 	border: 1px solid #cdd3dd;
 	border-radius: 4px;
+	overflow: hidden;
+	
 }
 
 input{
@@ -76,28 +78,5 @@ input{
 .wrap{
 background-color: $BackColor;
 }
-//헤더
-.main{
-	&-header{
-		display: flex;
-		// justify-content: space-between;
-		height: 68px;
-		align-items: center;
-		background-color: $MainColor;
-		&-inner{
-			flex: 1;
-			display: flex;
-			justify-content: space-between;
-			padding:  0 30px ;
-		}
-		.logo{
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			height: 100%;
-			width: 240px;
-			// border: 1px solid;
-		}
-	}
-}
+
 

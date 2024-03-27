@@ -1,28 +1,72 @@
 .main{
+    &-header{
+		display: flex;
+		// justify-content: space-between;
+		height: $headerH;
+        min-height: $headerH;
+		align-items: center;
+		background-color: $MainColor;
+		&-inner{
+			flex: 1;
+			display: flex;
+			justify-content: space-between;
+			padding:  0 10px ;
+            align-items: center;
+		}
+		.logo{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			width: 240px;
+			font-size: 26px;
+			font-weight: 600;
+			letter-spacing: 2px;
+			// border: 1px solid;
+		}
+	}
     &-body{
-        width: 100%;
-        height: calc(100dvh - 68px);
+        height: 100dvh;
         display: flex;
-        flex: 1;
     }
     &-content{       
         width: 100%;
-        min-height: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         // border: 1px solid;
-        padding: 20px 20px 0;
 
         &-inner{
             background-color: $LightBackColor;
             height: 100%;
-            border-radius: 20px 20px 0 0;
+            border-radius: 8px 8px 0 0;
+            margin: 10px 10px 0;
             padding: 30px 50px;
         }
     }
     &-search{
         max-width: 360px;
         width: 100%;
+        border-radius: 4px;
+        height: 30px;
+        &:hover{
+            background-color: rgba($color: #fff, $alpha: 0.3);
+            img{
+                filter: brightness(0.6);
+            }
+        }
+        &:focus-within{
+            background-color: rgba($color: #fff, $alpha: 0.3);
+            img{
+                filter: brightness(0.6);
+            }
+        }
         input{
-            height: 34px;
+            height: 30px;
+            background-color: transparent;
+        }
+        img{
+            max-width: 18px;
         }
     }
     &-my-info{
@@ -30,12 +74,17 @@
         gap: 8px;
         align-items: center;
         justify-content: center;
+        height: 38px;
         cursor: pointer;
-        font-size: 14px;
-
+        font-size: var(--f-m);
+        padding: 0 12px;
+        border-radius: $borderR;
+        &:hover{
+            background-color: $wop;
+        }
         &-profile{
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             overflow: hidden;
             background-color: #E4E8EE;

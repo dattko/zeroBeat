@@ -8,6 +8,9 @@ $w: #fff;
 $g: #8D99A8;
 $dg: #4A4A52;
 $padding: 20px;
+$borderR: 4px;
+$wop:rgba($color: #fff, $alpha: 0.3);
+$headerH: 52px;
 
 @function px($size) {
     @return calc(calc($size / 16)  *  1rem);

@@ -1,32 +1,46 @@
 // sidebar.tsx
-import React from 'react';
+
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import MenuItem from '@/types/menu';
 
 export const Sidebar = () => {
+  const pathName = usePathname();
+
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/menuItems');
+        const data = await response.json();
+        setMenuItems(data);
+      } catch (error) {
+        console.error('Error fetching menu items:', error);
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
+
   return (
     <div className='sidebar'>
+      <div className="logo">
+        ZeroBeat
+      </div>
       <ul>
-        <li>
-          <Link href="/">
-              <img src="/icon/home.svg" alt="메뉴 아이콘" />
-              홈
-          </Link>
-        </li>
-        <li>
-          <Link href="/chart">
-              <img src="/icon/chart.svg" alt="메뉴 아이콘" />
-              실시간 차트
-          </Link>
-        </li>
-        <li>
-          <Link href="/locker">
-              <img src="/icon/locker.svg" alt="메뉴 아이콘" />
-              보관함
-          </Link>
-        </li>
+        {menuItems.map((menuItem) => (
+          <li key={menuItem.id} className={pathName === menuItem.link ? 'active' : ''}> 
+            <Link href={menuItem.link}>
+              <img src={`/icon/${menuItem.img}.svg`} alt="메뉴 아이콘" />
+              {menuItem.name}
+            </Link>
+          </li>
+        ))}
       </ul>
     </div>
   );
 };
 
-
+export default Sidebar;

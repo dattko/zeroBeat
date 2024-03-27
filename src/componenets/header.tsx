@@ -6,9 +6,6 @@ export const Header = () => {
 
     return (
         <header className='main-header'>
-            <div className='logo'>
-                <img src="/images/logo.png" alt="로고" />
-            </div>
             <div className='main-header-inner'>
                 <div className='main-search'>
                     <div className='input-box'>

@@ -18,6 +18,7 @@
       "@style/*": ["src/styles/*"],
       "@component/*": ["src/componenets/*"],
       "@page/*": ["src/pages/*"],
+      "@type/*": ["src/types/*"],
     },
     "plugins": [
       {
