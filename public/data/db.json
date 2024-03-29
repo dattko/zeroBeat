@@ -4,4 +4,4 @@
       { "id": 2, "name": "실시간 차트", "link": "/chart","img":"chart" },
       { "id": 3, "name": "보관함", "link": "/locker" ,"img":"locker"}
     ]
-  }
+}

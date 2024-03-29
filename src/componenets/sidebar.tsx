@@ -1,38 +1,22 @@
-// sidebar.tsx
-
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+// import React, { useState, useEffect } from 'react';
 import MenuItem from '@/types/menu';
 
 
-const Sidebar = () => {
+export default  async function  Sidebar(){
   const pathName = usePathname();
-
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-
-  const fetchMenuItems = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/menuItems');
-      const data = await response.json();
-      setMenuItems(data);
-    } catch (error) {
-      console.error('Error fetching menu items:', error);
-    }
-  };
-
-  useEffect(() => {
-    
-    fetchMenuItems();
-  }, []);
-
+  
+  const response = await fetch('http://localhost:9999/menuItems');
+  const data : MenuItem[] = await response.json();
+  
   return (
     <div className='sidebar'>
       <div className="logo">
         ZeroBeat
       </div>
       <ul>
-        {menuItems.map((menuItem) => (
+        {data.map((menuItem) => (
           <li key={menuItem.id} className={pathName === menuItem.link ? 'active' : ''}> 
             <Link href={menuItem.link}>
               <img src={`/icon/${menuItem.img}.svg`} alt="메뉴 아이콘" />
@@ -45,4 +29,3 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;

@@ -6,23 +6,13 @@
         min-height: $headerH;
 		align-items: center;
 		background-color: $MainColor;
+        box-shadow: $boxShadow;
 		&-inner{
 			flex: 1;
 			display: flex;
 			justify-content: space-between;
 			padding:  0 10px ;
             align-items: center;
-		}
-		.logo{
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			height: 100%;
-			width: 240px;
-			font-size: 26px;
-			font-weight: 600;
-			letter-spacing: 2px;
-			// border: 1px solid;
 		}
 	}
     &-body{
@@ -76,15 +66,16 @@
         justify-content: center;
         height: 38px;
         cursor: pointer;
-        font-size: var(--f-m);
+        font-size: var(--f-s);
         padding: 0 12px;
         border-radius: $borderR;
         &:hover{
             background-color: $wop;
         }
         &-profile{
-            width: 30px;
-            height: 30px;
+            width: 26px;
+            height: 26px;
+            padding: 0 6px;
             border-radius: 50%;
             overflow: hidden;
             background-color: #E4E8EE;

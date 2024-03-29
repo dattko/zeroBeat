@@ -1,4 +1,4 @@
-const modal1 = () => {
+const modal1 = ( ) => {
     
     return (
         <div>

@@ -4,8 +4,8 @@ import '@style/globals.scss';
 import { Wrap } from '@/componenets/wrap';
 
 export const metadata: Metadata = {
-  title: "HM NEXT",
-  description: "HM portfolio",
+  title: "ZeroBeat",
+  description: "music service",
 };
 
 const RootLayout = ({

@@ -12,6 +12,7 @@ const Home = () => {
       openModal({
         modalType: "LoginModal",
         isOpen: true, 
+        title: "로그인",
       })
     );
   };
@@ -20,6 +21,7 @@ const Home = () => {
       openModal({
         modalType: "BasicModal",
         isOpen: true, 
+        title: "modal2",
       })
     );
   };
@@ -27,7 +29,6 @@ const Home = () => {
   return (
     <div>
       <button onClick={handleOpenLoginModal}>로그인 모달 열기</button>
-      {/* 추가로 다른 모달도 열고 싶다면 이 버튼을 활용할 수 있습니다: */}
       <button onClick={handleOpenBasicModal}>기본 모달 열기</button> 
     </div>
   );
