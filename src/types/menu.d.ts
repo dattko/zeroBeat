@@ -1,9 +1,11 @@
-interface MenuItem {
-  id: number;
-  name: string;
-  link: string;
-  img: string;
-  active: boolean;
-}
+declare module "menuTypes" {
 
-export default MenuItem;
+  export interface MenuItem {
+    id: number;
+    name: string;
+    link: string;
+    img: string;
+    active: boolean;
+  }
+  
+}

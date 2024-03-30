@@ -3,5 +3,228 @@
       { "id": 1, "name": "홈", "link": "/" , "img":"home"},
       { "id": 2, "name": "실시간 차트", "link": "/chart","img":"chart" },
       { "id": 3, "name": "보관함", "link": "/locker" ,"img":"locker"}
-    ]
+    ],
+    "music": [
+      {
+        "id": 1,
+        "title": "곡 제목 11",
+        "artist": "아티스트 11",
+        "album": "앨범 제목 11",
+        "release_date": "2023-08-19",
+        "popularity_rank": 20,
+        "genre": "팝",
+        "duration": "3:45",
+        "album_art_url": "https://picsum.photos/200/200?random=11"
+      },
+      {
+        "id": 2,
+        "title": "곡 제목 12",
+        "artist": "아티스트 12",
+        "album": "앨범 제목 12",
+        "release_date": "2023-09-01",
+        "popularity_rank": 4,
+        "genre": "록",
+        "duration": "4:20",
+        "album_art_url": "https://picsum.photos/200/200?random=12"
+      },
+      {
+        "id": 3,
+        "title": "곡 제목 13",
+        "artist": "아티스트 13",
+        "album": "앨범 제목 13",
+        "release_date": "2024-01-25",
+        "popularity_rank": 18,
+        "genre": "힙합",
+        "duration": "3:10",
+        "album_art_url": "https://picsum.photos/200/200?random=13"
+      },
+      {
+        "id": 4,
+        "title": "곡 제목 14",
+        "artist": "아티스트 14",
+        "album": "앨범 제목 14",
+        "release_date": "2023-07-02",
+        "popularity_rank": 9,
+        "genre": "EDM",
+        "duration": "5:05",
+        "album_art_url": "https://picsum.photos/200/200?random=14"
+      },
+      {
+        "id": 5,
+        "title": "곡 제목 15",
+        "artist": "아티스트 15",
+        "album": "앨범 제목 15",
+        "release_date": "2023-10-20",
+        "popularity_rank": 16,
+        "genre": "재즈",
+        "duration": "6:30",
+        "album_art_url": "https://picsum.photos/200/200?random=15"
+      },
+      {
+        "id": 6,
+        "title": "곡 제목 16",
+        "artist": "아티스트 16",
+        "album": "앨범 제목 16",
+        "release_date": "2023-05-06",
+        "popularity_rank": 3,
+        "genre": "댄스",
+        "duration": "3:55",
+        "album_art_url": "https://picsum.photos/200/200?random=16"
+      },
+      {
+        "id": 7,
+        "title": "곡 제목 17",
+        "artist": "아티스트 17",
+        "album": "앨범 제목 17",
+        "release_date": "2023-04-15",
+        "popularity_rank": 7,
+        "genre": "힙합",
+        "duration": "4:10",
+        "album_art_url": "https://picsum.photos/200/200?random=17"
+      },
+      {
+        "id": 8,
+        "title": "곡 제목 18",
+        "artist": "아티스트 18",
+        "album": "앨범 제목 18",
+        "release_date": "2024-01-12",
+        "popularity_rank": 14,
+        "genre": "록",
+        "duration": "3:30",
+        "album_art_url": "https://picsum.photos/200/200?random=18"
+      },
+      {
+        "id": 9,
+        "title": "곡 제목 19",
+        "artist": "아티스트 19",
+        "album": "앨범 제목 19",
+        "release_date": "2023-03-27",
+        "popularity_rank": 1,
+        "genre": "팝",
+        "duration": "4:15",
+        "album_art_url": "https://picsum.photos/200/200?random=19"
+      },
+      {
+        "id": 10,
+        "title": "곡 제목 20",
+        "artist": "아티스트 20",
+        "album": "앨범 제목 20",
+        "release_date": "2023-07-11",
+        "popularity_rank": 19,
+        "genre": "EDM",
+        "duration": "5:30",
+        "album_art_url": "https://picsum.photos/200/200?random=20"
+      },
+      {
+        "id": 11,
+        "title": "곡 제목 21",
+        "artist": "아티스트 21",
+        "album": "앨범 제목 21",
+        "release_date": "2023-06-10",
+        "popularity_rank": 6,
+        "genre": "재즈",
+        "duration": "6:10",
+        "album_art_url": "https://picsum.photos/200/200?random=21"
+      },
+      {
+        "id": 12,
+        "title": "곡 제목 22",
+        "artist": "아티스트 22",
+        "album": "앨범 제목 22",
+        "release_date": "2023-02-18",
+        "popularity_rank": 5,
+        "genre": "댄스",
+        "duration": "3:40",
+        "album_art_url": "https://picsum.photos/200/200?random=22"
+      },
+      {
+        "id": 13,
+        "title": "곡 제목 23",
+        "artist": "아티스트 23",
+        "album": "앨범 제목 23",
+        "release_date": "2023-11-03",
+        "popularity_rank": 10,
+        "genre": "힙합",
+        "duration": "4:05",
+        "album_art_url": "https://picsum.photos/200/200?random=23"
+      },
+      {
+        "id": 14,
+        "title": "곡 제목 24",
+        "artist": "아티스트 24",
+        "album": "앨범 제목 24",
+        "release_date": "2023-01-20",
+        "popularity_rank": 15,
+        "genre": "록",
+        "duration": "3:20",
+        "album_art_url": "https://picsum.photos/200/200?random=24"
+      },
+      {
+        "id": 15,
+        "title": "곡 제목 25",
+        "artist": "아티스트 25",
+        "album": "앨범 제목 25",
+        "release_date": "2023-03-11",
+        "popularity_rank": 13,
+        "genre": "팝",
+        "duration": "4:35",
+        "album_art_url": "https://picsum.photos/200/200?random=25"
+      },
+      {
+        "id": 16,
+        "title": "곡 제목 26",
+        "artist": "아티스트 26",
+        "album": "앨범 제목 26",
+        "release_date": "2023-05-28",
+        "popularity_rank": 17,
+        "genre": "EDM",
+        "duration": "5:50",
+        "album_art_url": "https://picsum.photos/200/200?random=26"
+      },
+      {
+        "id": 17,
+        "title": "곡 제목 27",
+        "artist": "아티스트 27",
+        "album": "앨범 제목 27",
+        "release_date": "2024-02-01",
+        "popularity_rank": 11,
+        "genre": "재즈",
+        "duration": "6:25",
+        "album_art_url": "https://picsum.photos/200/200?random=27"
+      },
+      {
+        "id": 18,
+        "title": "곡 제목 28",
+        "artist": "아티스트 28",
+        "album": "앨범 제목 28",
+        "release_date": "2023-09-30",
+        "popularity_rank": 8,
+        "genre": "댄스",
+        "duration": "3:35",
+        "album_art_url": "https://picsum.photos/200/200?random=28"
+      },
+      {
+        "id": 19,
+        "title": "곡 제목 29",
+        "artist": "아티스트 29",
+        "album": "앨범 제목 29",
+        "release_date": "2023-07-15",
+        "popularity_rank": 2,
+        "genre": "힙합",
+        "duration": "4:00",
+        "album_art_url": "https://picsum.photos/200/200?random=29"
+      },
+      {
+        "id": 20,
+        "title": "곡 제목 30",
+        "artist": "아티스트 30",
+        "album": "앨범 제목 30",
+        "release_date": "2023-11-17",
+        "popularity_rank": 12,
+        "genre": "록",
+        "duration": "3:15",
+        "album_art_url": "https://picsum.photos/200/200?random=30"
+      }
+    ],  
+    
 }

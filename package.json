@@ -18,7 +18,8 @@
     "sass": "^1.71.1",
     "styled-components": "^6.1.8",
     "styled-normalize": "^8.1.1",
-    "styled-reset": "^4.5.2"
+    "styled-reset": "^4.5.2",
+    "swiper": "^11.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-// import React, { useState, useEffect } from 'react';
-import MenuItem from '@/types/menu';
+import { MenuItem } from 'menuTypes';
 
 
 export default  async function  Sidebar(){
