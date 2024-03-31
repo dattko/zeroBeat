@@ -10,6 +10,9 @@ const __dirname = dirname(__filename);
 import path from 'path';
 
 const nextConfig = {
+  compiler: {
+    styledComponents: true,
+  },
   reactStrictMode: true,
   webpack(config) {
     return {

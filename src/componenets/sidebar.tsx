@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MenuItem } from 'menuTypes';
+import axios from 'axios';
 
-
-export default  async function  Sidebar(){
+export default async function Sidebar() {
   const pathName = usePathname();
   
-  const response = await fetch('http://localhost:9999/menuItems');
-  const data : MenuItem[] = await response.json();
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_API}/menuItems`);
+  const data: MenuItem[] = response.data;
   
   return (
     <div className='sidebar'>
@@ -27,4 +27,3 @@ export default  async function  Sidebar(){
     </div>
   );
 };
-
