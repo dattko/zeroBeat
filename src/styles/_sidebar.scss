@@ -1,11 +1,8 @@
-$sidebarW: 200px;
 .sidebar{
     width: $sidebarW;
-    min-width: $sidebarW;
     display: flex;
     flex-direction: column;
     z-index: 1;
-    overflow: hidden;
     .logo{
         height: $headerH;
         display: flex;
