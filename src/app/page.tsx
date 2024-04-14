@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { openModal } from '@redux/slice/modalSlice';
 import SwiperWrap from '@component/swiper/SwiperWrap';
 import { MusicList } from 'swiperTypes';
-import styled from 'styled-components';
+import styled,{ css } from 'styled-components';
 import axios from 'axios'; 
 import { useAppSelector } from '@/redux/store';
 
@@ -50,7 +50,7 @@ const Page = () => {
       <Section>
       <SectionTitleBox>
         <SectionTitle>
-          최근 재생한 음악  
+          최근 재생한 곡  
         </SectionTitle>
         </SectionTitleBox>
       <SwiperWrap>
@@ -69,19 +69,10 @@ const Page = () => {
       </SwiperWrap>
       </Section>
     ) : null}
-     
       <Section>
-      <SectionTitleBox>
+        <SectionTitleBox>
           <SectionTitle>
-            	실시간 인기 음악
-          </SectionTitle>
-        </SectionTitleBox>
-            <MusucList musicData={musicData}/>
-      </Section>
-      <Section>
-      <SectionTitleBox>
-          <SectionTitle>
-            	최근 출시 음악
+            	최근 출시 곡
           </SectionTitle>
           </SectionTitleBox>
         {/* Display the top two songs based on popularity rank */}
@@ -101,7 +92,35 @@ const Page = () => {
             ))}
         </SwiperWrap>
       </Section>
-      <button onClick={handleOpenBasicModal}>기본 모달 열기</button>
+      <Section>
+      <SectionTitleBox>
+          <SectionTitle>
+            	실시간 인기 곡
+          </SectionTitle>
+        </SectionTitleBox>
+            <MusucList musicData={musicData}/>
+      </Section>
+      <Section>
+        <SectionTitleBox>
+          <SectionTitle>
+            	보관함
+          </SectionTitle>
+          </SectionTitleBox>
+        {/* Display the top two songs based on popularity rank */}
+        <SwiperWrap>
+        {musicData
+            .slice(0, 3)
+            .map((song) => (
+              <SwiperList key={song.id}>
+                <AlbumImge>
+                 <img src={song.album_art_url} alt={song.title} />
+                </AlbumImge>
+                <MusicInfoText>playList</MusicInfoText>
+              </SwiperList>
+            ))}
+        </SwiperWrap>
+      </Section>
+      {/* <button onClick={handleOpenBasicModal}>기본 모달 열기</button> */}
     </>
   );
 };

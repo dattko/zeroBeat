@@ -18,8 +18,6 @@ export const Header = () => {
           })
         );
       };
-
-      console.log(isAuth);
     return (
         <header className='main-header'>
             <div className='main-header-inner'>
