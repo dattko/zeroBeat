@@ -140,6 +140,7 @@ const MusucList: React.FC<MusucListProps> = ({ musicData }) => {
       <MusinListUl>
         {musicData
         .sort((a, b) => a.popularity_rank - b.popularity_rank)
+        .slice(0, 10)
         .map((song, i) => (
           <MusinListLi key={song.id}>
             <MusicInfoText width='30px' grey center>
