@@ -5,13 +5,13 @@
 		height: $headerH;
         min-height: $headerH;
 		align-items: center;
-		background-color: $MainColor;
-        box-shadow: $boxShadow;
+		background-color: #EAEAEA;
+        // box-shadow: $boxShadow;
 		&-inner{
 			flex: 1;
 			display: flex;
 			justify-content: space-between;
-			padding:  0 10px ;
+			padding:  0 80px ;
             align-items: center;
 		}
 	}
@@ -29,25 +29,25 @@
         // border: 1px solid;
 
         &-inner{
-            background-color: $LightBackColor;
+            background-color: #fff;
             // height: 100%;
             overflow: auto;
             display: flex;
             flex-direction: column;
-            gap: 50px;
+            gap: 120px;
             flex: 1;
             border-radius: 8px 8px 0 0;
-            margin: 10px 10px 0;
-            padding-top: 30px;
-            padding-left: 50px;
+            // margin: 10px 10px 0;
+            padding-top: 70px;
+            padding-left: 80px;
             // width: 100%;
         }
     }
     &-search{
         max-width: 360px;
         width: 100%;
-        border-radius: 4px;
-        height: 30px;
+        border-radius: 24px;
+        height: 48px;
         &:hover{
             background-color: rgba($color: #fff, $alpha: 0.3);
             img{
@@ -60,9 +60,17 @@
                 filter: brightness(0.6);
             }
         }
+        .input-box{
+            border-radius: 24px;
+            height: 48px;
+        }
         input{
-            height: 30px;
+            padding: 0 30px;
             background-color: transparent;
+   
+        }
+        .icon-btn{
+            width: 48px !important;
         }
         img{
             max-width: 18px;

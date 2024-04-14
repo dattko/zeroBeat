@@ -3,6 +3,7 @@
     display: flex;
     flex-direction: column;
     z-index: 1;
+    background-color: #D9D9D9;
     .logo{
         height: $headerH;
         display: flex;
@@ -11,8 +12,8 @@
         font-size: 22px;
         font-weight: 800;
         letter-spacing: 2px;
-        background-color: $MainColor;
-        box-shadow: $boxShadow;
+        // background-color: $MainColor;
+        // box-shadow: $boxShadow;
     }
     ul{
         padding: 10px 10px;
@@ -20,7 +21,6 @@
         flex-direction: column;
         flex: 1;
         gap:4px;
-        border-right: 2px solid $LightBackColor;
         li{
             a{
                 height: 42px;
@@ -32,7 +32,7 @@
                 padding: 0 12px;
                 font-size: var(--f-s);
                 &:hover{
-                    background-color: $LightBackColor;
+                    background-color: rgba($color: #ebebeb, $alpha: 0.5);
                     border-radius: 8px;
                 }
     
@@ -43,7 +43,7 @@
             }
             &.active{
                 a{
-                    background-color: $LightBackColor;
+                    background-color: rgba($color: #ebebeb, $alpha: 0.8);
                     border-radius: 8px;}
             }
         }

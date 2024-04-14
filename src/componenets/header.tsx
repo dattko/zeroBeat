@@ -1,9 +1,25 @@
 'use client';
 import React, {useState} from 'react';
+import { openModal } from '@redux/slice/modalSlice';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from '@/redux/store';
 
 export const Header = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const dispatch = useDispatch();
+    const isAuth = useAppSelector((state) => state.auth.value.isAuth);
+    const { username } = useAppSelector((state) => state.auth.value);
 
+    const handleOpenLoginModal = () => {
+        dispatch(
+          openModal({
+            modalType: "LoginModal",
+            isOpen: true,
+            title: "로그인",
+          })
+        );
+      };
+
+      console.log(isAuth);
     return (
         <header className='main-header'>
             <div className='main-header-inner'>
@@ -15,19 +31,18 @@ export const Header = () => {
                         </button>
                     </div>
                 </div>
-                <div className='main-my-info'>
+                <button className='main-my-info' onClick={handleOpenLoginModal}>
                     <div className='main-my-info-profile'>
                         <img src="/images/user.svg" alt="프로필" />
                     </div>
-                    <div className='main-my-info-id'>
-                        {/* 닉네임 또는 로그인하기 버튼 */}
-                        {isLoggedIn ? (
-                            <span>닉네임</span>
+                    <div className='main-my-info-id' >
+                        {isAuth ? (
+                            <span>{username}</span>
                         ) : (
                             <span>로그인하기</span>
                         )}
                     </div>
-                </div>
+                </button>
             </div>
         </header>
     );

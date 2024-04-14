@@ -2,9 +2,8 @@
 import React from 'react';
 import Sidebar from '@component/sidebar'; 
 import { Content }  from '@component/content'; 
-import { Provider } from 'react-redux';
-import { store } from '@redux/store'
-import  GlobalModal  from '@modal//globalModal';
+import ReduxProvider from '@redux/provider';
+import  GlobalModal  from '@modal/globalModal';
 
 export const Wrap = ({
   children
@@ -12,7 +11,7 @@ export const Wrap = ({
   children: React.ReactNode
 }) => (      
   <div className='wrap'>
-    <Provider store={store}>
+    <ReduxProvider>
       <GlobalModal /> 
         <div className='main-body'>
           <Sidebar/>
@@ -20,7 +19,7 @@ export const Wrap = ({
             {children}
           </Content>
         </div>
-    </Provider>
+    </ReduxProvider>
   </div>
 );
 

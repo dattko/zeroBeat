@@ -8,7 +8,7 @@ const SwiperWrap: React.FC<MusicSwiperProps> = ({ children }) => {
     return (
         <Swiper
             pagination={{ clickable: true }}
-            spaceBetween={20}
+            spaceBetween={32}
             slidesPerView={"auto"}
             simulateTouch={true}
             grabCursor={true}

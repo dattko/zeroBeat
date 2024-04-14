@@ -12,7 +12,7 @@ export default async function Sidebar() {
   return (
     <div className='sidebar'>
       <div className="logo">
-        ZeroBeat
+        <img src="/images/row-logo.svg" alt="logo" />
       </div>
       <ul>
         {data.map((menuItem) => (

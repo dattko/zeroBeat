@@ -2,11 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '@redux/slice/modalSlice';
-import Modal1 from '@component/modal/modal1';
+import LoginModal from '@/componenets/modal/LoginModal';
 import Modal2 from '@component/modal/modal2';
 
 const modalComponents: Record<string, React.ComponentType> = {
-    LoginModal: Modal1,
+    LoginModal: LoginModal,
     BasicModal: Modal2,
 };
   

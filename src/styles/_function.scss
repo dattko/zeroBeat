@@ -10,9 +10,9 @@ $dg: #4A4A52;
 $padding: 20px;
 $borderR: 4px;
 $wop:rgba($color: #fff, $alpha: 0.3);
-$headerH: 52px;
+$headerH: 80px;
 $boxShadow: 0 1px 20px 0 rgba(0, 0, 0, 0.1);
-$sidebarW: 200px;
+$sidebarW: 260px;
 @function px($size) {
     @return calc(calc($size / 16)  *  1rem);
     }
