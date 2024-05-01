@@ -18,7 +18,6 @@ interface MusucListProps {
 const Page = () => {
   const [musicData, setMusicData] = useState<MusicList[]>([]);
   const dispatch = useDispatch();
-  const isAuth = useAppSelector((state) => state.auth.value.isAuth);
 
 
   useEffect(() => {
@@ -46,7 +45,7 @@ const Page = () => {
 
   return (
     <>
-    {isAuth ? (
+    {true ? (
       <Section>
       <SectionTitleBox>
         <SectionTitle>

@@ -1,45 +1,36 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from "@redux/store";
-import { closeModal } from '@redux/slice/modalSlice';
-import { logOut, logIn } from "@redux/slice/authSlice";
+import { signIn, signOut, useSession } from 'next-auth/react';
+import Image from "next/image";
 
-type LoginProps = {
-    name: string;
+export default function Login() {
+  const { data: session } = useSession();
+  
+  const handleLogin = () => {
+    signIn("spotify", { callbackUrl: "http://localhost:3000" });
   };
 
+  const handleLogout = () => {
+    signOut();
+  };
 
-const LoginModal = ( ) => {
-    const [username, setUsername] = useState("");
-    const dispatch = useDispatch();
-
-
-    const onClickLogIn = () => {
-        dispatch(logIn(username));
-        dispatch(closeModal());
-      };
-      
-      const onClickLogOut = () => {
-        dispatch(logOut());
-        dispatch(closeModal());
-      };
-
-    return (
-        <>
-        <div className='input-box'>
-            <input
-                type="text"
-                onChange={(e) => setUsername(e.target.value)}
-            />
-        </div>
-            <button onClick={onClickLogIn}>
-                Log In
-            </button>
-            <button onClick={onClickLogOut}>
-                 Log Out
-            </button>
-        </>
-    )
+  return (
+    <div className="flex flex-col items-center justify-center w-screen h-screen gap-20">
+        {session ? (
+          // If there is a session, show the logout button
+          <button
+            className="flex px-12 py-2 text-lg tracking-widest uppercase rounded-full focus:outline-none bg-primary hover:bg-opacity-80"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        ) : (
+          // If there is no session, show the login button
+          <button
+            className="flex px-12 py-2 text-lg tracking-widest uppercase rounded-full focus:outline-none bg-primary hover:bg-opacity-80"
+            onClick={handleLogin}
+          >
+            Login
+          </button>
+        )}
+    </div>
+  );
 }
-
-export default LoginModal;

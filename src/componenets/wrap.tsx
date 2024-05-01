@@ -10,17 +10,19 @@ export const Wrap = ({
 }: {
   children: React.ReactNode
 }) => (      
-  <div className='wrap'>
-    <ReduxProvider>
-      <GlobalModal /> 
-        <div className='main-body'>
-          <Sidebar/>
-          <Content>
-            {children}
-          </Content>
-        </div>
-    </ReduxProvider>
-  </div>
+  // <AuthSession>
+    <div className='wrap'>
+      <ReduxProvider>
+        <GlobalModal /> 
+          <div className='main-body'>
+            <Sidebar/>
+            <Content>
+              {children}
+            </Content>
+          </div>
+      </ReduxProvider>
+    </div>
+  // </AuthSession>
 );
 
 export default Wrap;

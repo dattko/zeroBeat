@@ -7,7 +7,7 @@ import axios from 'axios';
 
 
 const Locker = () => {
-    const [musicData, setMusicData] = useState<MusicList[]>([]);
+  const [musicData, setMusicData] = useState<MusicList[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {

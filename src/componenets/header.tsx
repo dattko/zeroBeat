@@ -1,13 +1,12 @@
-'use client';
-import React, {useState} from 'react';
+
+import React, {useState, useEffect} from 'react';
 import { openModal } from '@redux/slice/modalSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch ,useSelector} from 'react-redux';
 import { useAppSelector } from '@/redux/store';
+import { getSession } from 'next-auth/react';
 
 export const Header = () => {
     const dispatch = useDispatch();
-    const isAuth = useAppSelector((state) => state.auth.value.isAuth);
-    const { username } = useAppSelector((state) => state.auth.value);
 
     const handleOpenLoginModal = () => {
         dispatch(
@@ -17,7 +16,8 @@ export const Header = () => {
             title: "로그인",
           })
         );
-      };
+    };
+
     return (
         <header className='main-header'>
             <div className='main-header-inner'>
@@ -25,7 +25,7 @@ export const Header = () => {
                     <div className='input-box'>
                         <input type="text" />
                         <button className='icon-btn n-b' style={{width: '34px'}}>
-                        <img src="/images/search.svg" alt="로고" />
+                            <img src="/images/search.svg" alt="로고" />
                         </button>
                     </div>
                 </div>
@@ -34,8 +34,8 @@ export const Header = () => {
                         <img src="/images/user.svg" alt="프로필" />
                     </div>
                     <div className='main-my-info-id' >
-                        {isAuth ? (
-                            <span>{username}</span>
+                        {false ? (
+                            <span>로그인됨</span>
                         ) : (
                             <span>로그인하기</span>
                         )}
@@ -45,3 +45,6 @@ export const Header = () => {
         </header>
     );
 };
+
+
+

@@ -23,6 +23,7 @@ const GlobalModal = ()=> {
     return (
         isOpen && RenderModalComponent ? (
             <ModalWrap>
+                <ModalBg onClick={closeModalHandler}/>
                 <Modal>
                 <ModalHeader>
                     {modalTitle}
@@ -49,7 +50,6 @@ const ModalWrap = styled.div`
     height: 100vh;
     top: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.4);
     z-index: 999;
     display: flex;
     justify-content: center;
@@ -62,6 +62,7 @@ const Modal = styled.div`
     display: flex;
     flex-direction: column;
     border-radius: 4px;
+    z-index: 1;
     `
 
 const ModalHeader = styled.div`
@@ -84,4 +85,12 @@ const ModalFooter = styled.div`
     justify-content: end;
     padding: 0 16px;
     height: 42px;
+`;
+const ModalBg = styled.div`
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
 `;

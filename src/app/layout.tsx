@@ -3,6 +3,7 @@ import React from 'react';
 import type { Metadata } from "next";
 import '@style/globals.scss'; 
 import { Wrap } from '@/componenets/wrap';
+import { AuthProvider } from "@/provider/AuthProvider";
 
 export const metadata: Metadata = {
   title: "ZeroBeat",
@@ -14,12 +15,14 @@ const RootLayout = ({
 }: {
   children: React.ReactNode
 }) => (
-  <html lang='en'>
-    <body>
-      <Wrap>
-        {children} 
-      </Wrap>
-    </body>
+  <html >
+      <AuthProvider>
+        <body>
+            <Wrap>
+              {children} 
+            </Wrap>
+        </body>
+      </AuthProvider>
   </html>
 );
 
