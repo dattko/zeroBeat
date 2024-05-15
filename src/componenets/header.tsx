@@ -1,8 +1,9 @@
-
+'use client';
 import React, {useState, useEffect} from 'react';
 import { openModal } from '@redux/slice/modalSlice';
-import { useDispatch ,useSelector} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSession } from 'next-auth/react';
+import { SearchComponent } from '@component/header/SearchSpotify';
 
 export const Header = () => {
     const dispatch = useDispatch();
@@ -17,16 +18,19 @@ export const Header = () => {
         );
     };
 
+    
+
     return (
         <header className='main-header'>
             <div className='main-header-inner'>
                 <div className='main-search'>
-                    <div className='input-box'>
+                    <SearchComponent />
+                    {/* <div className='input-box'>
                         <input type="text" />
                         <button className='icon-btn n-b' style={{width: '34px'}}>
                             <img src="/images/search.svg" alt="로고" />
                         </button>
-                    </div>
+                    </div> */}
                 </div>
                 <button className='main-my-info' onClick={handleOpenLoginModal}>
                     <div className='main-my-info-profile'>
