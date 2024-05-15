@@ -2,18 +2,17 @@
 import React, {useState, useEffect} from 'react';
 import { openModal } from '@redux/slice/modalSlice';
 import { useDispatch ,useSelector} from 'react-redux';
-import { useAppSelector } from '@/redux/store';
-import { getSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 export const Header = () => {
     const dispatch = useDispatch();
-
+    const { data: session } = useSession() ;
+    console.log(session?.user?.picture)
     const handleOpenLoginModal = () => {
         dispatch(
           openModal({
             modalType: "LoginModal",
             isOpen: true,
-            title: "로그인",
           })
         );
     };
@@ -31,11 +30,15 @@ export const Header = () => {
                 </div>
                 <button className='main-my-info' onClick={handleOpenLoginModal}>
                     <div className='main-my-info-profile'>
-                        <img src="/images/user.svg" alt="프로필" />
+                    {session?.user?.picture ? (
+                            <img src={session?.user?.picture} alt="프로필" />
+                        ) : (
+                            <img src="/images/user.svg" alt="기본 프로필"  className='default'/>
+                        )}
                     </div>
                     <div className='main-my-info-id' >
-                        {false ? (
-                            <span>로그인됨</span>
+                        {session ? (
+                            <span>{session.user?.name}</span>
                         ) : (
                             <span>로그인하기</span>
                         )}

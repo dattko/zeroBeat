@@ -1,11 +1,17 @@
+import React,{useState} from 'react';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import Image from "next/image";
+import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
+import { closeModal,openModal } from '@redux/slice/modalSlice';
 
 export default function Login() {
   const { data: session } = useSession();
-  
+  const dispatch = useDispatch();
+
+
+
   const handleLogin = () => {
-    signIn("spotify", { callbackUrl: "http://localhost:3000" });
+    signIn("spotify", { callbackUrl: "http://localhost:3000" })
   };
 
   const handleLogout = () => {
@@ -13,24 +19,48 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen gap-20">
+    <LoginWrap>
+          <Logo>
+            <img src="/images/Spotify_Logo_RGB_Green.png" alt="로고" />
+          </Logo>
         {session ? (
-          // If there is a session, show the logout button
-          <button
-            className="flex px-12 py-2 text-lg tracking-widest uppercase rounded-full focus:outline-none bg-primary hover:bg-opacity-80"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <>
+          <LoginBtn  onClick={handleLogout}>         
+            Spotify 로그아웃
+          </LoginBtn>
+          </>
         ) : (
-          // If there is no session, show the login button
-          <button
-            className="flex px-12 py-2 text-lg tracking-widest uppercase rounded-full focus:outline-none bg-primary hover:bg-opacity-80"
-            onClick={handleLogin}
-          >
-            Login
-          </button>
+          <>
+          <LoginBtn  onClick={handleLogin}>         
+            Spotify 로그인
+          </LoginBtn>
+          </>
         )}
-    </div>
+    </LoginWrap>
   );
 }
+const Logo = styled.div`
+ max-width: 330px;
+`
+const LoginWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+flex-direction: column;
+padding-bottom: 50px;
+padding-top: 30px;
+  gap: 46px;
+  `
+const LoginBtn = styled.button`
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  padding: 0 20px;
+  height: 54px;
+  background-color: #1ed760;
+  color: #212121;
+  border-radius: 8px;
+  &:hover{
+    background-color: #1DB954;
+  }
+`

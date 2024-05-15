@@ -1,13 +1,27 @@
+'use client';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MenuItem } from 'menuTypes';
+import { MenuItem } from 'menuTypes'; 
 import axios from 'axios';
 
-export default async function Sidebar() {
+const Sidebar = () => {
   const pathName = usePathname();
   
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_API}/menuItems`);
-  const data: MenuItem[] = response.data;
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+
+
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_API}/menuItems`);
+        setMenuItems(response.data);
+      } catch (error) {
+        console.error('Error fetching menu items:', error);
+      }
+    };
+    fetchMenuItems();
+  }, []); 
   
   return (
     <div className='sidebar'>
@@ -15,7 +29,7 @@ export default async function Sidebar() {
         <img src="/images/row-logo.svg" alt="logo" />
       </div>
       <ul>
-        {data.map((menuItem) => (
+        {menuItems.map((menuItem) => (
           <li key={menuItem.id} className={pathName === menuItem.link ? 'active' : ''}> 
             <Link href={menuItem.link}>
               <img src={`/icon/${menuItem.img}.svg`} alt="메뉴 아이콘" />
@@ -27,3 +41,4 @@ export default async function Sidebar() {
     </div>
   );
 };
+export default Sidebar;

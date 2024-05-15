@@ -83,12 +83,12 @@ const SwiperList = styled.div`
 `
 //앨범커버
 interface AlbumImgeProps {
-  small?: boolean;
+  $small?: boolean;
 }
 
 const AlbumImge = styled.div<AlbumImgeProps>`
-  width: ${(props) => (props.small ? '48px' : '220px')};
-  height: ${(props) => (props.small ? '48px' : '220px')};
+  width: ${(props) => (props.$small ? '48px' : '220px')};
+  height: ${(props) => (props.$small ? '48px' : '220px')};
   background-color: #D9D9D9 ;
   display: flex;
   align-items: center;
@@ -128,23 +128,23 @@ gap: 16px;
 
 
 interface MusicInfoTextProps {
-  regular?: boolean;
-  grey?: boolean;
+  $regular?: boolean;
+  $grey?: boolean;
   width?: string;
-  center?: boolean;
+  $center?: boolean;
 }
 
 
 const MusicInfoTitle = styled.span<MusicInfoTextProps>`
-  font-size: ${(props) => (props.regular ? '16px' : '18px')};
+  font-size: ${(props) => (props.$regular ? '16px' : '18px')};
   font-weight: 700;
   flex: 1;
   
 `;
 const MusicInfoText = styled.span<MusicInfoTextProps>`
-  color: ${(props) => (props.grey ? '#7a7a7a' : '#000')};
+  color: ${(props) => (props.$grey ? '#7a7a7a' : '#000')};
   max-width: ${(props) => (props.width)};
-  text-align: ${(props) => (props.center ? 'center' : 'left')};
+  text-align: ${(props) => (props.$center ? '$center' : 'left')};
   width: 100%;
 `;
 

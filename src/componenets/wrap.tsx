@@ -1,28 +1,31 @@
-'use client'
-import React from 'react';
+'use client';
+import React, { ReactNode } from 'react';
 import Sidebar from '@component/sidebar'; 
-import { Content }  from '@component/content'; 
+import { Content } from '@component/content'; 
 import ReduxProvider from '@redux/provider';
-import  GlobalModal  from '@modal/globalModal';
+import GlobalModal from '@modal/globalModal';
 
-export const Wrap = ({
-  children
-}: {
-  children: React.ReactNode
-}) => (      
-  // <AuthSession>
-    <div className='wrap'>
+interface WrapProps {
+  children: ReactNode;
+}
+
+const Wrap: React.FC<WrapProps> = ({ children }) => {
+  
+  return (
+    <>
       <ReduxProvider>
-        <GlobalModal /> 
-          <div className='main-body'>
-            <Sidebar/>
-            <Content>
-              {children}
-            </Content>
-          </div>
+        <div className='wrap'>
+            <GlobalModal /> 
+            <div className='main-body'>
+              <Sidebar/>
+              <Content>
+                {children}
+              </Content>
+            </div>
+        </div>
       </ReduxProvider>
-    </div>
-  // </AuthSession>
-);
+    </>
+  );
+};
 
 export default Wrap;
