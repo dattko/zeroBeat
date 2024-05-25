@@ -64,6 +64,8 @@
         .input-box{
             border-radius: 24px;
             height: 48px;
+            position: relative;
+            overflow: visible;
         }
         input{
             padding: 0 30px;
