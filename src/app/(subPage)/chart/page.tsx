@@ -1,25 +1,39 @@
 "use client"
 import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import styled from 'styled-components';
-import { MusicList } from 'swiperTypes';
+import type { MusicList, SpotifyTrack,  } from '@/types/spotify';
+import { getPopularTracks, transformTrack } from '@/lib/spotify';
 import axios from 'axios';
 
 const Chart = () => {
-    const [musicData, setMusicData] = useState<MusicList[]>([]);
+  const { data: session } = useSession();
+  const [popularTracks, setPopularTracks] = useState<MusicList[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
 
     useEffect(() => {
-        const fetchData = async () => {
+      const fetchData = async () => {
+        if (session?.user?.accessToken) {
+          setIsLoading(true);
+          setError(null);
           try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_API}/music`);
-            setMusicData(response.data); 
+            const [popularTracksData] = await Promise.all([
+              getPopularTracks()
+            ]);
+            // console.log('Popular Tracks Data:', popularTracksData);
+            setPopularTracks(popularTracksData.tracks.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));
           } catch (error) {
             console.error('Error fetching data:', error);
+            setError('Failed to fetch data. Please try again.');
+          } finally {
+            setIsLoading(false);
           }
-        };
-    
-        fetchData();
-      }, []);
+        }
+      };
+      fetchData();
+    }, [session]);
 
 
     return (
@@ -30,7 +44,7 @@ const Chart = () => {
                     최근 인기 곡
             </SectionTitle>
             </SectionTitleBox>
-            <MusucList musicData={musicData}/>
+            <MusucList musicData={popularTracks}/>
       </Section>
         </>
     )
@@ -47,13 +61,14 @@ interface MusucListProps {
       <MusinListContainer>
         <MusinListUl>
           {musicData
-          .sort((a, b) => a.popularity_rank - b.popularity_rank)
           .map((song, i) => (
             <MusinListLi key={song.id}>
               <MusicInfoText width='30px' $grey $center>
                 {i + 1}
               </MusicInfoText>
-              <AlbumImge $small/>
+              <AlbumImge $small>
+              <img src={song.album_art_url} alt={song.title} />
+              </AlbumImge>
               <MusicInfoTitle $regular>{song.title}</MusicInfoTitle>
               <MusicInfoText width='22%'>{song.artist}</MusicInfoText>
               <MusicInfoText width='22%'>{song.album}</MusicInfoText>

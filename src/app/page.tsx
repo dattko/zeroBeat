@@ -1,262 +1,84 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { openModal } from '@redux/slice/modalSlice';
-import SwiperWrap from '@component/swiper/SwiperWrap';
-import { MusicList } from 'swiperTypes';
-import styled,{ css } from 'styled-components';
-import axios from 'axios'; 
-import { useAppSelector } from '@/redux/store';
-
-
-interface MusucListProps {
-  musicData: MusicList[]; 
-}
-
-
+import { useSession } from 'next-auth/react';
+import type { MusicList, SpotifyTrack, SpotifyAlbum } from '@/types/spotify';
+import { getRecentlyPlayed, getNewReleases, getPopularTracks, transformTrack, transformAlbum } from '@/lib/spotify';
+import styled from 'styled-components';
+import RowMusicList from '@/componenets/spotify/RowMusicList';
+import BoxMusicList from '@/componenets/spotify/BoxMusicList';
 
 const Page = () => {
-  const [musicData, setMusicData] = useState<MusicList[]>([]);
-  const dispatch = useDispatch();
-
+  const { data: session } = useSession();
+  const [recentlyPlayed, setRecentlyPlayed] = useState<MusicList[]>([]);
+  const [newReleases, setNewReleases] = useState<MusicList[]>([]);
+  const [popularTracks, setPopularTracks] = useState<MusicList[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_API}/music`);
-        setMusicData(response.data); 
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      if (session?.user?.accessToken) {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const [recentlyPlayedData, newReleasesData, popularTracksData] = await Promise.all([
+            getRecentlyPlayed(),
+            getNewReleases(),
+            getPopularTracks()
+          ]);
+  
+          // console.log('Recently Played Data:', recentlyPlayedData);
+          setRecentlyPlayed(recentlyPlayedData.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));  
+          // console.log('New Releases Data:', newReleasesData);
+          setNewReleases(newReleasesData.albums.items.map((item: SpotifyAlbum) => transformAlbum(item)));
+          // console.log('Popular Tracks Data:', popularTracksData);
+          setPopularTracks(popularTracksData.tracks.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          setError('Failed to fetch data. Please try again.');
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
-
     fetchData();
-  }, []);
-  
-  const handleOpenBasicModal = () => {
-    dispatch(
-      openModal({
-        modalType: "BasicModal",
-        isOpen: true,
-        title: "modal2",
-        header: true,
-        footer: true
-      })
-    );
-  };
+  }, [session]);
+
+  if (isLoading) return <LoadingMessage>Loading...</LoadingMessage>;
+  if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
 
   return (
-    <>
-    {true ? (
-      <Section>
-      <SectionTitleBox>
-        <SectionTitle>
-          최근 재생한 곡  
-        </SectionTitle>
-        </SectionTitleBox>
-      <SwiperWrap>
-        {musicData
-          .sort((a, b) => new Date(b.release_date).getTime() - new Date(a.release_date).getTime())
-          .map((song) => (
-            <SwiperList key={song.id}>
-              <AlbumImge>
-                <img src={song.album_art_url} alt={song.title} />
-              </AlbumImge>
-              <MusicInfoTitle>{song.title}</MusicInfoTitle>
-              <MusicInfoText>{song.artist}</MusicInfoText>
-              <MusicInfoText>{song.album}</MusicInfoText>
-            </SwiperList>
-          ))}
-      </SwiperWrap>
-      </Section>
-    ) : null}
-      <Section>
-        <SectionTitleBox>
-          <SectionTitle>
-            	최근 출시 곡
-          </SectionTitle>
-          </SectionTitleBox>
-        {/* Display the top two songs based on popularity rank */}
-        <SwiperWrap>
-        {musicData
-            .sort((a, b) => new Date(b.release_date).getTime() - new Date(a.release_date).getTime())
-            .map((song) => (
-              <SwiperList key={song.id}>
-                <AlbumImge>
-                 <img src={song.album_art_url} alt={song.title} />
-                </AlbumImge>
-                <MusicInfoTitle>{song.title}</MusicInfoTitle>
-                <MusicInfoText>{song.artist}</MusicInfoText>
-                <MusicInfoText> {song.album}</MusicInfoText>
-                <MusicInfoText>{new Date(song.release_date).toLocaleDateString()}</MusicInfoText>
-              </SwiperList>
-            ))}
-        </SwiperWrap>
-      </Section>
-      <Section>
-      <SectionTitleBox>
-          <SectionTitle>
-            	실시간 인기 곡
-          </SectionTitle>
-        </SectionTitleBox>
-            <MusucList musicData={musicData}/>
-      </Section>
-      <Section>
-        <SectionTitleBox>
-          <SectionTitle>
-            	보관함
-          </SectionTitle>
-          </SectionTitleBox>
-        {/* Display the top two songs based on popularity rank */}
-        <SwiperWrap>
-        {musicData
-            .slice(0, 3)
-            .map((song) => (
-              <SwiperList key={song.id}>
-                <AlbumImge>
-                 <img src={song.album_art_url} alt={song.title} />
-                </AlbumImge>
-                <MusicInfoText>playList</MusicInfoText>
-              </SwiperList>
-            ))}
-        </SwiperWrap>
-      </Section>
-      {/* <button onClick={handleOpenBasicModal}>기본 모달 열기</button> */}
-    </>
+    <PageContainer>
+      <BoxMusicList data={recentlyPlayed} title='최근 재생 곡'/>
+      <BoxMusicList data={newReleases} title='최신곡'/>
+      <RowMusicList title='글로벌 차트' data={popularTracks} limit={20}/>
+    </PageContainer>
   );
 };
+
+
+
+// 스타일 컴포넌트
+const PageContainer = styled.div`
+  padding: 20px;
+`;
+
+const LoadingMessage = styled.div`
+  font-size: 24px;
+  text-align: center;
+  margin-top: 50px;
+`;
+
+const ErrorMessage = styled.div`
+  font-size: 24px;
+  color: red;
+  text-align: center;
+  margin-top: 50px;
+`;
+
+
+
 
 
 
 export default Page;
-
-
-interface MusucListProps {
-  musicData: MusicList[]; 
-}
-
-const MusucList: React.FC<MusucListProps> = ({ musicData }) => {
-  return (
-    <MusinListContainer>
-      <MusinListUl>
-        {musicData
-        .sort((a, b) => a.popularity_rank - b.popularity_rank)
-        .slice(0, 10)
-        .map((song, i) => (
-          <MusinListLi key={song.id}>
-            <MusicInfoText width='30px' $grey $center>
-              {i + 1}
-            </MusicInfoText>
-            <AlbumImge $small/>
-            <MusicInfoTitle $regular>{song.title}</MusicInfoTitle>
-            <MusicInfoText width='22%'>{song.artist}</MusicInfoText>
-            <MusicInfoText width='22%'>{song.album}</MusicInfoText>
-            <MusicInfoText $grey width='60px'>
-              {song.duration}
-            </MusicInfoText>
-            <IconBtn>
-              <img src="/icon/three-dot.svg" alt="재생" />
-            </IconBtn>
-          </MusinListLi>
-        ))}
-      </MusinListUl>
-    </MusinListContainer>
-  );
-};
-
-
-// 섹샨
-const Section = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-`;
-
-const SectionTitleBox = styled.div`
-  display: flex;
-  align-items: center;
-`
-const SectionTitle = styled.span`
-  font-size: 32px;
-  font-weight: 700;
-`
-
-//스와이퍼 리스트
-const SwiperList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-`
-//앨범커버
-interface AlbumImgeProps {
-  $small?: boolean;
-}
-
-const AlbumImge = styled.div<AlbumImgeProps>`
-  width: ${(props) => (props.$small ? '48px' : '220px')};
-  height: ${(props) => (props.$small ? '48px' : '220px')};
-  background-color: #D9D9D9 ;
-  img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-`
-
-// 음악 세로 리스트
-
-const MusinListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding-right: 80px;
-`
-
-const MusinListUl = styled.ul`
-display: flex;
-flex-direction: column;
-gap: 16px;
-`
-const MusinListLi = styled.li`
-display: flex;
-justify-content: space-between;
-padding-bottom: 17px;
-border-bottom: 1px solid #D9D9D9;
-align-items: center;
-gap: 16px;
-`
-
-
-
-
-interface MusicInfoTextProps {
-  $regular?: boolean;
-  $grey?: boolean;
-  width?: string;
-  $center?: boolean;
-}
-
-
-const MusicInfoTitle = styled.span<MusicInfoTextProps>`
-  font-size: ${(props) => (props.$regular ? '16px' : '18px')};
-  font-weight: 700;
-  flex: 1;
-  
-`;
-const MusicInfoText = styled.span<MusicInfoTextProps>`
-  color: ${(props) => (props.$grey ? '#7a7a7a' : '#000')};
-  max-width: ${(props) => (props.width)};
-  text-align: ${(props) => (props.$center ? '$center' : 'left')};
-  width: 100%;
-`;
-
-const IconBtn = styled.button`
-display: flex;
-align-items: center;
-justify-content: center;
-width: 48px;
-height: 48px;
-`

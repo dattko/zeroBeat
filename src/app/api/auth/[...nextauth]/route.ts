@@ -1,62 +1,18 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, User, Session } from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
+import { JWT } from "next-auth/jwt";
 
+// 스코프 정의
 const scope =
   "user-read-recently-played user-read-playback-state user-top-read user-modify-playback-state user-read-currently-playing user-follow-read playlist-read-private user-read-email user-read-private user-library-read playlist-read-collaborative";
 
-export const authOptions: NextAuthOptions = {
-  providers: [
-    SpotifyProvider({
-      clientId: process.env.SPOTIFY_CLIENT_ID || "",
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
-      authorization: {
-        params: { scope },
-      },
-    }),
-  ],
-  secret: process.env.NEXTAUTH_SECRET,
-  callbacks: {
-    async jwt({ token, account }) {
-      if (account) {
-        token.id = account.id;
-        token.expires_at = account.expires_at ? account.expires_at : null;
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token; // 토큰 갱신에 필요
-      }
-
-      // expires_at이 숫자인지 확인하고 만료 시간 검사
-      if (token.expires_at && typeof token.expires_at === 'number') {
-        const currentTime = Math.floor(Date.now() / 1000);
-        if (token.expires_at < currentTime) {
-          try {
-            const refreshedToken = await refreshAccessToken(token.refreshToken as string);
-            token.accessToken = refreshedToken.accessToken;
-            token.expires_at = Math.floor(Date.now() / 1000) + refreshedToken.expiresIn;
-          } catch (error) {
-            console.error("Failed to refresh access token:", error);
-            token.expires_at = 0;
-          }
-        }
-      }
-      
-      return token;
-    },
-    async session({ session, token }) {
-      session.user = token;
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/",
-    signOut: "/",
-  },
-};
-
+// RefreshedToken 인터페이스 정의
 interface RefreshedToken {
   accessToken: string;
   expiresIn: number;
 }
 
+// 토큰 갱신 함수
 async function refreshAccessToken(refreshToken: string): Promise<RefreshedToken> {
   try {
     const url = 'https://accounts.spotify.com/api/token';
@@ -91,6 +47,66 @@ async function refreshAccessToken(refreshToken: string): Promise<RefreshedToken>
   }
 }
 
+// NextAuth 옵션 설정
+export const authOptions: NextAuthOptions = {
+  providers: [
+    SpotifyProvider({
+      clientId: process.env.SPOTIFY_CLIENT_ID || "",
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
+      authorization: {
+        params: { scope },
+      },
+    }),
+  ],
+  secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async jwt({ token, account }): Promise<JWT> {
+      if (account) {
+        token.id = account.id;
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.expires_at = account.expires_at;
+      }
+
+      // 토큰이 만료되기 5분 전에 갱신 시도
+      const shouldRefreshTime = Math.round((token.expires_at as number) - 5 * 60);
+      const currentTime = Math.round(Date.now() / 1000);
+
+      if (currentTime > shouldRefreshTime) {
+        try {
+          const refreshedToken = await refreshAccessToken(token.refreshToken as string);
+          token.accessToken = refreshedToken.accessToken;
+          token.expires_at = Math.floor(Date.now() / 1000) + refreshedToken.expiresIn;
+        } catch (error) {
+          console.error("Failed to refresh access token:", error);
+          token.error = "RefreshAccessTokenError";
+        }
+      }
+      
+      return token;
+    },
+    async session({ session, token }): Promise<Session> {
+      session.user = {
+        ...session.user,
+        accessToken: token.accessToken as string,
+        refreshToken: token.refreshToken as string,
+        username: token.username as string,
+      } as User & {
+        accessToken: string;
+        refreshToken: string;
+        username: string;
+      };
+      session.error = token.error as string | undefined;
+      return session;
+    }
+  },
+  pages: {
+    signIn: "/",
+    signOut: "/",
+  },
+};
+
+// NextAuth 핸들러 생성
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

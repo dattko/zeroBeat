@@ -1,58 +1,108 @@
 "use client"
+import { MusicList, SpotifyAlbum, SpotifyPlaylist, SpotifyArtist } from '@/types/spotify';
+import { getSavedAlbums, getSavedPlaylists, getFollowedArtists, transformAlbum, transformPlaylist, transformArtist } from '@/lib/spotify';
 import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import styled from 'styled-components';
 import SwiperWrap from '@component/swiper/SwiperWrap';
-import { MusicList } from 'swiperTypes';
-import axios from 'axios';
-
 
 const Locker = () => {
-  const [musicData, setMusicData] = useState<MusicList[]>([]);
+  const { data: session } = useSession();
+  const [savedAlbums, setSavedAlbums] = useState<MusicList[]>([]);
+  const [savedPlaylists, setSavedPlaylists] = useState<MusicList[]>([]);
+  const [followedArtists, setFollowedArtists] = useState<MusicList[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_API}/music`);
-            setMusicData(response.data); 
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        };
-    
-        fetchData();
-      }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (session?.user?.accessToken) {
+        try {
+          const [albumsData, playlistsData, artistsData] = await Promise.all([
+            getSavedAlbums(),
+            getSavedPlaylists(),
+            getFollowedArtists()
+          ]);
 
-    return (
-        <>
-            <Section>
-                <SectionTitleBox>
-                <SectionTitle>
-                        보관함
-                </SectionTitle>
-                </SectionTitleBox>
-                {/* Display the top two songs based on popularity rank */}
-                <SwiperWrap>
-                    <SwiperList >
-                        <AlbumImge>
-                            <img src="/icon/locak-album.svg" alt="보관함"
-                            style={{maxWidth: '88px', maxHeight: '88px'}}/>
-                        </AlbumImge>
-                        <MusicInfoText>새 보관함</MusicInfoText>
-                    </SwiperList>
-                {musicData
-                    .slice(0, 3)
-                    .map((song) => (
-                    <SwiperList key={song.id}>
-                        <AlbumImge>
-                        <img src={song.album_art_url} alt={song.title} />
-                        </AlbumImge>
-                        <MusicInfoText>playList</MusicInfoText>
-                    </SwiperList>
-                    ))}
-                </SwiperWrap>
-            </Section>
-        </>
-    )
+          setSavedAlbums(albumsData.items.map((item: { album: SpotifyAlbum }) => transformAlbum(item.album)));
+setSavedPlaylists(playlistsData.items.map((item: SpotifyPlaylist) => transformPlaylist(item)));
+setFollowedArtists(artistsData.artists.items.map((item: SpotifyArtist) => transformArtist(item)));
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          setError('Failed to fetch data. Please try again.');
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [session]);
+
+
+  if (isLoading) return <LoadingMessage>Loading...</LoadingMessage>;
+  if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
+
+  return (
+    <>
+      <Section>
+        <SectionTitleBox>
+          <SectionTitle>보관함</SectionTitle>
+        </SectionTitleBox>
+        <SwiperWrap>
+          <SwiperList>
+            <AlbumImge>
+              <img src="/icon/locak-album.svg" alt="새 보관함"
+                style={{maxWidth: '88px', maxHeight: '88px'}}/>
+            </AlbumImge>
+            <MusicInfoText>새 보관함</MusicInfoText>
+          </SwiperList>
+          {savedAlbums.map((album) => (
+            <SwiperList key={album.id}>
+              <AlbumImge>
+                <img src={album.album_art_url} alt={album.title} />
+              </AlbumImge>
+              <MusicInfoTitle>{album.title}</MusicInfoTitle>
+              <MusicInfoText>{album.artist}</MusicInfoText>
+            </SwiperList>
+          ))}
+        </SwiperWrap>
+      </Section>
+
+      <Section>
+        <SectionTitleBox>
+          <SectionTitle>플레이리스트</SectionTitle>
+        </SectionTitleBox>
+        <SwiperWrap>
+          {savedPlaylists.map((playlist) => (
+            <SwiperList key={playlist.id}>
+              <AlbumImge>
+                <img src={playlist.album_art_url} alt={playlist.title} />
+              </AlbumImge>
+              <MusicInfoTitle>{playlist.title}</MusicInfoTitle>
+              <MusicInfoText>{playlist.artist}</MusicInfoText>
+            </SwiperList>
+          ))}
+        </SwiperWrap>
+      </Section>
+
+      <Section>
+        <SectionTitleBox>
+          <SectionTitle>팔로우한 아티스트</SectionTitle>
+        </SectionTitleBox>
+        <SwiperWrap>
+          {followedArtists.map((artist) => (
+            <SwiperList key={artist.id}>
+              <AlbumImge>
+                <img src={artist.album_art_url} alt={artist.title} />
+              </AlbumImge>
+              <MusicInfoTitle>{artist.title}</MusicInfoTitle>
+            </SwiperList>
+          ))}
+        </SwiperWrap>
+      </Section>
+    </>
+  )
 }
 
 export default Locker;
@@ -155,3 +205,16 @@ justify-content: center;
 width: 48px;
 height: 48px;
 `
+
+const LoadingMessage = styled.div`
+  font-size: 24px;
+  text-align: center;
+  margin-top: 50px;
+`;
+
+const ErrorMessage = styled.div`
+  font-size: 24px;
+  color: red;
+  text-align: center;
+  margin-top: 50px;
+`;
