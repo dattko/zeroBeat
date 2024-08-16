@@ -5,7 +5,7 @@
 		height: $headerH;
         min-height: $headerH;
 		align-items: center;
-		background-color: #EAEAEA;
+		background: linear-gradient(#e4e4e4 40%, #fff);
         // box-shadow: $boxShadow;
 		&-inner{
 			flex: 1;

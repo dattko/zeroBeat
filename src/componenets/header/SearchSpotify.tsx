@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import {  useSession } from 'next-auth/react';
 
 interface Artist {
   name: string;
@@ -12,6 +13,7 @@ interface Track {
 }
 
 export const SearchComponent = () => {
+  const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<Track[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +25,7 @@ export const SearchComponent = () => {
     setIsLoading(true);
     setError('');
     try {
-      const response = await fetch(`/api/spotify/searchSpotify?q=${encodeURIComponent(searchTerm)}`);
+      const response = await fetch(`/api/spotify/search?q=${encodeURIComponent(searchTerm)}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -62,8 +64,8 @@ export const SearchComponent = () => {
       </button>
       {isFocused && (
         <InputContent>
+          {!session && <span>로그인 후 이용해 주세요.</span>}
           {isLoading && <p>Loading...</p>}
-          {error && <span>로그인 후 이용해 주세요.</span>}
           <SeachUl>
             {searchResults.map((track, index) => (
               <SeachLi key={index}>
