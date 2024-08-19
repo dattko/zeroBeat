@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]/option';
+import { authOptions } from '@/lib/auth';
 import { transformTrack } from '@/lib/spotify';
 
 export async function GET(req: Request) {
