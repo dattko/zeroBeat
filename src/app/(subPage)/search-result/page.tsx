@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState,Suspense } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
 import { searchSpotify, getTrackDetails } from '@/lib/spotify';
@@ -45,75 +45,73 @@ const SearchResultPage = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-        <Container>
-            <SearchTitle>
-            검색 : {searchQuery}
-            </SearchTitle>
-        
-        {isSelected && selectedTrack && (
-            <PickTrack>
-            <PickTitle>선택한 트랙</PickTitle>
-            <TrackItem>
-                <PickImage src={selectedTrack.album_art_url} alt={selectedTrack.title} />
-                <PickColText>
-                <PickTrackName>{selectedTrack.title}</PickTrackName>
-                <PickArtistName>{selectedTrack.artist}</PickArtistName>
-                <PickAlbumName>{selectedTrack.album}</PickAlbumName>
-                </PickColText>
-            </TrackItem>
-            </PickTrack>
-        )}
+    <Container>
+        <SearchTitle>
+           검색 : {searchQuery}
+         </SearchTitle>
+      
+      {isSelected && selectedTrack && (
+        <PickTrack>
+          <PickTitle>선택한 트랙</PickTitle>
+          <TrackItem>
+            <PickImage src={selectedTrack.album_art_url} alt={selectedTrack.title} />
+            <PickColText>
+              <PickTrackName>{selectedTrack.title}</PickTrackName>
+              <PickArtistName>{selectedTrack.artist}</PickArtistName>
+              <PickAlbumName>{selectedTrack.album}</PickAlbumName>
+            </PickColText>
+          </TrackItem>
+        </PickTrack>
+      )}
 
-        <Section>
-            <SectionTitle>노래</SectionTitle>
-            <TrackList>
-                <ListScroll>
-                {searchResults.tracks.map((track) => (
-                    <TrackItem key={track.id}>
-                    <Image src={track.album_art_url} alt={track.title} />
+      <Section>
+        <SectionTitle>노래</SectionTitle>
+        <TrackList>
+            <ListScroll>
+              {searchResults.tracks.map((track) => (
+                <TrackItem key={track.id}>
+                  <Image src={track.album_art_url} alt={track.title} />
+                  <ColText>
+                    <TrackName>{track.title}</TrackName>
+                    <ArtistName>{track.artist}</ArtistName>
+                  </ColText>
+                </TrackItem>
+              ))}
+            </ListScroll>
+        </TrackList>
+      </Section>
+
+      <Section>
+        <SectionTitle>아티스트</SectionTitle>
+        <ArtistList>
+            <ListScroll>
+              {searchResults.artists.map((artist) => (
+                <ArtistItem key={artist.id}>
+                  <Image src={artist.images?.[0]?.url} alt={artist.name} />
+                  <ArtistName>{artist.name}</ArtistName>
+                </ArtistItem>
+              ))}
+            </ListScroll>
+        </ArtistList>
+      </Section>
+
+      <Section>
+        <SectionTitle>앨범</SectionTitle>
+        <AlbumList>
+            <ListScroll>
+                {searchResults.albums.map((album) => (
+                    <AlbumItem key={album.id}>
+                    <AlbumImage src={album.images?.[0]?.url} alt={album.name} />
                     <ColText>
-                        <TrackName>{track.title}</TrackName>
-                        <ArtistName>{track.artist}</ArtistName>
+                        <AlbumName>{album.name}</AlbumName>
+                        <ArtistName>{album.artists.map(a => a.name).join(', ')}</ArtistName>
                     </ColText>
-                    </TrackItem>
+                    </AlbumItem>
                 ))}
-                </ListScroll>
-            </TrackList>
-        </Section>
-
-        <Section>
-            <SectionTitle>아티스트</SectionTitle>
-            <ArtistList>
-                <ListScroll>
-                {searchResults.artists.map((artist) => (
-                    <ArtistItem key={artist.id}>
-                    <Image src={artist.images?.[0]?.url} alt={artist.name} />
-                    <ArtistName>{artist.name}</ArtistName>
-                    </ArtistItem>
-                ))}
-                </ListScroll>
-            </ArtistList>
-        </Section>
-
-        <Section>
-            <SectionTitle>앨범</SectionTitle>
-            <AlbumList>
-                <ListScroll>
-                    {searchResults.albums.map((album) => (
-                        <AlbumItem key={album.id}>
-                        <AlbumImage src={album.images?.[0]?.url} alt={album.name} />
-                        <ColText>
-                            <AlbumName>{album.name}</AlbumName>
-                            <ArtistName>{album.artists.map(a => a.name).join(', ')}</ArtistName>
-                        </ColText>
-                        </AlbumItem>
-                    ))}
-                </ListScroll>
-            </AlbumList>
-        </Section>
-        </Container>
-    </Suspense>
+            </ListScroll>
+        </AlbumList>
+      </Section>
+    </Container>
   );
 };
 
