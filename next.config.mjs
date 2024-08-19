@@ -1,30 +1,20 @@
-/** @type {import('next').NextConfig} */
-
-
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 import path from 'path';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   compiler: {
     styledComponents: true,
   },
   reactStrictMode: true,
-  webpack(config) {
-    return {
-      ...config,
-      resolve: {
-        ...config.resolve,
-        alias: {
-          ...config.resolve.alias,
-          "@": path.resolve(__dirname, "src"),
-        },
-      },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@": path.resolve(__dirname, "src"),
     };
+    return config;
   },
 };
 
