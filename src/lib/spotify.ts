@@ -13,23 +13,34 @@ import {
 
 const BASE_URL = 'https://api.spotify.com/v1';
 
-async function fetchSpotifyAPI(endpoint: string) {
+export async function fetchSpotifyAPI(endpoint: string, retryCount = 0): Promise<any> {
   const session = await getSession();
   if (!session?.user?.accessToken) {
     throw new Error('No access token');
   }
 
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
-    headers: {
-      Authorization: `Bearer ${session.user.accessToken}`,
-    },
-  });
+  try {
+    const res = await fetch(`${BASE_URL}${endpoint}`, {
+      headers: {
+        Authorization: `Bearer ${session.user.accessToken}`,
+      },
+    });
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch data from Spotify API');
+    if (res.status === 429 && retryCount < 3) {
+      const retryAfter = res.headers.get('Retry-After') || '5';
+      await new Promise(resolve => setTimeout(resolve, parseInt(retryAfter) * 1000));
+      return fetchSpotifyAPI(endpoint, retryCount + 1);
+    }
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch data from Spotify API');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching data from Spotify API:', error);
+    throw error;
   }
-
-  return res.json();
 }
 
 
