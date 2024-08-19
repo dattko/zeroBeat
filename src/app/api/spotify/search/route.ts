@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../auth/[...nextauth]/route';
+import { transformTrack } from '@/lib/spotify';
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
@@ -25,7 +26,8 @@ export async function GET(req: Request) {
     if (!spotifyResponse.ok) {
       throw new Error(data.error?.message || 'Failed to fetch data');
     }
-    return NextResponse.json(data.tracks.items, { status: 200 });
+    const transformedData = data.tracks.items.map(transformTrack);
+    return NextResponse.json(transformedData, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: error.message || 'Error fetching data' }, { status: 500 });
   }

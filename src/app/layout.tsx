@@ -8,6 +8,12 @@ import { AuthProvider } from "@/provider/AuthProvider";
 export const metadata: Metadata = {
   title: "ZeroBeat",
   description: "music service",
+  icons: {
+    icon: [
+      {url: "/favicon.png"},
+      { url: '/favicon-dark.png', media: '(prefers-color-scheme: dark)' },
+    ]
+  }
 };
 
 const RootLayout = ({

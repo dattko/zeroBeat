@@ -1,5 +1,15 @@
 import { getSession } from 'next-auth/react';
-import { SpotifyAlbum, SpotifyArtist, SpotifyPlaylist,MusicList, SpotifyTrack } from '@/types/spotify';
+import { 
+  SpotifyAlbum,
+  SpotifyArtist, 
+  SpotifyPlaylist,
+  MusicList, 
+  SpotifyTrack,
+  SearchResults, 
+  Artist, 
+  Album 
+ } from '@/types/spotify';
+
 
 const BASE_URL = 'https://api.spotify.com/v1';
 
@@ -21,6 +31,24 @@ async function fetchSpotifyAPI(endpoint: string) {
 
   return res.json();
 }
+
+
+
+export async function searchSpotify(query: string): Promise<SearchResults> {
+  const data = await fetchSpotifyAPI(`/search?q=${encodeURIComponent(query)}&type=track,artist,album`);
+  return {
+    tracks: data.tracks.items.map(transformTrack),
+    artists: data.artists.items as Artist[],
+    albums: data.albums.items as Album[]
+  };
+}
+
+export async function getTrackDetails(trackId: string): Promise<MusicList> {
+  const data = await fetchSpotifyAPI(`/tracks/${trackId}`);
+  return transformTrack(data);
+}
+
+
 
 export async function getRecentlyPlayed() {
   return fetchSpotifyAPI('/me/player/recently-played?limit=20');

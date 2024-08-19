@@ -1,36 +1,29 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import {  useSession } from 'next-auth/react';
-
-interface Artist {
-  name: string;
-}
-
-interface Track {
-  name: string;
-  artists: Artist[];
-}
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { searchSpotify } from '@/lib/spotify';
+import { MusicList, Artist, SearchResults } from '@/types/spotify';
 
 export const SearchComponent = () => {
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<Track[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResults>({ tracks: [], artists: [], albums: [] });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
     setIsLoading(true);
     setError('');
     try {
-      const response = await fetch(`/api/spotify/search?q=${encodeURIComponent(searchTerm)}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setSearchResults(data);
+      const results = await searchSpotify(searchTerm);
+      setSearchResults(results);
+      setIsFocused(true);
     } catch (e) {
       if (e instanceof Error) {
         setError(e.message);
@@ -41,38 +34,61 @@ export const SearchComponent = () => {
     setIsLoading(false);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+  useEffect(() => {
+    if (searchTerm.trim()) {
       handleSearch();
     }
+  }, [searchTerm]);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
+      router.push(`/search-result?q=${searchTerm}`);
+    }
+  };
+
+  const handleTrackSelect = (track: MusicList) => {
+    router.push(`/search-result?id=${track.id}&q=${searchTerm}&selected=true`);
+  };
+
+  const handleSearchButtonClick = () => {
+    router.push(`/search-result?q=${searchTerm}`);
   };
 
   return (
     <div className='input-box'>
       <input
+        ref={inputRef}
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="검색어를 입력해 주세요."
         onKeyDown={handleKeyDown}
         onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onBlur={() => setTimeout(() => setIsFocused(false), 200)}
       />
-      <button className='icon-btn n-b' style={{ width: '34px' }}
-        onClick={handleSearch} disabled={isLoading}>
+      <button 
+        className='icon-btn n-b' 
+        style={{ width: '34px' }}
+        onClick={handleSearchButtonClick}
+        disabled={isLoading}
+      >
         <img src="/images/search.svg" alt="로고" />
       </button>
-      {isFocused && (
+      {isFocused && searchTerm.trim() && (
         <InputContent>
           {!session && <span>로그인 후 이용해 주세요.</span>}
           {isLoading && <p>Loading...</p>}
-          <SeachUl>
-            {searchResults.map((track, index) => (
-              <SeachLi key={index}>
-                {track.name} by {track.artists.map((artist: Artist) => artist.name).join(", ")}
-              </SeachLi>
+          {error && <p>{error}</p>}
+          <SearchUl>
+            {searchResults.tracks.map((track) => (
+              <SearchLi key={track.id} onClick={() => handleTrackSelect(track)}>
+                {track.title} by {track.artist}
+              </SearchLi>
             ))}
-          </SeachUl>
+          </SearchUl>
         </InputContent>
       )}
     </div>
@@ -95,19 +111,20 @@ const InputContent = styled.div`
   }
 `;
 
-const SeachUl = styled.ul`
+const SearchUl = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 6px;
   font-size: 14px;
   max-height: 600px;
-  overflow: auto  ;
-`
-const SeachLi = styled.li`
-cursor: pointer;
-padding: 10px 12px;
-border-radius: 6px;
-&:hover{
-  background-color: #f1f1f1;
-}
-`
+  overflow: auto;
+`;
+
+const SearchLi = styled.li`
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 6px;
+  &:hover{
+    background-color: #f1f1f1;
+  }
+`;

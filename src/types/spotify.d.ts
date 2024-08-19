@@ -62,14 +62,37 @@ export interface SpotifyPlaylist {
   images: SpotifyImage[];
 }
 
+export interface Artist {
+  id?: string;
+  name?: string;
+  images?: { url: string }[];
+}
+
+
 export interface MusicList {
   id: string;
   title: string;
   artist: string;
+  artists?: { name: string }[];  
   album: string;
   album_art_url: string;
+  images?: { url: string }[]; 
   release_date: string;
   duration: string;
   popularity_rank: number;
+  name?: string;  
 }
 
+export interface Album {
+  id: string;
+  name: string;
+  artists: { name: string }[];
+  images: { url: string }[];
+  release_date: string;
+}
+
+export interface SearchResults {
+  tracks: MusicList[];
+  artists: Artist[];
+  albums: Album[];
+}
