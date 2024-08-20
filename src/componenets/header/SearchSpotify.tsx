@@ -84,7 +84,6 @@ export const SearchComponent = () => {
       {isFocused && searchTerm.trim() && (
         <InputContent>
           {!session && <span>로그인 후 이용해 주세요.</span>}
-          {isLoading && <p>Loading...</p>}
           {error && <p>{error}</p>}
           <SearchUl>
             {searchResults.tracks.map((track) => (

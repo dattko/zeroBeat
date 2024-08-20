@@ -1,0 +1,105 @@
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(45deg, #8b5cf6, #ec4899);
+  background-size: 200% 200%;
+  animation: gradientAnimation 10s ease infinite;
+}
+
+.title {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+
+  @media (min-width: 768px) {
+    font-size: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 3.5rem;
+  }
+}
+
+.iconWrapper {
+  position: relative;
+}
+
+.icon {
+  color: white;
+  width: 4rem;
+  height: 4rem;
+  animation: bounce 1s ease infinite;
+
+  @media (min-width: 768px) {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  @media (min-width: 1024px) {
+    width: 6rem;
+    height: 6rem;
+  }
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid white;
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  transform: translate(-50%, -50%);
+
+  @media (min-width: 768px) {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  @media (min-width: 1024px) {
+    width: 5rem;
+    height: 5rem;
+  }
+}
+
+.loadingText {
+  color: white;
+  font-size: 1.25rem;
+  margin-top: 2rem;
+  animation: pulse 1.5s ease infinite;
+
+  @media (min-width: 768px) {
+    font-size: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 1.75rem;
+  }
+}

@@ -3,7 +3,6 @@ import type { Metadata } from "next"
 import "@style/globals.scss"
 import Wrap from "@/componenets/wrap"
 import { AuthProvider } from "@/provider/AuthProvider"
-import LoginModal from "@modal/LoginModal"
 
 export const metadata: Metadata = {
   title: "ZeroBeat",
@@ -22,7 +21,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
       <body suppressHydrationWarning={true}>
         <Wrap>
           {children}
-          <LoginModal />
         </Wrap>
       </body>
     </AuthProvider>

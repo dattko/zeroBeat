@@ -44,7 +44,6 @@ const Page = () => {
     fetchData();
   }, [session]);
 
-  if (isLoading) return <LoadingMessage>Loading...</LoadingMessage>;
   if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
 
   return (
@@ -61,12 +60,6 @@ const Page = () => {
 // 스타일 컴포넌트
 const PageContainer = styled.div`
   padding: 20px;
-`;
-
-const LoadingMessage = styled.div`
-  font-size: 24px;
-  text-align: center;
-  margin-top: 50px;
 `;
 
 const ErrorMessage = styled.div`

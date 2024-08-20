@@ -41,7 +41,6 @@ const SearchResultPage = () => {
     fetchData();
   }, [searchQuery, trackId, isSelected]);
 
-  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (

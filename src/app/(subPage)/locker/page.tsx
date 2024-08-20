@@ -39,8 +39,6 @@ setFollowedArtists(artistsData.artists.items.map((item: SpotifyArtist) => transf
     fetchData();
   }, [session]);
 
-
-  if (isLoading) return <LoadingMessage>Loading...</LoadingMessage>;
   if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
 
   return (
@@ -205,12 +203,6 @@ justify-content: center;
 width: 48px;
 height: 48px;
 `
-
-const LoadingMessage = styled.div`
-  font-size: 24px;
-  text-align: center;
-  margin-top: 50px;
-`;
 
 const ErrorMessage = styled.div`
   font-size: 24px;
