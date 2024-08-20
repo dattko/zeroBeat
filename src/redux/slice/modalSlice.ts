@@ -1,13 +1,13 @@
-// modalSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface ModalState {
   modalName: string;
   isOpen: boolean;
   modalTitle?: string;
-  header?:boolean;
-  footer?:boolean;
+  header?: boolean;
+  footer?: boolean;
   width?: number;
+  loginAttempts: number;
 }
 
 const initialState: ModalState = {
@@ -17,36 +17,28 @@ const initialState: ModalState = {
   header: true,
   footer: true,
   width: 580,
+  loginAttempts: 0,
 };
 
 export const modalSlice = createSlice({
   name: "modal",
   initialState,
   reducers: {
-    openModal: (state: ModalState, action: PayloadAction<{ modalType: string; isOpen: boolean; title?:string; header?: boolean, footer?: boolean }>) => {
-      const { modalType, isOpen, title,header,footer } = action.payload;
-      if (modalType === 'LoginModal') {
-        state.modalName = 'LoginModal';
-        state.isOpen = isOpen;
-        state.header = false;
-        state.footer = false;
-        state.width = 580;
-      } else {
-        state.modalName = modalType;
-        state.isOpen = isOpen;
-        state.modalTitle = title;
-        state.header = header;
-        state.footer = footer;
-        state.width = 580;
-      }
+    openModal: (state, action: PayloadAction<{ modalName: string; isOpen: boolean }>) => {
+      state.modalName = action.payload.modalName;
+      state.isOpen = action.payload.isOpen;
     },
-    closeModal: (state: ModalState) => {
+    closeModal: (state) => {
       state.isOpen = false;
+    },
+    incrementLoginAttempts: (state) => {
+      if (state.modalName === 'LoginModal') {
+        state.loginAttempts += 1;
+      }
     },
   },
 });
 
-export const { openModal, closeModal } = modalSlice.actions;
+export const { openModal, closeModal, incrementLoginAttempts } = modalSlice.actions;
 export const selectModal = (state: { modal: ModalState }) => state.modal;
-
 export default modalSlice.reducer;

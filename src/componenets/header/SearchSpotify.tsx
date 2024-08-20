@@ -1,64 +1,68 @@
-'use client';
-import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { searchSpotify } from '@/lib/spotify';
-import { MusicList, Artist, SearchResults } from '@/types/spotify';
+"use client"
+import React, { useState, useRef, useEffect } from "react"
+import styled from "styled-components"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { searchSpotify } from "@/lib/spotify"
+import { MusicList, Artist, SearchResults } from "@/types/spotify"
 
 export const SearchComponent = () => {
-  const { data: session } = useSession();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<SearchResults>({ tracks: [], artists: [], albums: [] });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { data: session } = useSession()
+  const [searchTerm, setSearchTerm] = useState("")
+  const [searchResults, setSearchResults] = useState<SearchResults>({
+    tracks: [],
+    artists: [],
+    albums: [],
+  })
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [isFocused, setIsFocused] = useState(false)
+  const router = useRouter()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleSearch = async () => {
-    if (!searchTerm.trim()) return;
-    setIsLoading(true);
-    setError('');
+    if (!searchTerm.trim()) return
+    setIsLoading(true)
+    setError("")
     try {
-      const results = await searchSpotify(searchTerm);
-      setSearchResults(results);
-      setIsFocused(true);
+      const results = await searchSpotify(searchTerm)
+      setSearchResults(results)
+      setIsFocused(true)
     } catch (e) {
       if (e instanceof Error) {
-        setError(e.message);
+        setError(e.message)
       } else {
-        setError('An unknown error occurred.');
+        setError("An unknown error occurred.")
       }
     }
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   useEffect(() => {
     if (searchTerm.trim()) {
-      handleSearch();
+      handleSearch()
     }
-  }, [searchTerm]);
+  }, [searchTerm])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       if (inputRef.current) {
-        inputRef.current.blur();
+        inputRef.current.blur()
       }
-      router.push(`/search-result?q=${searchTerm}`);
+      router.push(`/search-result?q=${searchTerm}`)
     }
-  };
+  }
 
   const handleTrackSelect = (track: MusicList) => {
-    router.push(`/search-result?id=${track.id}&q=${searchTerm}&selected=true`);
-  };
+    router.push(`/search-result?id=${track.id}&q=${searchTerm}&selected=true`)
+  }
 
   const handleSearchButtonClick = () => {
-    router.push(`/search-result?q=${searchTerm}`);
-  };
+    router.push(`/search-result?q=${searchTerm}&selected=true`)
+  }
 
   return (
-    <div className='input-box'>
+    <div className="input-box">
       <input
         ref={inputRef}
         type="text"
@@ -69,9 +73,9 @@ export const SearchComponent = () => {
         onFocus={() => setIsFocused(true)}
         onBlur={() => setTimeout(() => setIsFocused(false), 200)}
       />
-      <button 
-        className='icon-btn n-b' 
-        style={{ width: '34px' }}
+      <button
+        className="icon-btn n-b"
+        style={{ width: "34px" }}
         onClick={handleSearchButtonClick}
         disabled={isLoading}
       >
@@ -92,8 +96,8 @@ export const SearchComponent = () => {
         </InputContent>
       )}
     </div>
-  );
-};
+  )
+}
 
 const InputContent = styled.div`
   z-index: 10;
@@ -106,10 +110,10 @@ const InputContent = styled.div`
   transform: translateX(-50%);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   top: calc(100% + 10px);
-  span{
+  span {
     font-size: 13px;
   }
-`;
+`
 
 const SearchUl = styled.ul`
   display: flex;
@@ -118,13 +122,13 @@ const SearchUl = styled.ul`
   font-size: 14px;
   max-height: 600px;
   overflow: auto;
-`;
+`
 
 const SearchLi = styled.li`
   cursor: pointer;
   padding: 10px 12px;
   border-radius: 6px;
-  &:hover{
+  &:hover {
     background-color: #f1f1f1;
   }
-`;
+`
