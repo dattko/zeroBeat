@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '@style/loading/Loading.module.scss';
 
-const LoadingPage = () => {
+const Loading = () => {
   return (
     <div className={styles.container}>
       <div className={styles.title}>ZeroBeat</div>
@@ -18,4 +18,4 @@ const LoadingPage = () => {
   );
 };
 
-export default LoadingPage;
+export default Loading;

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import styled from 'styled-components';
 import SwiperWrap from '@component/swiper/SwiperWrap';
+import Loading from '@/app/loading';
 
 const Locker = () => {
   const { data: session } = useSession();
@@ -38,8 +39,8 @@ setFollowedArtists(artistsData.artists.items.map((item: SpotifyArtist) => transf
 
     fetchData();
   }, [session]);
-
-  if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
+  if (isLoading) return <Loading/>;
+  // if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
 
   return (
     <>

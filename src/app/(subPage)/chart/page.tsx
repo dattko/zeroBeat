@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import styled from 'styled-components';
 import type { MusicList, SpotifyTrack,  } from '@/types/spotify';
 import { getPopularTracks, transformTrack } from '@/lib/spotify';
+import Loading from '@/app/loading';
 import axios from 'axios';
 
 const Chart = () => {
@@ -35,6 +36,7 @@ const Chart = () => {
       fetchData();
     }, [session]);
 
+    if (isLoading) return <Loading/>;
 
     return (
         <>

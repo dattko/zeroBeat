@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import RowMusicList from '@/componenets/spotify/RowMusicList';
 import BoxMusicList from '@/componenets/spotify/BoxMusicList';
 import { useRouter } from 'next/navigation';
-
+import Loading from './loading';
 
 const Page = () => {
   const { data: session, status } = useSession();
@@ -51,10 +51,8 @@ const Page = () => {
     }
   }, [status, router]);
 
-  if (status === 'loading' || isLoading) {
-    return null;
-  }
-  // if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
+  if (isLoading) return <Loading/>;
+  if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
 
   return (
     <PageContainer>
