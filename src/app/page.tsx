@@ -6,45 +6,55 @@ import { getRecentlyPlayed, getNewReleases, getPopularTracks, transformTrack, tr
 import styled from 'styled-components';
 import RowMusicList from '@/componenets/spotify/RowMusicList';
 import BoxMusicList from '@/componenets/spotify/BoxMusicList';
+import { useRouter } from 'next/navigation';
+
 
 const Page = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [recentlyPlayed, setRecentlyPlayed] = useState<MusicList[]>([]);
   const [newReleases, setNewReleases] = useState<MusicList[]>([]);
   const [popularTracks, setPopularTracks] = useState<MusicList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (session?.user?.accessToken) {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+      return;
+    }
+
+    if (status === 'authenticated') {
+      const fetchData = () => {
         setIsLoading(true);
         setError(null);
-        try {
-          const [recentlyPlayedData, newReleasesData, popularTracksData] = await Promise.all([
-            getRecentlyPlayed(),
-            getNewReleases(),
-            getPopularTracks()
-          ]);
-  
-          // console.log('Recently Played Data:', recentlyPlayedData);
+        Promise.all([
+          getRecentlyPlayed(),
+          getNewReleases(),
+          getPopularTracks()
+        ])
+        .then(([recentlyPlayedData, newReleasesData, popularTracksData]) => {
           setRecentlyPlayed(recentlyPlayedData.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));  
-          // console.log('New Releases Data:', newReleasesData);
           setNewReleases(newReleasesData.albums.items.map((item: SpotifyAlbum) => transformAlbum(item)));
-          // console.log('Popular Tracks Data:', popularTracksData);
           setPopularTracks(popularTracksData.tracks.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));
-        } catch (error) {
+        })
+        .catch((error) => {
           console.error('Error fetching data:', error);
           setError('Failed to fetch data. Please try again.');
-        } finally {
+        })
+        .finally(() => {
           setIsLoading(false);
-        }
-      }
-    };
-    fetchData();
-  }, [session]);
+        });
+      };
 
-  if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
+      fetchData();
+    }
+  }, [status, router]);
+
+  if (status === 'loading' || isLoading) {
+    return null;
+  }
+  // if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
 
   return (
     <PageContainer>
@@ -60,6 +70,12 @@ const Page = () => {
 // 스타일 컴포넌트
 const PageContainer = styled.div`
   padding: 20px;
+`;
+
+const LoadingMessage = styled.div`
+  font-size: 24px;
+  text-align: center;
+  margin-top: 50px;
 `;
 
 const ErrorMessage = styled.div`

@@ -1,4 +1,4 @@
-// components/RecentlyPlayed.tsx
+'use client';
 import React from 'react';
 import styled from 'styled-components';
 import { MusicList as MusicListType } from '@/types/spotify';
