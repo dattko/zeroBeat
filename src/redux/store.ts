@@ -1,10 +1,11 @@
 import { combineReducers,configureStore } from '@reduxjs/toolkit'
 import modalSlice from '@redux/slice/modalSlice'
+import playerSlice from '@redux/slice/playerSlice'
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
-// Combine reducers if you have multiple slices
 const rootReducer = combineReducers({
   modal: modalSlice,
+  player: playerSlice,
 });
 
 

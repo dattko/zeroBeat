@@ -24,8 +24,24 @@ declare module "next-auth/jwt" {
   }
 }
 
-const scope =
-  "user-read-recently-played user-read-playback-state user-top-read user-modify-playback-state user-read-currently-playing user-follow-read playlist-read-private user-read-email user-read-private user-library-read playlist-read-collaborative";
+const scope = [
+  "user-read-recently-played",
+  "user-read-playback-state",
+  "user-top-read",
+  "user-modify-playback-state",
+  "user-read-currently-playing",
+  "user-follow-read",
+  "playlist-read-private",
+  "user-read-email",
+  "user-read-private",
+  "user-library-read",
+  "playlist-read-collaborative",
+  "streaming",
+  "user-library-modify",
+  "playlist-modify-public",
+  "playlist-modify-private"
+].join(" ");
+
 
 interface RefreshedToken {
   accessToken: string;

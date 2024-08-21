@@ -1,50 +1,53 @@
-// components/MusicList.tsx
 import React from 'react';
 import styled from 'styled-components';
 import { MusicList as MusicListType } from '@/types/spotify';
+import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 
 interface RowMusicListProps {
-    data: MusicListType[];
-    title: string;
-    limit?: number;
+  data: MusicListType[];
+  title: string;
+  limit?: number;
 }
 
 const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit }) => {
-    const displayData = limit ? data.slice(0, limit) : data;
+  const { handlePlayTrack } = useMusicPlayer();
+  const displayData = limit ? data.slice(0, limit) : data;
 
   return (
     <Section>
-        <SectionTitleBox>
+      <SectionTitleBox>
         <SectionTitle>{title}</SectionTitle>
-        </SectionTitleBox>
-        <MusicListContainer>
+      </SectionTitleBox>
+      <MusicListContainer>
         <MusicListUl>
-            {displayData.map((song, i) => (
-                <MusicListLi key={song.id}>
-                <MusicInfoText width="30px" $grey $center>
-                    {i + 1}
-                </MusicInfoText>
-                <AlbumImge $small>
-                    <img src={song.album_art_url} alt={song.title} />
-                </AlbumImge>
-                <MusicInfoTitle $regular>{song.title}</MusicInfoTitle>
-                <MusicInfoText width="22%">{song.artist}</MusicInfoText>
-                <MusicInfoText width="22%">{song.album}</MusicInfoText>
-                <MusicInfoText $grey width="60px">
-                    {song.duration}
-                </MusicInfoText>
-                <IconBtn>
-                    <img src="/icon/three-dot.svg" alt="재생" />
-                </IconBtn>
-                </MusicListLi>
-            ))}
+          {displayData.map((song, i) => (
+            <MusicListLi key={song.id} onClick={() => handlePlayTrack(song)}>
+              <MusicInfoText width="30px" $grey $center>
+                {i + 1}
+              </MusicInfoText>
+              <AlbumImge $small>
+                <img src={song.album_art_url} alt={song.title} />
+              </AlbumImge>
+              <MusicInfoTitle $regular>{song.title}</MusicInfoTitle>
+              <MusicInfoText width="22%">{song.artist}</MusicInfoText>
+              <MusicInfoText width="22%">{song.album}</MusicInfoText>
+              <MusicInfoText $grey width="60px">
+                {song.duration}
+              </MusicInfoText>
+              <IconBtn>
+                <img src="/icon/three-dot.svg" alt="재생" />
+              </IconBtn>
+            </MusicListLi>
+          ))}
         </MusicListUl>
-        </MusicListContainer>
+      </MusicListContainer>
     </Section>
   );
 };
 
 export default RowMusicList;
+
+
 
 const Section = styled.div`
   width: 100%;

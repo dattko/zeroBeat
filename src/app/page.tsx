@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import type { MusicList, SpotifyTrack, SpotifyAlbum } from '@/types/spotify';
@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import RowMusicList from '@/componenets/spotify/RowMusicList';
 import BoxMusicList from '@/componenets/spotify/BoxMusicList';
 import { useRouter } from 'next/navigation';
-import Loading from './loading';
+import Loading from '@/app/loading';
 
 const Page = () => {
   const { data: session, status } = useSession();
@@ -25,26 +25,48 @@ const Page = () => {
     }
 
     if (status === 'authenticated') {
-      const fetchData = () => {
+      const fetchData = async () => {
         setIsLoading(true);
         setError(null);
-        Promise.all([
-          getRecentlyPlayed(),
-          getNewReleases(),
-          getPopularTracks()
-        ])
-        .then(([recentlyPlayedData, newReleasesData, popularTracksData]) => {
-          setRecentlyPlayed(recentlyPlayedData.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));  
-          setNewReleases(newReleasesData.albums.items.map((item: SpotifyAlbum) => transformAlbum(item)));
-          setPopularTracks(popularTracksData.tracks.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));
-        })
-        .catch((error) => {
+        try {
+          const [recentlyPlayedData, newReleasesData, popularTracksData] = await Promise.all([
+            getRecentlyPlayed(),
+            getNewReleases(),
+            getPopularTracks()
+          ]);
+
+          console.log('Recently Played Data:', recentlyPlayedData);
+          console.log('New Releases Data:', newReleasesData);
+          console.log('Popular Tracks Data:', popularTracksData);
+
+          if (recentlyPlayedData && Array.isArray(recentlyPlayedData.items)) {
+            const uniqueRecentlyPlayed = recentlyPlayedData.items
+              .map((item: { track: SpotifyTrack }) => transformTrack(item.track))
+              .filter((track: MusicList, index: number, self: MusicList[])=> 
+                index === self.findIndex((t) => t.id === track.id)
+              );
+            setRecentlyPlayed(uniqueRecentlyPlayed);
+          } else {
+            console.error('Unexpected structure for recently played data:', recentlyPlayedData);
+          }
+
+          if (newReleasesData && newReleasesData.albums && Array.isArray(newReleasesData.albums.items)) {
+            setNewReleases(newReleasesData.albums.items.map((item: SpotifyAlbum) => transformAlbum(item)));
+          } else {
+            console.error('Unexpected structure for new releases data:', newReleasesData);
+          }
+
+          if (popularTracksData && popularTracksData.tracks && Array.isArray(popularTracksData.tracks.items)) {
+            setPopularTracks(popularTracksData.tracks.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));
+          } else {
+            console.error('Unexpected structure for popular tracks data:', popularTracksData);
+          }
+        } catch (error) {
           console.error('Error fetching data:', error);
           setError('Failed to fetch data. Please try again.');
-        })
-        .finally(() => {
+        } finally {
           setIsLoading(false);
-        });
+        }
       };
 
       fetchData();
@@ -70,21 +92,12 @@ const PageContainer = styled.div`
   padding: 20px;
 `;
 
-const LoadingMessage = styled.div`
-  font-size: 24px;
-  text-align: center;
-  margin-top: 50px;
-`;
-
 const ErrorMessage = styled.div`
   font-size: 24px;
   color: red;
   text-align: center;
   margin-top: 50px;
 `;
-
-
-
 
 
 

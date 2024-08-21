@@ -22,9 +22,9 @@
     }
     &-content{       
         width: calc(100% - #{$sidebarW});
-        
         flex: 1;
         display: flex;
+        position: relative;
         flex-direction: column;
         // border: 1px solid;
 

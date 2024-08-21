@@ -1,4 +1,5 @@
 import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 import { 
   SpotifyAlbum,
   SpotifyArtist, 
@@ -8,8 +9,7 @@ import {
   SearchResults, 
   Artist, 
   Album 
- } from '@/types/spotify';
-
+} from '@/types/spotify';
 
 const BASE_URL = 'https://api.spotify.com/v1';
 
@@ -43,8 +43,6 @@ export async function fetchSpotifyAPI(endpoint: string, retryCount = 0): Promise
   }
 }
 
-
-
 export async function searchSpotify(query: string): Promise<SearchResults> {
   const data = await fetchSpotifyAPI(`/search?q=${encodeURIComponent(query)}&type=track,artist,album`);
   return {
@@ -58,8 +56,6 @@ export async function getTrackDetails(trackId: string): Promise<MusicList> {
   const data = await fetchSpotifyAPI(`/tracks/${trackId}`);
   return transformTrack(data);
 }
-
-
 
 export async function getRecentlyPlayed() {
   return fetchSpotifyAPI('/me/player/recently-played?limit=20');
@@ -85,11 +81,10 @@ export async function getFollowedArtists() {
   return fetchSpotifyAPI('/me/following?type=artist&limit=20');
 }
 
-
-// 변환 함수들 추가
 export function transformTrack(item: SpotifyTrack): MusicList {
   return {
     id: item.id,
+    uri: item.uri,
     title: item.name,
     artist: Array.isArray(item.artists) ? item.artists.map(artist => artist.name).join(', ') : '',
     album: item.album.name,
@@ -100,8 +95,7 @@ export function transformTrack(item: SpotifyTrack): MusicList {
   };
 }
 
-
-function msToMinutesAndSeconds(ms: number): string {
+export function msToMinutesAndSeconds(ms: number): string {
   const minutes = Math.floor(ms / 60000);
   const seconds = ((ms % 60000) / 1000).toFixed(0);
   return `${minutes}:${parseInt(seconds) < 10 ? '0' : ''}${seconds}`;
@@ -110,16 +104,16 @@ function msToMinutesAndSeconds(ms: number): string {
 export function transformAlbum(item: SpotifyAlbum): MusicList {
   return {
     id: item.id,
+    uri: `spotify:album:${item.id}`, 
     title: item.name,
     artist: Array.isArray(item.artists) ? item.artists.map(artist => artist.name).join(', ') : '',
     album: item.name,
     album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
     release_date: item.release_date || '',
-    duration: '',
+    duration: '', 
     popularity_rank: item.popularity || 0,
   };
 }
-
 
 export function transformPlaylist(item: SpotifyPlaylist): MusicList {
   return {
@@ -127,15 +121,12 @@ export function transformPlaylist(item: SpotifyPlaylist): MusicList {
     title: item.name,
     artist: item.owner.display_name,
     album: 'Playlist',
-     album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
+    album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
     release_date: '',
     duration: '',
     popularity_rank: 0,
   };
 }
-
-
-
 
 export function transformArtist(item: SpotifyArtist): MusicList {
   return {
@@ -149,3 +140,85 @@ export function transformArtist(item: SpotifyArtist): MusicList {
     popularity_rank: item.popularity || 0,
   };
 }
+
+export async function toggleShuffle(accessToken: string, state: boolean): Promise<void> {
+  await fetch(`${BASE_URL}/me/player/shuffle?state=${state}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  });
+}
+
+export async function setRepeatMode(accessToken: string, state: 'off' | 'context' | 'track'): Promise<void> {
+  await fetch(`${BASE_URL}/me/player/repeat?state=${state}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  });
+}
+
+export async function playTrack(session: Session | null, track: MusicList): Promise<boolean> {
+  if (!session?.user?.accessToken) return false;
+
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me/player/play', {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${session.user.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uris: [track.uri] }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Spotify API Error:', errorData);
+      throw new Error(errorData.error.message || 'Failed to play track');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to play track:', error);
+    return false;
+  }
+}
+
+
+export const getDevices = async (session: Session | null) => {
+  if (!session?.user?.accessToken) return null;
+
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me/player/devices', {
+      headers: {
+        'Authorization': `Bearer ${session.user.accessToken}`,
+      },
+    });
+    const data = await response.json();
+    return data.devices.find((device: any) => device.name === 'Web Playback SDK');
+  } catch (error) {
+    console.error('Failed to get devices:', error);
+    return null;
+  }
+};
+
+export const activateDevice = async (session: Session | null, deviceId: string) => {
+  if (!session?.user?.accessToken) return false;
+
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me/player', {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${session.user.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ device_ids: [deviceId], play: true }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Failed to activate device:', error);
+    return false;
+  }
+};
+
