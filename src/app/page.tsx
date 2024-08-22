@@ -40,15 +40,20 @@ const Page = () => {
           console.log('Popular Tracks Data:', popularTracksData);
 
           if (recentlyPlayedData && Array.isArray(recentlyPlayedData.items)) {
-            const uniqueRecentlyPlayed = recentlyPlayedData.items
-              .map((item: { track: SpotifyTrack }) => transformTrack(item.track))
-              .filter((track: MusicList, index: number, self: MusicList[])=> 
-                index === self.findIndex((t) => t.id === track.id)
-              );
+            const transformedTracks: MusicList[] = recentlyPlayedData.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track));
+            
+            const uniqueTracksMap = new Map<string, MusicList>(
+              transformedTracks.map((track: MusicList) => [track.id, track])
+            );
+            
+            const uniqueRecentlyPlayed: MusicList[] = Array.from(uniqueTracksMap.values());
+            
             setRecentlyPlayed(uniqueRecentlyPlayed);
           } else {
             console.error('Unexpected structure for recently played data:', recentlyPlayedData);
           }
+          
+          
 
           if (newReleasesData && newReleasesData.albums && Array.isArray(newReleasesData.albums.items)) {
             setNewReleases(newReleasesData.albums.items.map((item: SpotifyAlbum) => transformAlbum(item)));

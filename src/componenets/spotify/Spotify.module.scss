@@ -102,96 +102,97 @@
   }
 }
 
-// 플레이리스트
-
-// styles/PlaylistComponent.module.scss
+//플레이리스트
 
 .playlistContainer {
-  display: flex;
-  height: calc(100vh - 100px); // Adjust based on your layout
-  overflow: hidden;
-}
-
-.playlistList {
-  width: 250px;
-  overflow-y: auto;
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #282828;
-  color: #fff;
+  background-color: #121212;
+  color: #ffffff;
 
-  h2 {
-    margin-bottom: 20px;
+  .sectionTitle {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #1DB954;
   }
 
-  ul {
-    list-style-type: none;
-    padding: 0;
+  .nowPlaying {
+    margin-bottom: 30px;
 
-    li {
+    .trackItem {
+      background-color: #282828;
       padding: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s;
+      border-radius: 5px;
+    }
+  }
 
-      &:hover {
-        background-color: #333;
+  .recommendedTracks {
+    .trackList {
+      &::-webkit-scrollbar {
+        width: 8px;
       }
 
-      &.selected {
-        background-color: #1DB954;
+      &::-webkit-scrollbar-track {
+        background: #121212;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #535353;
+        border-radius: 4px;
       }
     }
   }
-}
 
-.trackList {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 20px;
-  background-color: #121212;
-  color: #fff;
+  .trackItem {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    transition: background-color 0.2s;
+    cursor: pointer;
 
-  h2 {
-    margin-bottom: 20px;
-  }
+    &:hover {
+      background-color: #282828;
+    }
 
-  ul {
-    list-style-type: none;
-    padding: 0;
+    .albumArt {
+      width: 40px;
+      height: 40px;
+      margin-right: 15px;
+      border-radius: 2px;
+    }
 
-    li {
+    .trackInfo {
+      flex-grow: 1;
       display: flex;
-      align-items: center;
-      padding: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s;
+      flex-direction: column;
 
-      &:hover {
-        background-color: #282828;
+      .trackTitle {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 4px;
       }
 
-      img {
-        margin-right: 15px;
-      }
-
-      .trackInfo {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-
-        strong {
-          font-size: 14px;
-        }
-
-        span {
-          font-size: 12px;
-          color: #b3b3b3;
-        }
-      }
-
-      span:last-child {
-        font-size: 12px;
+      .artistName {
+        font-size: 14px;
         color: #b3b3b3;
       }
     }
+
+    .trackDuration {
+      font-size: 14px;
+      color: #b3b3b3;
+    }
   }
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
+
+.error {
+  color: #ff4136;
 }

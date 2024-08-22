@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
-import { setCurrentTrack, setIsPlaying, setDeviceId } from '@redux/slice/playerSlice';
+import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, addToQueue } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
-import { getDevices, activateDevice, playTrack } from '@/lib/spotify';
+import { activateDevice, playTrack } from '@/lib/spotify';
 import { MusicList as MusicListType } from '@/types/spotify';
 
 export const useMusicPlayer = () => {
@@ -11,39 +11,86 @@ export const useMusicPlayer = () => {
   const { data: session } = useSession();
   const isPlayerReady = useSelector((state: RootState) => state.player.isPlayerReady);
   const deviceId = useSelector((state: RootState) => state.player.deviceId);
+  const [error, setError] = useState<string | null>(null);
+  const [isSDKLoaded, setIsSDKLoaded] = useState(false);
 
-  const fetchDevices = useCallback(async () => {
-    const device = await getDevices(session);
-    if (device) {
-      dispatch(setDeviceId(device.id));
-    } else {
-      console.error('Web Playback SDK device not found');
-    }
-  }, [session, dispatch]);
+  const initializePlayer = useCallback(() => {
+    if (!session?.user?.accessToken || isSDKLoaded) return;
+
+    const script = document.createElement('script');
+    script.src = 'https://sdk.scdn.co/spotify-player.js';
+    script.async = true;
+
+    script.onload = () => {
+      setIsSDKLoaded(true);
+    };
+
+    document.body.appendChild(script);
+
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      const player = new window.Spotify.Player({
+        name: 'Web Playback SDK',
+        getOAuthToken: cb => { cb(session.user.accessToken); },
+      });
+
+      player.addListener('ready', ({ device_id }) => {
+        console.log('Ready with Device ID', device_id);
+        dispatch(setDeviceId(device_id));
+        dispatch(setIsPlayerReady(true));
+      });
+
+      player.addListener('not_ready', ({ device_id }) => {
+        console.log('Device ID has gone offline', device_id);
+        dispatch(setIsPlayerReady(false));
+      });
+
+      player.connect();
+    };
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, [session, dispatch, isSDKLoaded]);
 
   useEffect(() => {
-    fetchDevices();
-  }, [fetchDevices]);
+    initializePlayer();
+  }, [initializePlayer]);
 
   const handlePlayTrack = async (track: MusicListType) => {
+    if (!session?.user?.accessToken) {
+      setError('No access token available');
+      return;
+    }
+
+    if (!isPlayerReady) {
+      setError('Player is not ready. Please wait and try again.');
+      return;
+    }
+
+    if (!deviceId) {
+      setError('No active device found. Please refresh the page and try again.');
+      return;
+    }
+
     dispatch(setCurrentTrack(track));
     dispatch(setIsPlaying(true));
+    dispatch(addToQueue(track));  // 트랙을 재생목록에 추가
 
-    if (session && isPlayerReady && deviceId) {
+    try {
       const isDeviceActivated = await activateDevice(session, deviceId);
-      if (isDeviceActivated) {
-        const isPlayed = await playTrack(session, track);
-        if (!isPlayed) {
-          alert('Failed to play track. Please try again.');
-        }
-      } else {
-        alert('Failed to activate device. Please try again.');
+      if (!isDeviceActivated) {
+        throw new Error('Failed to activate device');
       }
-    } else {
-      console.error('No access token, player is not ready, or device ID is missing');
-      alert('Unable to play track. Please make sure you are logged in and the player is ready.');
+
+      const isPlayed = await playTrack(session, track, isPlayerReady, deviceId);
+      if (!isPlayed) {
+        throw new Error('Failed to play track');
+      }
+    } catch (err) {
+      console.error('Error playing track:', err);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
     }
   };
 
-  return { handlePlayTrack };
+  return { handlePlayTrack, error, isPlayerReady };
 };

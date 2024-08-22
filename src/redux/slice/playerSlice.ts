@@ -10,6 +10,7 @@ interface PlayerState {
   repeatMode: number;
   isPlayerReady: boolean; 
   deviceId: string | null;
+  queue: MusicList[];  // 재생목록 상태 추가
 }
 
 const initialState: PlayerState = {
@@ -21,6 +22,7 @@ const initialState: PlayerState = {
   repeatMode: 0,
   isPlayerReady: false, 
   deviceId: null,
+  queue: [],  // 초기값으로 빈 배열 추가
 };
 
 const playerSlice = createSlice({
@@ -48,9 +50,18 @@ const playerSlice = createSlice({
     setIsPlayerReady: (state, action: PayloadAction<boolean>) => {
       state.isPlayerReady = action.payload;
     },
-    setDeviceId: (state, action: PayloadAction<string>) => {  // 새로 추가된 액션
+    setDeviceId: (state, action: PayloadAction<string>) => {
       state.deviceId = action.payload;
     },
+    addToQueue: (state, action: PayloadAction<MusicList>) => {
+      state.queue.push(action.payload);  // 재생목록에 트랙 추가
+    },
+    removeFromQueue: (state, action: PayloadAction<string>) => {
+      state.queue = state.queue.filter(track => track.uri !== action.payload);  // URI를 기준으로 트랙 제거
+    },
+    clearQueue: (state) => {
+      state.queue = [];  // 재생목록 초기화
+    }
   },
 });
 
@@ -63,6 +74,9 @@ export const {
   setRepeatMode,
   setIsPlayerReady,
   setDeviceId,
+  addToQueue,
+  removeFromQueue,
+  clearQueue
 } = playerSlice.actions;
 
 export default playerSlice.reducer;

@@ -159,11 +159,29 @@ export async function setRepeatMode(accessToken: string, state: 'off' | 'context
   });
 }
 
-export async function playTrack(session: Session | null, track: MusicList): Promise<boolean> {
-  if (!session?.user?.accessToken) return false;
+export async function playTrack(
+  session: Session | null, 
+  track: MusicList, 
+  isPlayerReady: boolean, 
+  deviceId: string | null
+): Promise<boolean> {
+  if (!session?.user?.accessToken) {
+    console.error('No access token available');
+    return false;
+  }
+
+  if (!isPlayerReady) {
+    console.error('Player is not ready');
+    return false;
+  }
+
+  if (!deviceId) {
+    console.error('Device ID is missing');
+    return false;
+  }
 
   try {
-    const response = await fetch('https://api.spotify.com/v1/me/player/play', {
+    const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${session.user.accessToken}`,
@@ -184,7 +202,6 @@ export async function playTrack(session: Session | null, track: MusicList): Prom
     return false;
   }
 }
-
 
 export const getDevices = async (session: Session | null) => {
   if (!session?.user?.accessToken) return null;

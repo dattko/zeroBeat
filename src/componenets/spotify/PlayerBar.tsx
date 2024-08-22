@@ -23,6 +23,7 @@ const PlayerBar: React.FC = () => {
   const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const isPlayerReady = useSelector((state: RootState) => state.player.isPlayerReady);
 
   const checkPremiumStatus = useCallback(async () => {
     if (!session?.user?.accessToken) {
@@ -68,7 +69,7 @@ const PlayerBar: React.FC = () => {
         name: 'Web Playback SDK',
         getOAuthToken: cb => { 
           cb(session.user.accessToken);
-        },
+        }
       });
 
       // Error handling
@@ -90,7 +91,7 @@ const PlayerBar: React.FC = () => {
       });
 
       // Playback status updates
-      player.addListener('ptayer_state_changed', (state: SpotifySDK.PlaybackState) => {
+      player.addListener('player_state_changed', (state: SpotifySDK.PlaybackState) => {
         if (!state) {
           console.error('Player state is null');
           return;
@@ -128,6 +129,11 @@ const PlayerBar: React.FC = () => {
         if (!isActivated) {
           setError('Failed to activate the player. Please try refreshing the page.');
         }
+
+        // Set initial volume
+        player.setVolume(0.5).then(() => {
+          dispatch(setVolume(50));
+        });
       });
 
       // Not Ready
@@ -160,58 +166,90 @@ const PlayerBar: React.FC = () => {
   }, [session, dispatch, isPremium]);
 
   const handlePlayPause = async () => {
-    if (player) {
-      if (isPlaying) {
-        await player.pause();
-      } else {
-        if (currentTrack) {
-          const isPlayed = await playTrack(session, currentTrack);
-          if (!isPlayed) {
-            setError('Failed to play track. Please try again.');
-          }
+    if (player && isPlayerReady) {
+      try {
+        if (isPlaying) {
+          await player.pause();
         } else {
-          await player.resume();
+          if (currentTrack) {
+            const isPlayed = await playTrack(session, currentTrack, isPlayerReady, deviceId);
+            if (!isPlayed) {
+              throw new Error('Failed to play track');
+            }
+          } else {
+            await player.resume();
+          }
         }
+        dispatch(setIsPlaying(!isPlaying));
+      } catch (error) {
+        console.error('Error in play/pause:', error);
+        setError('Failed to play/pause. Please try again.');
       }
-      dispatch(setIsPlaying(!isPlaying));
+    } else {
+      setError('Player is not ready. Please wait and try again.');
     }
   };
 
-
-  const handlePreviousTrack = () => {
-    if (player) {
-      player.previousTrack();
+  const handlePreviousTrack = async () => {
+    if (player && isPlayerReady) {
+      try {
+        await player.previousTrack();
+      } catch (error) {
+        console.error('Error in previous track:', error);
+        setError('Failed to play previous track. Please try again.');
+      }
+    } else {
+      setError('Player is not ready. Please wait and try again.');
     }
   };
 
-  const handleNextTrack = () => {
-    if (player) {
-      player.nextTrack();
+  const handleNextTrack = async () => {
+    if (player && isPlayerReady) {
+      try {
+        await player.nextTrack();
+      } catch (error) {
+        console.error('Error in next track:', error);
+        setError('Failed to play next track. Please try again.');
+      }
+    } else {
+      setError('Player is not ready. Please wait and try again.');
     }
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(e.target.value);
-    if (player) {
-      player.setVolume(newVolume / 100).then(() => {
+    if (player && isPlayerReady) {
+      try {
+        await player.setVolume(newVolume / 100);
         dispatch(setVolume(newVolume));
-      });
+      } catch (error) {
+        console.error('Error setting volume:', error);
+        setError('Failed to change volume. Please try again.');
+      }
+    } else {
+      setError('Player is not ready. Please wait and try again.');
     }
   };
 
-  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProgressChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPosition = Number(e.target.value);
-    if (player && currentTrack) {
-      player.seek(newPosition).then(() => {
+    if (player && isPlayerReady && currentTrack) {
+      try {
+        await player.seek(newPosition);
         dispatch(setProgress(newPosition));
-      });
+      } catch (error) {
+        console.error('Error seeking track:', error);
+        setError('Failed to seek track. Please try again.');
+      }
+    } else {
+      setError('Player is not ready or no track is playing. Please wait and try again.');
     }
   };
 
   const handleShuffleToggle = async () => {
-    if (session?.user?.accessToken) {
+    if (session?.user?.accessToken && isPlayerReady) {
       try {
-        const response = await fetch(`https://api.spotify.com/v1/me/player/shuffle?state=${!shuffleOn}`, {
+        const response = await fetch(`https://api.spotify.com/v1/me/player/shuffle?state=${!shuffleOn}&device_id=${deviceId}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${session.user.accessToken}`
@@ -222,19 +260,21 @@ const PlayerBar: React.FC = () => {
         } else {
           throw new Error('Failed to toggle shuffle');
         }
-      } catch (error: unknown) {
+      } catch (error) {
         console.error('Error toggling shuffle:', error);
-        setError(error instanceof Error ? error.message : 'Failed to toggle shuffle. Please try again.');
+        setError('Failed to toggle shuffle. Please try again.');
       }
+    } else {
+      setError('Player is not ready or not authenticated. Please wait and try again.');
     }
   };
 
   const handleRepeatToggle = async () => {
-    if (session?.user?.accessToken) {
+    if (session?.user?.accessToken && isPlayerReady) {
       const newMode = (repeatMode + 1) % 3; // 0: off, 1: context, 2: track
       const repeatState = ['off', 'context', 'track'][newMode];
       try {
-        const response = await fetch(`https://api.spotify.com/v1/me/player/repeat?state=${repeatState}`, {
+        const response = await fetch(`https://api.spotify.com/v1/me/player/repeat?state=${repeatState}&device_id=${deviceId}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${session.user.accessToken}`
@@ -245,10 +285,12 @@ const PlayerBar: React.FC = () => {
         } else {
           throw new Error('Failed to change repeat mode');
         }
-      } catch (error: unknown) {
+      } catch (error) {
         console.error('Error setting repeat mode:', error);
-        setError(error instanceof Error ? error.message : 'Failed to change repeat mode. Please try again.');
+        setError('Failed to change repeat mode. Please try again.');
       }
+    } else {
+      setError('Player is not ready or not authenticated. Please wait and try again.');
     }
   };
 
@@ -298,13 +340,13 @@ const PlayerBar: React.FC = () => {
         </div>
       </div>
       <div className={styles.playerControls}>
-        <button onClick={handleShuffleToggle} className={shuffleOn ? styles.active : ''}>
+        <button onClick={handleShuffleToggle} className={shuffleOn ? styles.active : ''} disabled={!isPlayerReady}>
           Shuffle
         </button>
-        <button onClick={handlePreviousTrack}>Previous</button>
-        <button onClick={handlePlayPause}>{isPlaying ? 'Pause' : 'Play'}</button>
-        <button onClick={handleNextTrack}>Next</button>
-        <button onClick={handleRepeatToggle} className={repeatMode !== 0 ? styles.active : ''}>
+        <button onClick={handlePreviousTrack} disabled={!isPlayerReady}>Previous</button>
+        <button onClick={handlePlayPause} disabled={!isPlayerReady}>{isPlaying ? 'Pause' : 'Play'}</button>
+        <button onClick={handleNextTrack} disabled={!isPlayerReady}>Next</button>
+        <button onClick={handleRepeatToggle} className={repeatMode !== 0 ? styles.active : ''} disabled={!isPlayerReady}>
           Repeat
         </button>
       </div>
@@ -317,6 +359,7 @@ const PlayerBar: React.FC = () => {
           value={progress}
           onChange={handleProgressChange}
           className={styles.progressBar}
+          disabled={!isPlayerReady}
         />
         <span>{currentTrack.duration}</span>
       </div>
@@ -328,6 +371,7 @@ const PlayerBar: React.FC = () => {
           value={volume}
           onChange={handleVolumeChange}
           className={styles.volumeSlider}
+          disabled={!isPlayerReady}
         />
       </div>
     </div>
