@@ -11,6 +11,7 @@ interface PlayerState {
   isPlayerReady: boolean; 
   deviceId: string | null;
   queue: MusicList[];  // 재생목록 상태 추가
+  isSDKLoaded: boolean;
 }
 
 const initialState: PlayerState = {
@@ -23,6 +24,7 @@ const initialState: PlayerState = {
   isPlayerReady: false, 
   deviceId: null,
   queue: [],  // 초기값으로 빈 배열 추가
+  isSDKLoaded: false,
 };
 
 const playerSlice = createSlice({
@@ -57,11 +59,14 @@ const playerSlice = createSlice({
       state.queue.push(action.payload);  // 재생목록에 트랙 추가
     },
     removeFromQueue: (state, action: PayloadAction<string>) => {
-      state.queue = state.queue.filter(track => track.uri !== action.payload);  // URI를 기준으로 트랙 제거
+      state.queue = state.queue.filter(track => track.uri !== action.payload); 
     },
     clearQueue: (state) => {
-      state.queue = [];  // 재생목록 초기화
-    }
+      state.queue = [];  
+    },
+    setIsSDKLoaded: (state, action: PayloadAction<boolean>) => {
+      state.isSDKLoaded = action.payload;
+    },
   },
 });
 
@@ -76,7 +81,8 @@ export const {
   setDeviceId,
   addToQueue,
   removeFromQueue,
-  clearQueue
+  clearQueue,
+  setIsSDKLoaded
 } = playerSlice.actions;
 
 export default playerSlice.reducer;

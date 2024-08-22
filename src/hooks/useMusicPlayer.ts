@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
-import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, addToQueue } from '@redux/slice/playerSlice';
+import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, addToQueue } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { activateDevice, playTrack } from '@/lib/spotify';
 import { MusicList as MusicListType } from '@/types/spotify';
@@ -11,18 +11,18 @@ export const useMusicPlayer = () => {
   const { data: session } = useSession();
   const isPlayerReady = useSelector((state: RootState) => state.player.isPlayerReady);
   const deviceId = useSelector((state: RootState) => state.player.deviceId);
+  const isSDKLoaded = useSelector((state: RootState) => state.player.isSDKLoaded);
   const [error, setError] = useState<string | null>(null);
-  const [isSDKLoaded, setIsSDKLoaded] = useState(false);
 
   const initializePlayer = useCallback(() => {
-    if (!session?.user?.accessToken || isSDKLoaded) return;
+    if (!session?.user?.accessToken || isSDKLoaded) return; 
 
     const script = document.createElement('script');
     script.src = 'https://sdk.scdn.co/spotify-player.js';
     script.async = true;
 
     script.onload = () => {
-      setIsSDKLoaded(true);
+      dispatch(setIsSDKLoaded(true)); 
     };
 
     document.body.appendChild(script);
@@ -46,15 +46,13 @@ export const useMusicPlayer = () => {
 
       player.connect();
     };
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, [session, dispatch, isSDKLoaded]);
+  }, [session, isSDKLoaded, dispatch]);
 
   useEffect(() => {
-    initializePlayer();
-  }, [initializePlayer]);
+    if (!isSDKLoaded) {
+      initializePlayer(); // isSDKLoaded가 false일 때만 초기화 로직 실행
+    }
+  }, [initializePlayer, isSDKLoaded]);
 
   const handlePlayTrack = async (track: MusicListType) => {
     if (!session?.user?.accessToken) {
@@ -74,7 +72,7 @@ export const useMusicPlayer = () => {
 
     dispatch(setCurrentTrack(track));
     dispatch(setIsPlaying(true));
-    dispatch(addToQueue(track));  // 트랙을 재생목록에 추가
+    dispatch(addToQueue(track)); 
 
     try {
       const isDeviceActivated = await activateDevice(session, deviceId);
