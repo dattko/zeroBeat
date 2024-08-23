@@ -1,4 +1,3 @@
-'use client';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@redux/store';
@@ -8,18 +7,23 @@ import {
   setVolume, 
   setDeviceId,
   setIsPlayerReady,
+  nextTrack,
+  previousTrack,
+  setCurrentTrackIndex,
+  setCurrentTrack
 } from '@redux/slice/playerSlice';
 import styles from './Spotify.module.scss';
+import { playTrack } from '@/lib/spotify';
 import { SpotifySDK } from '@/types/spotify';
 
 const PlayerBar: React.FC = () => {
   const dispatch = useDispatch();
-  const { currentTrack, isPlaying, volume } = useSelector((state: RootState) => state.player);
-  const isPlayerReady = useSelector((state: RootState) => state.player.isPlayerReady);
+  const { currentTrack, isPlaying, volume, isPlayerReady, queue, currentTrackIndex, deviceId} = useSelector((state: RootState) => state.player);
   const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
-
+  const { repeatMode } = useSelector((state: RootState) => state.player);
+  
   useEffect(() => {
     if (!player && window.Spotify && window.Spotify.Player && session?.user?.accessToken) {
       const newPlayer = new window.Spotify.Player({
@@ -43,6 +47,17 @@ const PlayerBar: React.FC = () => {
     }
   }, [player, dispatch, session]);
 
+  // Handle current track changes and play the track
+  useEffect(() => {
+    if (currentTrack && isPlayerReady && session && player) {
+      playTrack(session, currentTrack, isPlayerReady, deviceId)
+        .catch(error => {
+          console.error('Failed to play track:', error);
+          setError('Failed to play track. Please try again.');
+        });
+    }
+  }, [currentTrack, isPlayerReady, session, player]);
+
   const handlePlayPause = async () => {
     if (player && isPlayerReady) {
       try {
@@ -58,6 +73,30 @@ const PlayerBar: React.FC = () => {
       }
     } else {
       setError('Player is not ready. Please wait and try again.');
+    }
+  };
+
+  const handleNextTrack = async () => {
+    if (currentTrackIndex < queue.length - 1) {
+      dispatch(nextTrack());
+    } else if (repeatMode === 2) {
+      dispatch(setCurrentTrackIndex(0));
+      dispatch(setCurrentTrack(queue[0]));
+    } else {
+      // Handle the case where there's no next track and repeat mode is off
+      return;
+    }
+  };
+
+  const handlePreviousTrack = async () => {
+    if (currentTrackIndex > 0) {
+      dispatch(previousTrack());
+    } else if (repeatMode === 2) {
+      dispatch(setCurrentTrackIndex(queue.length - 1));
+      dispatch(setCurrentTrack(queue[queue.length - 1]));
+    } else {
+      // Handle the case where there's no previous track and repeat mode is off
+      return;
     }
   };
 
@@ -80,7 +119,7 @@ const PlayerBar: React.FC = () => {
     return (
       <div className={styles.errorMessage}>
         <p>{error}</p>
-        <button onClick={() => window.location.reload()}>Retry</button>
+        <button onClick={() => setError(null)}>Dismiss</button>
       </div>
     );
   }
@@ -97,8 +136,14 @@ const PlayerBar: React.FC = () => {
         </div>
       </div>
       <div className={styles.playerControls}>
-        <button onClick={handlePlayPause} disabled={!isPlayerReady}>
+        <button onClick={handlePreviousTrack} disabled={!isPlayerReady} className={styles.controlButton}>
+          Previous
+        </button>
+        <button onClick={handlePlayPause} disabled={!isPlayerReady} className={styles.controlButton}>
           {isPlaying ? 'Pause' : 'Play'}
+        </button>
+        <button onClick={handleNextTrack} disabled={!isPlayerReady} className={styles.controlButton}>
+          Next
         </button>
       </div>
       <div className={styles.volumeControl}>
@@ -109,7 +154,7 @@ const PlayerBar: React.FC = () => {
           value={volume}
           onChange={handleVolumeChange}
           className={styles.volumeSlider}
-          disabled={!isPlayerReady || !player}  // player와 isPlayerReady 상태에 따라 슬라이더 활성화
+          disabled={!isPlayerReady || !player}
         />
       </div>
     </div>

@@ -12,6 +12,7 @@ interface PlayerState {
   deviceId: string | null;
   queue: MusicList[];  // 재생목록 상태 추가
   isSDKLoaded: boolean;
+  currentTrackIndex: number; 
 }
 
 const initialState: PlayerState = {
@@ -25,6 +26,7 @@ const initialState: PlayerState = {
   deviceId: null,
   queue: [],  // 초기값으로 빈 배열 추가
   isSDKLoaded: false,
+  currentTrackIndex: -1,
 };
 
 const playerSlice = createSlice({
@@ -67,6 +69,28 @@ const playerSlice = createSlice({
     setIsSDKLoaded: (state, action: PayloadAction<boolean>) => {
       state.isSDKLoaded = action.payload;
     },
+    setCurrentTrackIndex: (state, action: PayloadAction<number>) => {
+      state.currentTrackIndex = action.payload;
+    },
+    nextTrack: (state) => {
+      if (state.currentTrackIndex < state.queue.length - 1) {
+        state.currentTrackIndex += 1;
+        state.currentTrack = state.queue[state.currentTrackIndex];
+      } else if (state.repeatMode === 2) { 
+        state.currentTrackIndex = 0;
+        state.currentTrack = state.queue[0];
+      }
+    },
+    previousTrack: (state) => {
+      if (state.currentTrackIndex > 0) {
+        state.currentTrackIndex -= 1;
+        state.currentTrack = state.queue[state.currentTrackIndex];
+      } else if (state.repeatMode === 2) { 
+        state.currentTrackIndex = state.queue.length - 1;
+        state.currentTrack = state.queue[state.currentTrackIndex];
+      }
+    },
+
   },
 });
 
@@ -82,7 +106,10 @@ export const {
   addToQueue,
   removeFromQueue,
   clearQueue,
-  setIsSDKLoaded
+  setIsSDKLoaded,
+  setCurrentTrackIndex,
+  nextTrack,
+  previousTrack,
 } = playerSlice.actions;
 
 export default playerSlice.reducer;

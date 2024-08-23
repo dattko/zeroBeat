@@ -58,9 +58,9 @@ export interface MusicList {
   album: string;
   album_art_url: string;
   images?: { url: string }[]; 
-  release_date: string;
+  release_date?: string;
   duration: string;
-  popularity_rank: number;
+  popularity_rank?: number;
   name?: string;  
 }
 

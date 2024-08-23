@@ -1,27 +1,26 @@
-
 .playerBarContainer {
   display: flex;
-  width: calc(100% - 260px);
   justify-content: space-between;
   align-items: center;
+  padding: 10px;
   background-color: #282828;
-  padding: 16px;
-  position: fixed;
+  color: white;
+  position: absolute;
   bottom: 0;
   right: 0;
-  height: 90px;
+  width: 100%;
+  z-index: 10;
 }
 
 .trackInfo {
   display: flex;
   align-items: center;
-  width: 30%;
 }
 
 .albumArt {
-  width: 56px;
-  height: 56px;
-  margin-right: 16px;
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
 }
 
 .textInfo {
@@ -31,8 +30,6 @@
 
 .trackTitle {
   font-size: 14px;
-  font-weight: bold;
-  color: #ffffff;
   margin: 0;
 }
 
@@ -42,64 +39,39 @@
   margin: 0;
 }
 
-.controls {
+.playerControls {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 40%;
 }
 
-.controlButton, .playPauseButton {
+.controlButton {
   background: none;
   border: none;
-  color: #b3b3b3;
-  font-size: 16px;
-  margin: 0 8px;
+  color: white;
+  font-size: 14px;
+  margin: 0 10px;
   cursor: pointer;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: #ffffff;
-  }
 }
 
-.playPauseButton {
-  font-size: 32px;
+.controlButton:disabled {
+  color: #b3b3b3;
+  cursor: not-allowed;
 }
 
 .volumeControl {
-  display: flex;
-  align-items: center;
-  width: 30%;
-  justify-content: flex-end;
+  width: 100px;
 }
 
 .volumeSlider {
-  appearance: none;
-  width: 100px;
-  height: 4px;
-  border-radius: 2px;
-  background: #535353;
-  outline: none;
-  margin-left: 8px;
+  width: 100%;
+}
 
-  &::-webkit-slider-thumb {
-    appearance: none;
-    appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #ffffff;
-    cursor: pointer;
-  }
-
-  &::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #ffffff;
-    cursor: pointer;
-  }
+.errorMessage {
+  background-color: #ff4444;
+  color: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
 }
 
 //플레이리스트
