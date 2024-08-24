@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
-import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, addToQueue } from '@redux/slice/playerSlice';
+import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, addToQueue, setQueue } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { activateDevice, playTrack } from '@/lib/spotify';
 import { MusicList as MusicListType } from '@/types/spotify';
@@ -72,7 +72,7 @@ export const useMusicPlayer = () => {
 
     dispatch(setCurrentTrack(track));
     dispatch(setIsPlaying(true));
-    dispatch(addToQueue(track)); 
+    dispatch(setQueue([track])); 
 
     try {
       const isDeviceActivated = await activateDevice(session, deviceId);

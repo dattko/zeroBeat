@@ -23,7 +23,7 @@ const PlayerBar: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
   const { repeatMode } = useSelector((state: RootState) => state.player);
-  
+
   useEffect(() => {
     if (!player && window.Spotify && window.Spotify.Player && session?.user?.accessToken) {
       const newPlayer = new window.Spotify.Player({
@@ -47,16 +47,16 @@ const PlayerBar: React.FC = () => {
     }
   }, [player, dispatch, session]);
 
-  // Handle current track changes and play the track
   useEffect(() => {
-    if (currentTrack && isPlayerReady && session && player) {
+    // queue가 업데이트 될 때마다 현재 트랙을 재생
+    if (queue.length > 0 && currentTrackIndex !== -1 && currentTrack && isPlayerReady && session && player) {
       playTrack(session, currentTrack, isPlayerReady, deviceId)
         .catch(error => {
           console.error('Failed to play track:', error);
           setError('Failed to play track. Please try again.');
         });
     }
-  }, [currentTrack, isPlayerReady, session, player]);
+  }, [queue, currentTrackIndex, currentTrack, isPlayerReady, session, player]);
 
   const handlePlayPause = async () => {
     if (player && isPlayerReady) {

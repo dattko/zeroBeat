@@ -6,7 +6,7 @@ import { MusicList } from '@/types/spotify';
 import styles from './Spotify.module.scss';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 
-const CurrentQueue: React.FC = () => {
+const PlayList: React.FC = () => {
   // Redux 상태에서 queue를 가져옵니다.
   const queue = useSelector((state: RootState) => state.player.queue);
   const { handlePlayTrack, error: playerError } = useMusicPlayer();
@@ -46,4 +46,4 @@ const CurrentQueue: React.FC = () => {
   );
 };
 
-export default CurrentQueue;
+export default PlayList;

@@ -9,7 +9,7 @@ import ReduxProvider from '@redux/provider';
 import GlobalModal from '@modal/globalModal';
 import Loading from '@/app/loading';
 import Playbar from './spotify/PlayerBar';
-import PlaylistComponent from './spotify/PlayList';
+import PlayList from './spotify/PlayList';
 interface WrapProps {
   children: ReactNode;
 }
@@ -48,7 +48,7 @@ const Wrap: React.FC<WrapProps> = ({ children }) => {
             {children}
             <Playbar/>
           </Content>
-          <PlaylistComponent/>
+          <PlayList/>
         </div>
       </div>
     </ReduxProvider>

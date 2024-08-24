@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import "@style/globals.scss"
 import Wrap from "@/componenets/wrap"
 import { AuthProvider } from "@/provider/AuthProvider"
+import ReduxProvider from '@redux/provider';
 
 export const metadata: Metadata = {
   title: "ZeroBeat",
@@ -16,14 +17,14 @@ export const metadata: Metadata = {
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
-  <html>
-    <AuthProvider>
-      <body suppressHydrationWarning={true}>
+  <html>  
+    <body suppressHydrationWarning={true}>
+      <AuthProvider>
         <Wrap>
           {children}
         </Wrap>
-      </body>
-    </AuthProvider>
+      </AuthProvider>
+    </body>
   </html>
 )
 

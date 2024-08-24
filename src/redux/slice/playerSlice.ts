@@ -13,6 +13,7 @@ interface PlayerState {
   queue: MusicList[];  // 재생목록 상태 추가
   isSDKLoaded: boolean;
   currentTrackIndex: number; 
+  recommendations: { [key: string]: MusicList[] };
 }
 
 const initialState: PlayerState = {
@@ -27,6 +28,7 @@ const initialState: PlayerState = {
   queue: [],  // 초기값으로 빈 배열 추가
   isSDKLoaded: false,
   currentTrackIndex: -1,
+  recommendations: {},
 };
 
 const playerSlice = createSlice({
@@ -58,13 +60,19 @@ const playerSlice = createSlice({
       state.deviceId = action.payload;
     },
     addToQueue: (state, action: PayloadAction<MusicList>) => {
-      state.queue.push(action.payload);  // 재생목록에 트랙 추가
+      state.queue.push(action.payload); 
+    },
+    newToQueue: (state, action: PayloadAction<MusicList>) => {
+      state.queue.push(action.payload); 
     },
     removeFromQueue: (state, action: PayloadAction<string>) => {
       state.queue = state.queue.filter(track => track.uri !== action.payload); 
     },
     clearQueue: (state) => {
       state.queue = [];  
+    },
+    setQueue: (state, action: PayloadAction<MusicList[]>) => {  
+      state.queue = action.payload;
     },
     setIsSDKLoaded: (state, action: PayloadAction<boolean>) => {
       state.isSDKLoaded = action.payload;
@@ -90,7 +98,9 @@ const playerSlice = createSlice({
         state.currentTrack = state.queue[state.currentTrackIndex];
       }
     },
-
+    setRecommendations: (state, action: PayloadAction<{ trackId: string, recommendations: MusicList[] }>) => {
+      state.recommendations[action.payload.trackId] = action.payload.recommendations;
+    }
   },
 });
 
@@ -110,6 +120,8 @@ export const {
   setCurrentTrackIndex,
   nextTrack,
   previousTrack,
+  setQueue,
+  setRecommendations
 } = playerSlice.actions;
 
 export default playerSlice.reducer;
