@@ -3,15 +3,27 @@ import styled from 'styled-components';
 import { MusicList as MusicListType } from '@/types/spotify';
 import SwiperWrap from '@component/swiper/SwiperWrap';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
+import { useRouter } from 'next/navigation';
 
 interface BoxMusicListProps {
   data: MusicListType[];
   title: string;
+  type: 'track' | 'album';
 }
 
-const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title }) => {
+const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type }) => {
   const { handlePlayTrack } = useMusicPlayer();
+  const router = useRouter();
   
+  const handleItemClick = (item: MusicListType) => {
+    if (type === 'track') {
+      handlePlayTrack(item);
+    } else {
+      console.log('Album clicked:', item);
+      // router.push(`/album/${item.id}`);
+    }
+  };
+
   return (
     <Section>
       <SectionTitleBox>
@@ -19,19 +31,19 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title }) => {
       </SectionTitleBox>
       {data.length > 0 ? (
         <SwiperWrap>
-          {data.map((song) => (
-            <SwiperList key={song.id} onClick={() => handlePlayTrack(song)}>
+          {data.map((item) => (
+            <SwiperList key={item.id} onClick={() => handleItemClick(item)}>
               <AlbumImge>
-                <img src={song.album_art_url} alt={song.title} />
+                <img src={item.album_art_url} alt={item.title} />
               </AlbumImge>
-              <MusicInfoTitle>{song.title}</MusicInfoTitle>
-              <MusicInfoText>{song.artist}</MusicInfoText>
-              <MusicInfoText>{song.album}</MusicInfoText>
+              <MusicInfoTitle>{item.title}</MusicInfoTitle>
+              <MusicInfoText>{type === 'track' ? item.artist : item.artist || '다양한 아티스트'}</MusicInfoText>
+              {type === 'track' && <MusicInfoText>{item.album}</MusicInfoText>}
             </SwiperList>
           ))}
         </SwiperWrap>
       ) : (
-        <NoDataMessage>No tracks available</NoDataMessage>
+        <NoDataMessage>No {type}s available</NoDataMessage>
       )}
     </Section>
   );
@@ -39,9 +51,7 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title }) => {
 
 export default BoxMusicList;
 
-// Styled components...
-
-// Styled components
+// Styled components remain the same...
 const Section = styled.div`
   width: 100%;
   display: flex;

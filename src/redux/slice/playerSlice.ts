@@ -98,9 +98,6 @@ const playerSlice = createSlice({
         state.currentTrack = state.queue[state.currentTrackIndex];
       }
     },
-    setRecommendations: (state, action: PayloadAction<{ trackId: string, recommendations: MusicList[] }>) => {
-      state.recommendations[action.payload.trackId] = action.payload.recommendations;
-    }
   },
 });
 
@@ -121,7 +118,6 @@ export const {
   nextTrack,
   previousTrack,
   setQueue,
-  setRecommendations
 } = playerSlice.actions;
 
 export default playerSlice.reducer;

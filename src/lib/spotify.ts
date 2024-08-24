@@ -239,3 +239,52 @@ export const activateDevice = async (session: Session | null, deviceId: string) 
   }
 };
 
+export async function getRecommendations(trackId: string, limit: number = 20): Promise<MusicList[]> {
+  const session = await getSession();
+  if (!session?.user?.accessToken) {
+    throw new Error('No access token');
+  }
+
+  const response = await fetch(`https://api.spotify.com/v1/recommendations?seed_tracks=${trackId}&limit=${limit}`, {
+    headers: {
+      Authorization: `Bearer ${session?.user?.accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch recommendations');
+  }
+
+  const data = await response.json();
+  return data.tracks.map(transformTrack);
+}
+
+export const pausePlayback = async (session: Session) => {
+  const response = await fetch('https://api.spotify.com/v1/me/player/pause', {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${session.user.accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to pause playback');
+  }
+};
+
+export const resumePlayback = async (session: Session, deviceId?: string | null) => {
+  const url = deviceId 
+    ? `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`
+    : 'https://api.spotify.com/v1/me/player/play';
+
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${session.user.accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to resume playback');
+  }
+};

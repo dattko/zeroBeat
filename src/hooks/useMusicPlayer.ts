@@ -1,18 +1,26 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
-import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, addToQueue, setQueue } from '@redux/slice/playerSlice';
+import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
-import { activateDevice, playTrack } from '@/lib/spotify';
-import { MusicList as MusicListType } from '@/types/spotify';
+import { activateDevice, playTrack, getRecommendations, pausePlayback, resumePlayback } from '@/lib/spotify';
+import { MusicList as MusicListType, SpotifySDK } from '@/types/spotify';
 
 export const useMusicPlayer = () => {
   const dispatch = useDispatch();
   const { data: session } = useSession();
-  const isPlayerReady = useSelector((state: RootState) => state.player.isPlayerReady);
-  const deviceId = useSelector((state: RootState) => state.player.deviceId);
-  const isSDKLoaded = useSelector((state: RootState) => state.player.isSDKLoaded);
+  const { 
+    isPlayerReady, 
+    deviceId, 
+    isSDKLoaded, 
+    currentTrackIndex, 
+    queue, 
+    currentTrack,
+    isPlaying
+  } = useSelector((state: RootState) => state.player);
   const [error, setError] = useState<string | null>(null);
+  const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
+
 
   const initializePlayer = useCallback(() => {
     if (!session?.user?.accessToken || isSDKLoaded) return; 
@@ -28,25 +36,27 @@ export const useMusicPlayer = () => {
     document.body.appendChild(script);
 
     window.onSpotifyWebPlaybackSDKReady = () => {
-      const player = new window.Spotify.Player({
+      const newPlayer = new window.Spotify.Player({
         name: 'Web Playback SDK',
         getOAuthToken: cb => { cb(session.user.accessToken); },
       });
 
-      player.addListener('ready', ({ device_id }) => {
+      newPlayer.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
         dispatch(setDeviceId(device_id));
         dispatch(setIsPlayerReady(true));
       });
 
-      player.addListener('not_ready', ({ device_id }) => {
+      newPlayer.addListener('not_ready', ({ device_id }) => {
         console.log('Device ID has gone offline', device_id);
         dispatch(setIsPlayerReady(false));
       });
 
-      player.connect();
+      newPlayer.connect();
+      setPlayer(newPlayer); 
     };
   }, [session, isSDKLoaded, dispatch]);
+
 
   useEffect(() => {
     if (!isSDKLoaded) {
@@ -72,7 +82,6 @@ export const useMusicPlayer = () => {
 
     dispatch(setCurrentTrack(track));
     dispatch(setIsPlaying(true));
-    dispatch(setQueue([track])); 
 
     try {
       const isDeviceActivated = await activateDevice(session, deviceId);
@@ -84,11 +93,79 @@ export const useMusicPlayer = () => {
       if (!isPlayed) {
         throw new Error('Failed to play track');
       }
+
+      // 추천 트랙 가져오기
+      const recommendations = await getRecommendations(track.id);
+
+      // 큐 초기화 후 선택한 트랙과 추천 트랙 추가
+      const newQueue = [track, ...recommendations];
+      dispatch(setQueue(newQueue));
+
     } catch (err) {
       console.error('Error playing track:', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     }
   };
 
-  return { handlePlayTrack, error, isPlayerReady };
+  const handleNextTrack = async () => {
+    dispatch(nextTrack());
+    if (currentTrackIndex < queue.length - 1) {
+      const nextTrackToPlay = queue[currentTrackIndex + 1];
+      if (session && deviceId && nextTrackToPlay) {
+        try {
+          await playTrack(session, nextTrackToPlay, isPlayerReady, deviceId);
+        } catch (err) {
+          console.error('Error playing next track:', err);
+          setError('Failed to play next track. Please try again.');
+        }
+      }
+    }
+  };
+
+  const handlePreviousTrack = async () => {
+    dispatch(previousTrack());
+    if (currentTrackIndex > 0) {
+      const prevTrackToPlay = queue[currentTrackIndex - 1];
+      if (session && deviceId && prevTrackToPlay) {
+        try {
+          await playTrack(session, prevTrackToPlay, isPlayerReady, deviceId);
+        } catch (err) {
+          console.error('Error playing previous track:', err);
+          setError('Failed to play previous track. Please try again.');
+        }
+      }
+    }
+  };
+
+  const handlePlayPause = async () => {
+    if (!session) {
+      setError('No session available');
+      return;
+    }
+
+    try {
+      if (isPlaying) {
+        await pausePlayback(session);
+      } else {
+        await resumePlayback(session, deviceId);
+      }
+      dispatch(setIsPlaying(!isPlaying));
+    } catch (err) {
+      console.error('Error toggling play/pause:', err);
+      setError('Failed to toggle play/pause. Please try again.');
+    }
+  };
+
+  useEffect(() => {
+    // 현재 트랙이 변경될 때마다 실행
+    if (currentTrack && session && deviceId && isPlayerReady) {
+      playTrack(session, currentTrack, isPlayerReady, deviceId)
+        .catch(err => {
+          console.error('Error playing track:', err);
+          setError('Failed to play track. Please try again.');
+        });
+    }
+  }, [currentTrack, session, deviceId, isPlayerReady]);
+
+  return { handlePlayTrack, handleNextTrack, handlePreviousTrack, handlePlayPause, error, isPlayerReady };
 };
