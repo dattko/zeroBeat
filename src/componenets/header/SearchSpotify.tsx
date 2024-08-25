@@ -19,6 +19,7 @@ export const SearchComponent = () => {
   const [isFocused, setIsFocused] = useState(false)
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
+  const [isComposing, setIsComposing] = useState(false)
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return
@@ -45,12 +46,21 @@ export const SearchComponent = () => {
   }, [searchTerm])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !isComposing) {
+      event.preventDefault()
       if (inputRef.current) {
         inputRef.current.blur()
       }
       router.push(`/search-result?q=${searchTerm}`)
     }
+  }
+
+  const handleCompositionStart = () => {
+    setIsComposing(true)
+  }
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false)
   }
 
   const handleTrackSelect = (track: MusicList) => {
@@ -70,6 +80,8 @@ export const SearchComponent = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="검색어를 입력해 주세요."
         onKeyDown={handleKeyDown}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setTimeout(() => setIsFocused(false), 200)}
       />
