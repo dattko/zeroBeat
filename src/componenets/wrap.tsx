@@ -1,6 +1,5 @@
 'use client';
-
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import Sidebar from '@component/sidebar'; 
@@ -10,6 +9,7 @@ import GlobalModal from '@modal/globalModal';
 import Loading from '@/app/loading';
 import Playbar from './spotify/PlayerBar';
 import PlayList from './spotify/PlayList';
+
 interface WrapProps {
   children: ReactNode;
 }
@@ -19,12 +19,17 @@ const Wrap: React.FC<WrapProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
+  const [isPlayListOpen, setIsPlayListOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated" && !isLoginPage) {
       router.push("/login");
     }
   }, [status, router, isLoginPage]);
+
+  const togglePlayList = () => {
+    setIsPlayListOpen(prev => !prev);
+  };
 
   if (status === "loading") {
     return <Loading />;
@@ -34,7 +39,6 @@ const Wrap: React.FC<WrapProps> = ({ children }) => {
     if (isLoginPage) {
       return <>{children}</>;
     }
-
     return null;
   }
 
@@ -46,9 +50,9 @@ const Wrap: React.FC<WrapProps> = ({ children }) => {
           <Sidebar/>
           <Content>
             {children}
-            <Playbar/>
+            <Playbar onTogglePlayList={togglePlayList} />
           </Content>
-          <PlayList/>
+          <PlayList isOpen={isPlayListOpen} />
         </div>
       </div>
     </ReduxProvider>

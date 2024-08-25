@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
-import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack } from '@redux/slice/playerSlice';
+import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack, setCurrentTrackIndex } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { activateDevice, playTrack, getRecommendations, pausePlayback, resumePlayback } from '@/lib/spotify';
 import { MusicList as MusicListType, SpotifySDK } from '@/types/spotify';
@@ -64,7 +64,7 @@ export const useMusicPlayer = () => {
     }
   }, [initializePlayer, isSDKLoaded]);
 
-  const handlePlayTrack = async (track: MusicListType) => {
+  const handlePlayTrack = async (track: MusicListType, updateQueue: boolean = true, playlistIndex: number | null = null) => {
     if (!session?.user?.accessToken) {
       setError('No access token available');
       return;
@@ -83,6 +83,9 @@ export const useMusicPlayer = () => {
     dispatch(setCurrentTrack(track));
     dispatch(setIsPlaying(true));
 
+    // 플레이리스트에서 재생하는 경우 해당 인덱스를 사용, 그렇지 않으면 0으로 설정
+    dispatch(setCurrentTrackIndex(playlistIndex !== null ? playlistIndex : 0));
+
     try {
       const isDeviceActivated = await activateDevice(session, deviceId);
       if (!isDeviceActivated) {
@@ -94,18 +97,22 @@ export const useMusicPlayer = () => {
         throw new Error('Failed to play track');
       }
 
-      // 추천 트랙 가져오기
-      const recommendations = await getRecommendations(track.id);
+      if (updateQueue) {
+        // 추천 트랙 가져오기
+        const recommendations = await getRecommendations(track.id);
 
-      // 큐 초기화 후 선택한 트랙과 추천 트랙 추가
-      const newQueue = [track, ...recommendations];
-      dispatch(setQueue(newQueue));
+        // 큐 초기화 후 선택한 트랙과 추천 트랙 추가
+        const newQueue = [track, ...recommendations];
+        dispatch(setQueue(newQueue));
+      }
 
     } catch (err) {
       console.error('Error playing track:', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     }
   };
+
+
 
   const handleNextTrack = async () => {
     dispatch(nextTrack());
@@ -120,6 +127,10 @@ export const useMusicPlayer = () => {
         }
       }
     }
+  };
+
+  const playTrackFromPlaylist = async (track: MusicListType, index: number) => {
+    await handlePlayTrack(track, false, index);  
   };
 
   const handlePreviousTrack = async () => {
@@ -156,6 +167,18 @@ export const useMusicPlayer = () => {
     }
   };
 
+  const loadMoreTracks = useCallback(async () => {
+    if (!currentTrack) return;
+
+    try {
+      const recommendations = await getRecommendations(currentTrack.id, 20);
+      dispatch(setQueue([...queue, ...recommendations]));
+    } catch (error) {
+      console.error('Error loading more tracks:', error);
+      setError('Failed to load more tracks. Please try again.');
+    }
+  }, [currentTrack, queue, dispatch]);
+   
   useEffect(() => {
     // 현재 트랙이 변경될 때마다 실행
     if (currentTrack && session && deviceId && isPlayerReady) {
@@ -167,5 +190,5 @@ export const useMusicPlayer = () => {
     }
   }, [currentTrack, session, deviceId, isPlayerReady]);
 
-  return { handlePlayTrack, handleNextTrack, handlePreviousTrack, handlePlayPause, error, isPlayerReady };
+  return { handlePlayTrack, handleNextTrack, handlePreviousTrack, handlePlayPause, playTrackFromPlaylist,loadMoreTracks, error, isPlayerReady };
 };

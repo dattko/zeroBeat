@@ -7,7 +7,11 @@ import {
 } from '@redux/slice/playerSlice';
 import styles from './Spotify.module.scss';
 
-const PlayerBar: React.FC = () => {
+interface PlaybarProps {
+  onTogglePlayList: () => void;
+}
+
+const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
   const dispatch = useDispatch();
   const { currentTrack, isPlaying, volume, queue, currentTrackIndex } = useSelector((state: RootState) => state.player);
   const { handleNextTrack, handlePreviousTrack, handlePlayPause } = useMusicPlayer();
@@ -17,12 +21,16 @@ const PlayerBar: React.FC = () => {
     dispatch(setVolume(newVolume));
   };
 
+  const handleControlClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); 
+  };
+
   if (!currentTrack) return null;
 
   const nextTrackInfo = queue[currentTrackIndex + 1];
 
   return (
-    <div className={styles.playerBarContainer}>
+    <div className={styles.playerBarContainer} onClick={onTogglePlayList}>
       <div className={styles.trackInfo}>
         <img src={currentTrack.album_art_url} alt={currentTrack.album} className={styles.albumArt} />
         <div className={styles.textInfo}>
@@ -30,14 +38,14 @@ const PlayerBar: React.FC = () => {
           <p className={styles.artistName}>{currentTrack.artist}</p>
         </div>
       </div>
-      <div className={styles.playerControls}>
+      <div className={styles.playerControls} onClick={onTogglePlayList}>
         <button onClick={handlePreviousTrack} className={styles.controlButton}>Previous</button>
         <button onClick={handlePlayPause} className={styles.controlButton}>
           {isPlaying ? 'Pause' : 'Play'}
         </button>
         <button onClick={handleNextTrack} className={styles.controlButton}>Next</button>
       </div>
-      <div className={styles.volumeControl}>
+      <div className={styles.volumeControl} onClick={onTogglePlayList}>
         <input
           type="range"
           min="0"

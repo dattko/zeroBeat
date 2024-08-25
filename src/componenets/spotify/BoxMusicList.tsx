@@ -4,6 +4,8 @@ import { MusicList as MusicListType } from '@/types/spotify';
 import SwiperWrap from '@component/swiper/SwiperWrap';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { RootState } from '@redux/store';
 
 interface BoxMusicListProps {
   data: MusicListType[];
@@ -13,11 +15,11 @@ interface BoxMusicListProps {
 
 const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type }) => {
   const { handlePlayTrack } = useMusicPlayer();
-  const router = useRouter();
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
   
   const handleItemClick = (item: MusicListType) => {
     if (type === 'track') {
-      handlePlayTrack(item);
+      handlePlayTrack(item, true);  // null을 전달하여 인덱스를 0으로 설정
     } else {
       console.log('Album clicked:', item);
       // router.push(`/album/${item.id}`);
@@ -32,7 +34,11 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type }) => {
       {data.length > 0 ? (
         <SwiperWrap>
           {data.map((item) => (
-            <SwiperList key={item.id} onClick={() => handleItemClick(item)}>
+            <SwiperList 
+              key={item.id} 
+              onClick={() => handleItemClick(item)}
+              className={currentTrack?.id === item.id ? 'active' : ''}
+            >
               <AlbumImge>
                 <img src={item.album_art_url} alt={item.title} />
               </AlbumImge>
