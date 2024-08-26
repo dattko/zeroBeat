@@ -1,10 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@redux/store';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
-import { 
-  setVolume, 
-} from '@redux/slice/playerSlice';
 import styles from './Spotify.module.scss';
 
 interface PlaybarProps {
@@ -13,21 +10,53 @@ interface PlaybarProps {
 
 const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
   const dispatch = useDispatch();
-  const { currentTrack, isPlaying, volume, queue, currentTrackIndex } = useSelector((state: RootState) => state.player);
-  const { handleNextTrack, handlePreviousTrack, handlePlayPause } = useMusicPlayer();
+  const { currentTrack, isPlaying, volume, queue, currentTrackIndex, progress, duration, repeatMode } = useSelector((state: RootState) => state.player);
+  
+  const { 
+    handleNextTrack, 
+    handlePreviousTrack, 
+    handlePlayPause, 
+    handleVolumeChange, 
+    handleRepeatMode, 
+    handleProgressChange 
+  } = useMusicPlayer();
+  
+  const [currentProgress, setCurrentProgress] = useState(progress);
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    setCurrentProgress(progress);
+  }, [progress]);
+
+  useEffect(() => {
+    if (duration > 0) {
+      setCurrentProgress(progress);
+    }
+  }, [duration, progress]);
+
+  const handleVolumeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(e.target.value);
-    dispatch(setVolume(newVolume));
+    handleVolumeChange(newVolume); 
   };
 
-  const handleControlClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+  const handleProgressChangeWrapper = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newProgress = Number(e.target.value);
+    setCurrentProgress(newProgress);
+    handleProgressChange(newProgress);
+  };
+
+  const handleRepeatClick = () => {
+    handleRepeatMode();
   };
 
   if (!currentTrack) return null;
 
   const nextTrackInfo = queue[currentTrackIndex + 1];
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  };
 
   return (
     <div className={styles.playerBarContainer} onClick={onTogglePlayList}>
@@ -44,6 +73,22 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
           {isPlaying ? 'Pause' : 'Play'}
         </button>
         <button onClick={handleNextTrack} className={styles.controlButton}>Next</button>
+        <button onClick={handleRepeatClick} className={styles.controlButton}>
+          Repeat: {repeatMode === 0 ? 'Off' : repeatMode === 1 ? 'Single' : 'All'}
+        </button>
+      </div>
+      <div className={styles.progressControl} onClick={onTogglePlayList}>
+        <input
+          type="range"
+          min="0"
+          max={duration}
+          value={currentProgress}
+          onChange={handleProgressChangeWrapper}
+          className={styles.progressSlider}
+        />
+        <div className={styles.progressTime}>
+          <span>{formatTime(currentProgress)}</span> / <span>{formatTime(duration)}</span>
+        </div>
       </div>
       <div className={styles.volumeControl} onClick={onTogglePlayList}>
         <input
@@ -51,7 +96,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
           min="0"
           max="100"
           value={volume}
-          onChange={handleVolumeChange}
+          onChange={handleVolumeSliderChange}
           className={styles.volumeSlider}
         />
       </div>

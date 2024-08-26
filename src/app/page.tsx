@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import Loading from '@/app/loading';
 
 const Page = () => {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [recentlyPlayed, setRecentlyPlayed] = useState<MusicList[]>([]);
   const [newReleases, setNewReleases] = useState<MusicList[]>([]);
   const [popularTracks, setPopularTracks] = useState<MusicList[]>([]);

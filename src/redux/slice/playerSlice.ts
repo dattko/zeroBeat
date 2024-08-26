@@ -7,12 +7,13 @@ interface PlayerState {
   volume: number;
   progress: number;
   shuffleOn: boolean;
-  repeatMode: number;
-  isPlayerReady: boolean; 
+  isPlayerReady: boolean;
   deviceId: string | null;
   queue: MusicList[];  // 재생목록 상태 추가
   isSDKLoaded: boolean;
+  repeatMode: number; 
   currentTrackIndex: number; 
+  duration: number; 
   recommendations: { [key: string]: MusicList[] };
 }
 
@@ -23,12 +24,13 @@ const initialState: PlayerState = {
   progress: 0,
   shuffleOn: false,
   repeatMode: 0,
-  isPlayerReady: false, 
+  isPlayerReady: false,
   deviceId: null,
   queue: [],  // 초기값으로 빈 배열 추가
   isSDKLoaded: false,
   currentTrackIndex: -1,
   recommendations: {},
+  duration: 0,
 };
 
 const playerSlice = createSlice({
@@ -60,18 +62,15 @@ const playerSlice = createSlice({
       state.deviceId = action.payload;
     },
     addToQueue: (state, action: PayloadAction<MusicList>) => {
-      state.queue.push(action.payload); 
-    },
-    newToQueue: (state, action: PayloadAction<MusicList>) => {
-      state.queue.push(action.payload); 
+      state.queue.push(action.payload);
     },
     removeFromQueue: (state, action: PayloadAction<string>) => {
-      state.queue = state.queue.filter(track => track.uri !== action.payload); 
+      state.queue = state.queue.filter(track => track.uri !== action.payload);
     },
     clearQueue: (state) => {
-      state.queue = [];  
+      state.queue = [];
     },
-    setQueue: (state, action: PayloadAction<MusicList[]>) => {  
+    setQueue: (state, action: PayloadAction<MusicList[]>) => {
       state.queue = action.payload;
     },
     setIsSDKLoaded: (state, action: PayloadAction<boolean>) => {
@@ -80,11 +79,14 @@ const playerSlice = createSlice({
     setCurrentTrackIndex: (state, action: PayloadAction<number>) => {
       state.currentTrackIndex = action.payload;
     },
+    setDuration: (state, action: PayloadAction<number>) => {
+      state.duration = action.payload;
+    },
     nextTrack: (state) => {
       if (state.currentTrackIndex < state.queue.length - 1) {
         state.currentTrackIndex += 1;
         state.currentTrack = state.queue[state.currentTrackIndex];
-      } else if (state.repeatMode === 2) { 
+      } else if (state.repeatMode === 2) {  // Repeat all
         state.currentTrackIndex = 0;
         state.currentTrack = state.queue[0];
       }
@@ -93,7 +95,7 @@ const playerSlice = createSlice({
       if (state.currentTrackIndex > 0) {
         state.currentTrackIndex -= 1;
         state.currentTrack = state.queue[state.currentTrackIndex];
-      } else if (state.repeatMode === 2) { 
+      } else if (state.repeatMode === 2) {  // Repeat all
         state.currentTrackIndex = state.queue.length - 1;
         state.currentTrack = state.queue[state.currentTrackIndex];
       }
@@ -113,11 +115,12 @@ export const {
   addToQueue,
   removeFromQueue,
   clearQueue,
+  setQueue,
   setIsSDKLoaded,
   setCurrentTrackIndex,
+  setDuration, 
   nextTrack,
   previousTrack,
-  setQueue,
 } = playerSlice.actions;
 
 export default playerSlice.reducer;

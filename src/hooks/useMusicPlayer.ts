@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
 import { 
   setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, 
-  setIsSDKLoaded, setQueue, nextTrack, previousTrack, setCurrentTrackIndex 
+  setIsSDKLoaded, setQueue, nextTrack, previousTrack, setCurrentTrackIndex,
+  setVolume, setProgress, setRepeatMode
 } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { 
@@ -19,10 +20,11 @@ export const useMusicPlayer = () => {
   const { data: session } = useSession();
   const { 
     isPlayerReady, deviceId, isSDKLoaded, currentTrackIndex, 
-    queue, currentTrack, isPlaying 
+    queue, currentTrack, isPlaying, volume, progress, repeatMode 
   } = useSelector((state: RootState) => state.player);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
+  const [duration, setDuration] = useState<number>(0);  // Add duration state
 
   const initializePlayer = useCallback(() => {
     if (!session?.user?.accessToken || isSDKLoaded || isInitializing) return;
@@ -63,6 +65,14 @@ export const useMusicPlayer = () => {
         dispatch(setIsPlayerReady(false));
       });
 
+      newPlayer.addListener('player_state_changed', (state) => {
+        console.log(state.duration);
+        if (state) {
+          dispatch(setProgress(state.position));
+          setDuration(state.duration);
+        }
+      });
+
       newPlayer.connect();
       setPlayer(newPlayer);
     };
@@ -77,52 +87,63 @@ export const useMusicPlayer = () => {
       setError('No access token available');
       return;
     }
-
+  
     if (!isPlayerReady) {
       setError('Player is not ready. Please wait and try again.');
       return;
     }
-
+  
     if (!deviceId) {
       setError('No active device found. Please refresh the page and try again.');
       return;
     }
-
+  
     dispatch(setCurrentTrack(track));
     dispatch(setIsPlaying(true));
-
-    // 플레이리스트에서 재생하는 경우 해당 인덱스를 사용, 그렇지 않으면 0으로 설정
     dispatch(setCurrentTrackIndex(playlistIndex !== null ? playlistIndex : 0));
-
+  
     try {
       const isDeviceActivated = await activateDevice(session, deviceId);
       if (!isDeviceActivated) {
         throw new Error('Failed to activate device');
       }
-
+  
       const isPlayed = await playTrack(session, track, isPlayerReady, deviceId);
       if (!isPlayed) {
         throw new Error('Failed to play track');
       }
-
+  
+      // 단일 곡 반복 모드에서는 곡의 시작으로 되돌리기 제거
+      if (repeatMode === 1 && player) {
+        player.seek(0);
+      }
+  
       if (updateQueue) {
-        // 추천 트랙 가져오기
         const recommendations = await getRecommendations(track.id);
-
-        // 큐 초기화 후 선택한 트랙과 추천 트랙 추가
         const newQueue = [track, ...recommendations];
         dispatch(setQueue(newQueue));
       }
-
+  
     } catch (err) {
       console.error('Error playing track:', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     }
   };
+  
 
-
+  const playTrackFromPlaylist = async (track: MusicListType, index: number) => {
+    await handlePlayTrack(track, false, index);  
+  };
 
   const handleNextTrack = async () => {
+    if (repeatMode === 1) {
+      // 단일 곡 반복 모드일 경우, 현재 곡을 다시 재생
+      if (currentTrack) {
+        await handlePlayTrack(currentTrack, false, currentTrackIndex);
+      }
+      return;
+    }
+  
     dispatch(nextTrack());
     if (currentTrackIndex < queue.length - 1) {
       const nextTrackToPlay = queue[currentTrackIndex + 1];
@@ -137,11 +158,17 @@ export const useMusicPlayer = () => {
     }
   };
 
-  const playTrackFromPlaylist = async (track: MusicListType, index: number) => {
-    await handlePlayTrack(track, false, index);  
-  };
+
 
   const handlePreviousTrack = async () => {
+    if (repeatMode === 1) {
+      // 단일 곡 반복 모드일 경우, 현재 곡을 다시 재생
+      if (repeatMode !== 1) {
+        player?.seek(0); 
+      }
+      return;
+    }
+  
     dispatch(previousTrack());
     if (currentTrackIndex > 0) {
       const prevTrackToPlay = queue[currentTrackIndex - 1];
@@ -175,6 +202,24 @@ export const useMusicPlayer = () => {
     }
   };
 
+  const handleVolumeChange = async (volume: number) => {
+    if (player) {
+      try {
+        await player.setVolume(volume / 100);
+        dispatch(setVolume(volume));
+      } catch (err) {
+        console.error('Error changing volume:', err);
+        setError('Failed to change volume. Please try again.');
+      }
+    }
+    console.log(volume);
+  };
+
+  const handleRepeatMode = () => {
+    const newRepeatMode = (repeatMode + 1) % 3; 
+    dispatch(setRepeatMode(newRepeatMode));
+  };
+
   const loadMoreTracks = useCallback(async () => {
     if (!currentTrack) return;
 
@@ -186,9 +231,20 @@ export const useMusicPlayer = () => {
       setError('Failed to load more tracks. Please try again.');
     }
   }, [currentTrack, queue, dispatch]);
-   
+
+  const handleProgressChange = async (newProgress: number) => {
+    if (player) {
+      try {
+        player.seek(newProgress * 1000); // seek 메서드는 밀리초 단위로 입력받습니다.
+        dispatch(setProgress(newProgress)); // 상태 업데이트
+      } catch (err) {
+        console.error('Error changing progress:', err);
+        setError('Failed to change progress. Please try again.');
+      }
+    }
+  };
+
   useEffect(() => {
-    // 현재 트랙이 변경될 때마다 실행
     if (currentTrack && session && deviceId && isPlayerReady) {
       playTrack(session, currentTrack, isPlayerReady, deviceId)
         .catch(err => {
@@ -198,5 +254,19 @@ export const useMusicPlayer = () => {
     }
   }, [currentTrack, session, deviceId, isPlayerReady]);
 
-  return { handlePlayTrack, handleNextTrack, handlePreviousTrack, handlePlayPause, playTrackFromPlaylist,loadMoreTracks, error, isPlayerReady };
+  return { 
+    handlePlayTrack, 
+    handleNextTrack, 
+    handlePreviousTrack, 
+    handlePlayPause, 
+    playTrackFromPlaylist,
+    handleVolumeChange,
+    handleRepeatMode,
+    loadMoreTracks, 
+    handleProgressChange, // 추가된 함수
+    error, 
+    isPlayerReady, 
+    duration,
+    progress
+  };
 };

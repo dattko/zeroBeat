@@ -1,13 +1,11 @@
 "use client"
 import React, { useState, useRef, useEffect } from "react"
 import styled from "styled-components"
-import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { searchSpotify } from "@/lib/spotify"
 import { MusicList, Artist, SearchResults } from "@/types/spotify"
 
 export const SearchComponent = () => {
-  const { data: session } = useSession()
   const [searchTerm, setSearchTerm] = useState("")
   const [searchResults, setSearchResults] = useState<SearchResults>({
     tracks: [],
@@ -95,7 +93,6 @@ export const SearchComponent = () => {
       </button>
       {isFocused && searchTerm.trim() && (
         <InputContent>
-          {!session && <span>로그인 후 이용해 주세요.</span>}
           {error && <p>{error}</p>}
           <SearchUl>
             {searchResults.tracks.map((track) => (
