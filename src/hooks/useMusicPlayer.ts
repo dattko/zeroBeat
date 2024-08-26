@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { 
   setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, 
   setIsSDKLoaded, setQueue, nextTrack, previousTrack, setCurrentTrackIndex,
-  setVolume, setProgress, setRepeatMode
+  setVolume, setProgress, setRepeatMode, setDuration
 } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { 
@@ -24,7 +24,6 @@ export const useMusicPlayer = () => {
   } = useSelector((state: RootState) => state.player);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
-  const [duration, setDuration] = useState<number>(0);  // Add duration state
 
   const initializePlayer = useCallback(() => {
     if (!session?.user?.accessToken || isSDKLoaded || isInitializing) return;
@@ -66,10 +65,10 @@ export const useMusicPlayer = () => {
       });
 
       newPlayer.addListener('player_state_changed', (state) => {
-        console.log(state.duration);
         if (state) {
-          dispatch(setProgress(state.position));
-          setDuration(state.duration);
+          const { position, duration } = state;
+          dispatch(setProgress(position / 1000)); 
+          dispatch(setDuration(duration / 1000)); 
         }
       });
 
@@ -78,10 +77,12 @@ export const useMusicPlayer = () => {
     };
   }, [session, isSDKLoaded, dispatch]);
 
+  
   useEffect(() => {
     initializePlayer();
   }, [initializePlayer]);
 
+  
   const handlePlayTrack = async (track: MusicListType, updateQueue: boolean = true, playlistIndex: number | null = null) => {
     if (!session?.user?.accessToken) {
       setError('No access token available');
@@ -129,7 +130,6 @@ export const useMusicPlayer = () => {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     }
   };
-  
 
   const playTrackFromPlaylist = async (track: MusicListType, index: number) => {
     await handlePlayTrack(track, false, index);  
@@ -157,8 +157,6 @@ export const useMusicPlayer = () => {
       }
     }
   };
-
-
 
   const handlePreviousTrack = async () => {
     if (repeatMode === 1) {
@@ -212,7 +210,6 @@ export const useMusicPlayer = () => {
         setError('Failed to change volume. Please try again.');
       }
     }
-    console.log(volume);
   };
 
   const handleRepeatMode = () => {
@@ -231,11 +228,11 @@ export const useMusicPlayer = () => {
       setError('Failed to load more tracks. Please try again.');
     }
   }, [currentTrack, queue, dispatch]);
-
+  
   const handleProgressChange = async (newProgress: number) => {
     if (player) {
       try {
-        player.seek(newProgress * 1000); // seek 메서드는 밀리초 단위로 입력받습니다.
+        player.seek(newProgress * 1000); // 밀리초 단위로 변환
         dispatch(setProgress(newProgress)); // 상태 업데이트
       } catch (err) {
         console.error('Error changing progress:', err);
@@ -243,6 +240,14 @@ export const useMusicPlayer = () => {
       }
     }
   };
+
+  const getCurrentTime = useCallback(async (): Promise<number> => {
+    if (player) {
+      const state = await player.getCurrentState();
+      return state ? state.position / 1000 : 0;
+    }
+    return 0;
+  }, [player]);
 
   useEffect(() => {
     if (currentTrack && session && deviceId && isPlayerReady) {
@@ -263,10 +268,10 @@ export const useMusicPlayer = () => {
     handleVolumeChange,
     handleRepeatMode,
     loadMoreTracks, 
-    handleProgressChange, // 추가된 함수
+    handleProgressChange, 
     error, 
     isPlayerReady, 
-    duration,
-    progress
+    progress,
+    getCurrentTime
   };
 };
