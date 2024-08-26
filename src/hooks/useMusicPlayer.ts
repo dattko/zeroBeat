@@ -1,36 +1,47 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
-import { setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack, setCurrentTrackIndex } from '@redux/slice/playerSlice';
+import { 
+  setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, 
+  setIsSDKLoaded, setQueue, nextTrack, previousTrack, setCurrentTrackIndex 
+} from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
-import { activateDevice, playTrack, getRecommendations, pausePlayback, resumePlayback } from '@/lib/spotify';
+import { 
+  activateDevice, playTrack, getRecommendations, 
+  pausePlayback, resumePlayback 
+} from '@/lib/spotify';
 import { MusicList as MusicListType, SpotifySDK } from '@/types/spotify';
+
+let isInitializing = false;
 
 export const useMusicPlayer = () => {
   const dispatch = useDispatch();
   const { data: session } = useSession();
   const { 
-    isPlayerReady, 
-    deviceId, 
-    isSDKLoaded, 
-    currentTrackIndex, 
-    queue, 
-    currentTrack,
-    isPlaying
+    isPlayerReady, deviceId, isSDKLoaded, currentTrackIndex, 
+    queue, currentTrack, isPlaying 
   } = useSelector((state: RootState) => state.player);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
 
-
   const initializePlayer = useCallback(() => {
-    if (!session?.user?.accessToken || isSDKLoaded) return; 
+    if (!session?.user?.accessToken || isSDKLoaded || isInitializing) return;
+
+    isInitializing = true;
 
     const script = document.createElement('script');
     script.src = 'https://sdk.scdn.co/spotify-player.js';
     script.async = true;
 
     script.onload = () => {
-      dispatch(setIsSDKLoaded(true)); 
+      dispatch(setIsSDKLoaded(true));
+      isInitializing = false;
+    };
+
+    script.onerror = () => {
+      console.error('Failed to load Spotify SDK');
+      setError('Failed to load Spotify SDK');
+      isInitializing = false;
     };
 
     document.body.appendChild(script);
@@ -53,16 +64,13 @@ export const useMusicPlayer = () => {
       });
 
       newPlayer.connect();
-      setPlayer(newPlayer); 
+      setPlayer(newPlayer);
     };
   }, [session, isSDKLoaded, dispatch]);
 
-
   useEffect(() => {
-    if (!isSDKLoaded) {
-      initializePlayer(); // isSDKLoaded가 false일 때만 초기화 로직 실행
-    }
-  }, [initializePlayer, isSDKLoaded]);
+    initializePlayer();
+  }, [initializePlayer]);
 
   const handlePlayTrack = async (track: MusicListType, updateQueue: boolean = true, playlistIndex: number | null = null) => {
     if (!session?.user?.accessToken) {
