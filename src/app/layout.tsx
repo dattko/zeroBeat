@@ -3,7 +3,6 @@ import type { Metadata } from "next"
 import "@style/globals.scss"
 import Wrap from "@/componenets/wrap"
 import { AuthProvider } from "@/provider/AuthProvider"
-import ReduxProvider from '@redux/provider';
 
 export const metadata: Metadata = {
   title: "ZeroBeat",

@@ -80,6 +80,10 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     return `${minutes}:${seconds}`;
   };
 
+  const handleControlClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); 
+  };
+
   return (
     <div className={styles.playerBarContainer} onClick={onTogglePlayList}>
       {/* 트랙 정보 */}
@@ -92,7 +96,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
       </div>
       
       {/* 플레이어 컨트롤 */}
-      <div className={styles.playerControls}>
+      <div className={styles.playerControls} onClick={handleControlClick}>
         <button onClick={handlePreviousTrack} className={styles.controlButton}>Previous</button>
         <button onClick={handlePlayPause} className={styles.controlButton}>
           {isPlaying ? 'Pause' : 'Play'}
@@ -104,7 +108,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
       </div>
       
       {/* 프로그레스 바 */}
-      <div className={styles.progressControl}>
+      <div className={styles.progressControl} onClick={handleControlClick}>
         <input
           type="range"
           min="0"
@@ -119,7 +123,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
       </div>
       
       {/* 볼륨 컨트롤 */}
-      <div className={styles.volumeControl}>
+      <div className={styles.volumeControl} onClick={handleControlClick}>
         <input
           type="range"
           min="0"
@@ -128,6 +132,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
           onChange={handleVolumeSliderChange}
           className={styles.volumeSlider}
         />
+        <span>{volume}</span>
       </div>
       
       {/* 다음 트랙 정보 */}
