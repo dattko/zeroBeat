@@ -3,14 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 import styles from './Spotify.module.scss';
-
+import { setCurrentTime, setProgress } from '@redux/slice/playerSlice';
 interface PlaybarProps {
   onTogglePlayList: () => void;
 }
 
 const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
-  const { currentTrack, isPlaying, volume, queue, currentTrackIndex, progress, duration, repeatMode } = useSelector((state: RootState) => state.player);
-  const [currentTime, setCurrentTime] = useState(0);
+  const dispatch = useDispatch();
+  const { currentTrack, isPlaying, volume, queue, currentTrackIndex, progress, duration, repeatMode, currentTime, } = useSelector((state: RootState) => state.player);
+  const [localCurrentTime, setLocalCurrentTime] = useState(0);
 
   const { 
     handleNextTrack, 
@@ -20,7 +21,13 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     handleRepeatMode, 
     handleProgressChange,
     getCurrentTime,
+    initializePlayer
   } = useMusicPlayer();
+
+  useEffect(() => {
+    console.log('새로로고침');
+    initializePlayer();
+  }, [initializePlayer]);
 
   // 스페이스바 제어를 위한 이벤트 핸들러
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
@@ -54,21 +61,24 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     if (isPlaying) {
       interval = setInterval(async () => {
         const time = await getCurrentTime();
-        setCurrentTime(time);
+        setLocalCurrentTime(time);
+        dispatch(setCurrentTime(time));
+        dispatch(setProgress(time / duration * 100));
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isPlaying, getCurrentTime]);
+  }, [isPlaying, getCurrentTime, dispatch, duration]);
 
   const handleVolumeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(e.target.value);
     handleVolumeChange(newVolume); 
   };
 
-  const handleProgressChangeWrapper = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProgressChangeWrapper = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newProgress = Number(e.target.value);
+    setLocalCurrentTime(newProgress);
     handleProgressChange(newProgress);
-  };
+  }, [handleProgressChange]);
 
   if (!currentTrack) return null;
 
@@ -83,6 +93,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
   const handleControlClick = (e: React.MouseEvent) => {
     e.stopPropagation(); 
   };
+
 
   return (
     <div className={styles.playerBarContainer} onClick={onTogglePlayList}>
@@ -108,17 +119,17 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
       </div>
       
       {/* 프로그레스 바 */}
-      <div className={styles.progressControl} onClick={handleControlClick}>
+<div className={styles.progressControl} onClick={handleControlClick}>
         <input
           type="range"
           min="0"
           max={duration}
-          value={currentTime}
+          value={localCurrentTime}
           onChange={handleProgressChangeWrapper}
           className={styles.progressSlider}
         />
         <div className={styles.progressTime}>
-          <span>{formatTime(currentTime)}</span> / <span>{formatTime(duration)}</span>
+          <span>{formatTime(localCurrentTime)}</span> / <span>{formatTime(duration)}</span>
         </div>
       </div>
       

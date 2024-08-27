@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
+import { usePlayTrack } from './usePlayTrack';
 import { 
-  setCurrentTrack, setIsPlaying, setDeviceId, setIsPlayerReady, 
-  setIsSDKLoaded, setQueue, nextTrack, previousTrack, setCurrentTrackIndex,
-  setVolume, setProgress, setRepeatMode, setDuration
+  setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack, setVolume, setProgress, setRepeatMode, setDuration
 } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { 
@@ -22,6 +21,7 @@ export const useMusicPlayer = () => {
     isPlayerReady, deviceId, isSDKLoaded, currentTrackIndex, 
     queue, currentTrack, isPlaying, volume, progress, repeatMode 
   } = useSelector((state: RootState) => state.player);
+  const { handlePlayTrack } = usePlayTrack();
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
 
@@ -76,60 +76,6 @@ export const useMusicPlayer = () => {
       setPlayer(newPlayer);
     };
   }, [session, isSDKLoaded, dispatch]);
-
-  
-  useEffect(() => {
-    initializePlayer();
-  }, [initializePlayer]);
-
-  
-  const handlePlayTrack = async (track: MusicListType, updateQueue: boolean = true, playlistIndex: number | null = null) => {
-    if (!session?.user?.accessToken) {
-      setError('No access token available');
-      return;
-    }
-  
-    if (!isPlayerReady) {
-      setError('Player is not ready. Please wait and try again.');
-      return;
-    }
-  
-    if (!deviceId) {
-      setError('No active device found. Please refresh the page and try again.');
-      return;
-    }
-  
-    dispatch(setCurrentTrack(track));
-    dispatch(setIsPlaying(true));
-    dispatch(setCurrentTrackIndex(playlistIndex !== null ? playlistIndex : 0));
-  
-    try {
-      const isDeviceActivated = await activateDevice(session, deviceId);
-      if (!isDeviceActivated) {
-        throw new Error('Failed to activate device');
-      }
-  
-      const isPlayed = await playTrack(session, track, isPlayerReady, deviceId);
-      if (!isPlayed) {
-        throw new Error('Failed to play track');
-      }
-  
-      // 단일 곡 반복 모드에서는 곡의 시작으로 되돌리기 제거
-      if (repeatMode === 1 && player) {
-        player.seek(0);
-      }
-  
-      if (updateQueue) {
-        const recommendations = await getRecommendations(track.id);
-        const newQueue = [track, ...recommendations];
-        dispatch(setQueue(newQueue));
-      }
-  
-    } catch (err) {
-      console.error('Error playing track:', err);
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    }
-  };
 
   const playTrackFromPlaylist = async (track: MusicListType, index: number) => {
     await handlePlayTrack(track, false, index);  
@@ -263,6 +209,33 @@ export const useMusicPlayer = () => {
         });
     }
   }, [currentTrack, session, deviceId, isPlayerReady]);
+  const restorePlayerState = useCallback(async () => {
+    if (player && currentTrack && session && deviceId && isPlayerReady) {
+      const state = await player.getCurrentState();
+      if (state && state.paused) {
+        playTrack(session, currentTrack, isPlayerReady, deviceId)
+          .catch(err => {
+            console.error('Error restoring track:', err);
+            setError('Failed to restore track. Please try again.');
+          });
+      }
+    }
+  }, [player, currentTrack, session, deviceId, isPlayerReady]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        restorePlayerState();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [restorePlayerState]);
+
 
   return { 
     handlePlayTrack, 
@@ -277,6 +250,7 @@ export const useMusicPlayer = () => {
     error, 
     isPlayerReady, 
     progress,
-    getCurrentTime
+    getCurrentTime,
+    initializePlayer
   };
 };

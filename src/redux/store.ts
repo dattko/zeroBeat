@@ -1,8 +1,7 @@
 import { combineReducers,configureStore } from '@reduxjs/toolkit'
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import modalSlice from '@redux/slice/modalSlice'
 import playerSlice from '@redux/slice/playerSlice'
-import sp from '@redux/slice/spotifySlice'
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import spotifySlice from '@redux/slice/spotifySlice';
 
 const rootReducer = combineReducers({

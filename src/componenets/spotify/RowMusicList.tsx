@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { MusicList as MusicListType } from '@/types/spotify';
-import { useMusicPlayer } from '@/hooks/useMusicPlayer';
+import { usePlayTrack } from '@/hooks/usePlayTrack';
 
 interface RowMusicListProps {
   data: MusicListType[];
@@ -10,7 +10,7 @@ interface RowMusicListProps {
 }
 
 const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit }) => {
-  const { handlePlayTrack } = useMusicPlayer();
+  const { handlePlayTrack } = usePlayTrack();
   const displayData = limit ? data.slice(0, limit) : data;
 
   return (

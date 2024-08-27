@@ -15,6 +15,7 @@ interface PlayerState {
   currentTrackIndex: number; 
   duration: number; 
   recommendations: { [key: string]: MusicList[] };
+  currentTime: number;
 }
 
 const initialState: PlayerState = {
@@ -31,6 +32,7 @@ const initialState: PlayerState = {
   currentTrackIndex: -1,
   recommendations: {},
   duration: 0,
+  currentTime: 0,
 };
 
 const playerSlice = createSlice({
@@ -82,6 +84,9 @@ const playerSlice = createSlice({
     setDuration: (state, action: PayloadAction<number>) => {
       state.duration = action.payload;
     },
+    setCurrentTime: (state, action: PayloadAction<number>) => {
+      state.currentTime = action.payload;
+    },
     nextTrack: (state) => {
       if (state.currentTrackIndex < state.queue.length - 1) {
         state.currentTrackIndex += 1;
@@ -121,6 +126,7 @@ export const {
   setDuration, 
   nextTrack,
   previousTrack,
+  setCurrentTime
 } = playerSlice.actions;
 
 export default playerSlice.reducer;

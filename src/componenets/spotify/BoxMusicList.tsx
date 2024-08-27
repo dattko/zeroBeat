@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { MusicList as MusicListType } from '@/types/spotify';
 import SwiperWrap from '@component/swiper/SwiperWrap';
-import { useMusicPlayer } from '@/hooks/useMusicPlayer';
+import { usePlayTrack } from '@/hooks/usePlayTrack';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
@@ -14,7 +14,7 @@ interface BoxMusicListProps {
 }
 
 const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type }) => {
-  const { handlePlayTrack } = useMusicPlayer();
+  const { handlePlayTrack } = usePlayTrack();
   const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
   
   const handleItemClick = (item: MusicListType) => {
