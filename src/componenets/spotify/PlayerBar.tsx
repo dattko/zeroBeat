@@ -24,10 +24,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     initializePlayer
   } = useMusicPlayer();
 
-  useEffect(() => {
-    console.log('새로로고침');
-    initializePlayer();
-  }, [initializePlayer]);
+  initializePlayer();
 
   // 스페이스바 제어를 위한 이벤트 핸들러
   const handleKeyPress = useCallback((event: KeyboardEvent) => {

@@ -7,10 +7,9 @@ import {
 } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { 
-  activateDevice, playTrack, getRecommendations, 
-  pausePlayback, resumePlayback 
+  playTrack, getRecommendations, pausePlayback, resumePlayback 
 } from '@/lib/spotify';
-import { MusicList as MusicListType, SpotifySDK } from '@/types/spotify';
+import {SpotifySDK } from '@/types/spotify';
 
 let isInitializing = false;
 
@@ -77,9 +76,6 @@ export const useMusicPlayer = () => {
     };
   }, [session, isSDKLoaded, dispatch]);
 
-  const playTrackFromPlaylist = async (track: MusicListType, index: number) => {
-    await handlePlayTrack(track, false, index);  
-  };
 
   const handleNextTrack = async () => {
     if (repeatMode === 1) {
@@ -242,7 +238,6 @@ export const useMusicPlayer = () => {
     handleNextTrack, 
     handlePreviousTrack, 
     handlePlayPause, 
-    playTrackFromPlaylist,
     handleVolumeChange,
     handleRepeatMode,
     loadMoreTracks, 

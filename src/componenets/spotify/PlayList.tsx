@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
-import { FixedSizeList as List, ListOnItemsRenderedProps } from 'react-window';
+import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
-import { MusicList } from '@/types/spotify';
 import styles from './Spotify.module.scss';
-import { useMusicPlayer } from '@/hooks/useMusicPlayer';
+import { usePlayList } from '@/hooks/usePlayList';
 
 interface PlayListProps {
   isOpen: boolean;
@@ -14,8 +13,7 @@ interface PlayListProps {
 const PlayList: React.FC<PlayListProps> = ({ isOpen }) => {
   const queue = useSelector((state: RootState) => state.player.queue);
   const currentTrackIndex = useSelector((state: RootState) => state.player.currentTrackIndex);
-  const { playTrackFromPlaylist, loadMoreTracks, error: playerError } = useMusicPlayer();
-
+  const { playTrackFromPlaylist, loadMoreTracks, error: playerError } = usePlayList();
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<List | null>(null);
   const [listHeight, setListHeight] = useState(400);
