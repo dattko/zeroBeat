@@ -46,7 +46,7 @@ const playerSlice = createSlice({
     setVolume: (state, action: PayloadAction<number>) => {
       state.volume = action.payload;
     },
-    setProgress: (state, action: PayloadAction<number>) => {
+    setProgress: (state, action: PayloadAction<nuㄴmber>) => {
       state.progress = action.payload;
     },
     toggleShuffle: (state) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
@@ -18,9 +18,36 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     handlePlayPause, 
     handleVolumeChange, 
     handleRepeatMode, 
-    handleProgressChange ,
-    getCurrentTime
+    handleProgressChange,
+    getCurrentTime,
   } = useMusicPlayer();
+
+  // 스페이스바 제어를 위한 이벤트 핸들러
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    // 입력 요소나 contentEditable 요소에 포커스가 있는 경우 무시
+    if (
+      event.target instanceof HTMLInputElement ||
+      event.target instanceof HTMLTextAreaElement ||
+      (event.target instanceof HTMLElement && event.target.isContentEditable)
+    ) {
+      return;
+    }
+
+    if (event.code === 'Space') {
+      event.preventDefault(); // 스크롤 방지
+      handlePlayPause();
+    }
+  }, [handlePlayPause]);
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 이벤트 리스너 추가
+    document.addEventListener('keydown', handleKeyPress);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -37,12 +64,12 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     const newVolume = Number(e.target.value);
     handleVolumeChange(newVolume); 
   };
+
   const handleProgressChangeWrapper = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newProgress = Number(e.target.value);
     handleProgressChange(newProgress);
   };
 
-  
   if (!currentTrack) return null;
 
   const nextTrackInfo = queue[currentTrackIndex + 1];
@@ -54,7 +81,8 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
   };
 
   return (
-<div className={styles.playerBarContainer} onClick={onTogglePlayList}>
+    <div className={styles.playerBarContainer} onClick={onTogglePlayList}>
+      {/* 트랙 정보 */}
       <div className={styles.trackInfo}>
         <img src={currentTrack.album_art_url} alt={currentTrack.album} className={styles.albumArt} />
         <div className={styles.textInfo}>
@@ -62,6 +90,8 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
           <p className={styles.artistName}>{currentTrack.artist}</p>
         </div>
       </div>
+      
+      {/* 플레이어 컨트롤 */}
       <div className={styles.playerControls}>
         <button onClick={handlePreviousTrack} className={styles.controlButton}>Previous</button>
         <button onClick={handlePlayPause} className={styles.controlButton}>
@@ -72,6 +102,8 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
           Repeat: {repeatMode === 0 ? 'Off' : repeatMode === 1 ? 'Single' : 'All'}
         </button>
       </div>
+      
+      {/* 프로그레스 바 */}
       <div className={styles.progressControl}>
         <input
           type="range"
@@ -85,6 +117,8 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
           <span>{formatTime(currentTime)}</span> / <span>{formatTime(duration)}</span>
         </div>
       </div>
+      
+      {/* 볼륨 컨트롤 */}
       <div className={styles.volumeControl}>
         <input
           type="range"
@@ -95,6 +129,8 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
           className={styles.volumeSlider}
         />
       </div>
+      
+      {/* 다음 트랙 정보 */}
       {nextTrackInfo && (
         <div className={styles.nextTrackInfo}>
           <p>Next: {nextTrackInfo.title} - {nextTrackInfo.artist}</p>
@@ -105,4 +141,3 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
 };
 
 export default PlayerBar;
-

@@ -6,6 +6,7 @@ import type { MusicList, SpotifyTrack,  } from '@/types/spotify';
 import { getPopularTracks, transformTrack } from '@/lib/spotify';
 import Loading from '@/app/loading';
 import axios from 'axios';
+import RowMusicList from '@/componenets/spotify/RowMusicList';
 
 const Chart = () => {
   const { data: session } = useSession();
@@ -23,7 +24,6 @@ const Chart = () => {
             const [popularTracksData] = await Promise.all([
               getPopularTracks()
             ]);
-            // console.log('Popular Tracks Data:', popularTracksData);
             setPopularTracks(popularTracksData.tracks.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -41,12 +41,7 @@ const Chart = () => {
     return (
         <>
       <Section>
-        <SectionTitleBox>
-            <SectionTitle>
-                    최근 인기 곡
-            </SectionTitle>
-            </SectionTitleBox>
-            <MusucList musicData={popularTracks}/>
+        <RowMusicList title='Global 차트' data={popularTracks}/>
       </Section>
         </>
     )
@@ -54,38 +49,6 @@ const Chart = () => {
 
 export default Chart;
 
-interface MusucListProps {
-    musicData: MusicList[]; 
-  }
-  
-  const MusucList: React.FC<MusucListProps> = ({ musicData }) => {
-    return (
-      <MusinListContainer>
-        <MusinListUl>
-          {musicData
-          .map((song, i) => (
-            <MusinListLi key={song.id}>
-              <MusicInfoText width='30px' $grey $center>
-                {i + 1}
-              </MusicInfoText>
-              <AlbumImge $small>
-              <img src={song.album_art_url} alt={song.title} />
-              </AlbumImge>
-              <MusicInfoTitle $regular>{song.title}</MusicInfoTitle>
-              <MusicInfoText width='22%'>{song.artist}</MusicInfoText>
-              <MusicInfoText width='22%'>{song.album}</MusicInfoText>
-              <MusicInfoText $grey width='60px'>
-                {song.duration}
-              </MusicInfoText>
-              <IconBtn>
-                <img src="/icon/three-dot.svg" alt="재생" />
-              </IconBtn>
-            </MusinListLi>
-          ))}
-        </MusinListUl>
-      </MusinListContainer>
-    );
-  };
 
 
 const Section = styled.div`

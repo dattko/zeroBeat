@@ -181,9 +181,14 @@ export const useMusicPlayer = () => {
     }
   };
 
-  const handlePlayPause = async () => {
+  const handlePlayPause = useCallback(async () => {
     if (!session) {
       setError('No session available');
+      return;
+    }
+
+    if (!currentTrack) {
+      window.alert('플레이어바가 없습니다. 음악을 먼저 선택해주세요.');
       return;
     }
 
@@ -198,7 +203,7 @@ export const useMusicPlayer = () => {
       console.error('Error toggling play/pause:', err);
       setError('Failed to toggle play/pause. Please try again.');
     }
-  };
+  }, [session, currentTrack, isPlaying, deviceId, dispatch]);
 
   const handleVolumeChange = async (volume: number) => {
     if (player) {
