@@ -18,7 +18,7 @@ const Page = () => {
     <PageContainer>
       <BoxMusicList data={recentlyPlayed} title='최근 재생' type="track"/>
       <BoxMusicList data={newReleases} title='NEW 앨범' type="album"/>
-      <RowMusicList title='Global 차트' data={popularTracks} limit={20}/>
+      <RowMusicList title='Global 차트' data={popularTracks} limit={30}/>
     </PageContainer>
   );
 };

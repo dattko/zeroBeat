@@ -24,8 +24,9 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     initializePlayer
   } = useMusicPlayer();
 
-  initializePlayer();
-
+  useEffect(() => {
+    initializePlayer();
+  }, []);
   // 스페이스바 제어를 위한 이벤트 핸들러
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     // 입력 요소나 contentEditable 요소에 포커스가 있는 경우 무시

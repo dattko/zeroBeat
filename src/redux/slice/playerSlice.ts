@@ -16,6 +16,7 @@ interface PlayerState {
   duration: number; 
   recommendations: { [key: string]: MusicList[] };
   currentTime: number;
+  setVisibilityChange: boolean;
 }
 
 const initialState: PlayerState = {
@@ -33,6 +34,7 @@ const initialState: PlayerState = {
   recommendations: {},
   duration: 0,
   currentTime: 0,
+  setVisibilityChange: false,
 };
 
 const playerSlice = createSlice({
@@ -105,6 +107,9 @@ const playerSlice = createSlice({
         state.currentTrack = state.queue[state.currentTrackIndex];
       }
     },
+    setVisibilityChange: (state, action: PayloadAction<boolean>) => {
+      state.setVisibilityChange = action.payload;
+    }
   },
 });
 
@@ -126,6 +131,7 @@ export const {
   setDuration, 
   nextTrack,
   previousTrack,
+  setVisibilityChange,
   setCurrentTime
 } = playerSlice.actions;
 

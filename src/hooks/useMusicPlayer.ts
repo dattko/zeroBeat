@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
 import { usePlayTrack } from './usePlayTrack';
 import { 
-  setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack, setVolume, setProgress, setRepeatMode, setDuration
+  setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack, setVolume, setProgress, setRepeatMode, setDuration, setVisibilityChange
 } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { 
@@ -128,17 +128,19 @@ export const useMusicPlayer = () => {
       setError('No session available');
       return;
     }
-
+  
     if (!currentTrack) {
       window.alert('플레이어바가 없습니다. 음악을 먼저 선택해주세요.');
       return;
     }
-
+  
     try {
       if (isPlaying) {
         await pausePlayback(session);
+        dispatch(setVisibilityChange(false));
       } else {
         await resumePlayback(session, deviceId);
+        dispatch(setVisibilityChange(true));
       }
       dispatch(setIsPlaying(!isPlaying));
     } catch (err) {
@@ -196,27 +198,33 @@ export const useMusicPlayer = () => {
     return 0;
   }, [player]);
 
-  useEffect(() => {
-    if (currentTrack && session && deviceId && isPlayerReady) {
-      playTrack(session, currentTrack, isPlayerReady, deviceId)
-        .catch(err => {
-          console.error('Error playing track:', err);
-          setError('Failed to play track. Please try again.');
-        });
-    }
-  }, [currentTrack, session, deviceId, isPlayerReady]);
+  // useEffect(() => {
+  //   if (currentTrack && session && deviceId && isPlayerReady) {
+  //     playTrack(session, currentTrack, isPlayerReady, deviceId)
+  //       .catch(err => {
+  //         console.error('Error playing track:', err);
+  //         setError('Failed to play track. Please try again.');
+  //       });
+  //   }
+  // }, [currentTrack, session, deviceId, isPlayerReady]);
+  
   const restorePlayerState = useCallback(async () => {
     if (player && currentTrack && session && deviceId && isPlayerReady) {
       const state = await player.getCurrentState();
-      if (state && state.paused) {
-        playTrack(session, currentTrack, isPlayerReady, deviceId)
-          .catch(err => {
-            console.error('Error restoring track:', err);
-            setError('Failed to restore track. Please try again.');
-          });
+      if (state) {
+        const currentPosition = state.position;
+        if (isPlaying && state.paused) {
+          // 재생 중이어야 하는데 일시정지 상태라면 재생을 재개
+          await resumePlayback(session, deviceId);
+          // 현재 위치로 이동
+          player.seek(currentPosition);
+        } else if (!isPlaying && !state.paused) {
+          // 일시정지 상태여야 하는데 재생 중이라면 일시정지
+          await pausePlayback(session);
+        }
       }
     }
-  }, [player, currentTrack, session, deviceId, isPlayerReady]);
+  }, [player, currentTrack, session, deviceId, isPlayerReady, isPlaying]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -224,9 +232,9 @@ export const useMusicPlayer = () => {
         restorePlayerState();
       }
     };
-
+  
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
+  
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
