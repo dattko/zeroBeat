@@ -3,7 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
 import { searchSpotify, getTrackDetails } from '@/lib/spotify';
-import { MusicList, SearchResults } from '@/types/spotify';
+import { MusicList as MusicListType , SearchResults } from '@/types/spotify';
+import { usePlayTrack } from '@/hooks/usePlayTrack';
+import { useRouter } from 'next/navigation';
+
 
 const SearchResultPage = () => {
   const searchParams = useSearchParams();
@@ -11,9 +14,24 @@ const SearchResultPage = () => {
   const trackId = searchParams.get('id');
   const isSelected = searchParams.get('selected') === 'true';
   const [searchResults, setSearchResults] = useState<SearchResults>({ tracks: [], artists: [], albums: [] });
-  const [selectedTrack, setSelectedTrack] = useState<MusicList | null>(null);
+  const [selectedTrack, setSelectedTrack] = useState<MusicListType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const { handlePlayTrack } = usePlayTrack();
+
+  const handleItemClick = (item: MusicListType, type='string') => {
+    if (type === 'album') {
+      console.log('Album clicked:', item);
+      // router.push(`/album/${item.id}`);
+    }else if (type === 'artist') {
+      console.log('Artist clicked:', item);
+      // router.push(`/album/${item.id}`);
+    }
+     else {
+      handlePlayTrack(item, true);  // null을 전달하여 인덱스를 0으로 설정
+    }
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +87,7 @@ const SearchResultPage = () => {
         <TrackList>
             <ListScroll>
               {searchResults.tracks.map((track) => (
-                <TrackItem key={track.id}>
+                <TrackItem key={track.id} onClick={()=>handleItemClick(track)}>
                   <Image src={track.album_art_url} alt={track.title} />
                   <ColText>
                     <TrackName>{track.title}</TrackName>
@@ -86,7 +104,7 @@ const SearchResultPage = () => {
         <ArtistList>
             <ListScroll>
               {searchResults.artists.map((artist) => (
-                <ArtistItem key={artist.id}>
+                <ArtistItem key={artist.id} onClick={()=>handleItemClick(artist, 'artist')}>
                   <Image src={artist.images?.[0]?.url} alt={artist.name} />
                   <ArtistName>{artist.name}</ArtistName>
                 </ArtistItem>
@@ -100,11 +118,11 @@ const SearchResultPage = () => {
         <AlbumList>
             <ListScroll>
                 {searchResults.albums.map((album) => (
-                    <AlbumItem key={album.id}>
+                    <AlbumItem key={album.id} onClick={()=>handleItemClick(album, 'album')}>
                     <AlbumImage src={album.images?.[0]?.url} alt={album.name} />
                     <ColText>
                         <AlbumName>{album.name}</AlbumName>
-                        <ArtistName>{album.artists.map(a => a.name).join(', ')}</ArtistName>
+                        <ArtistName>{album?.artists?.map(a => a.name).join(', ')}</ArtistName>
                     </ColText>
                     </AlbumItem>
                 ))}

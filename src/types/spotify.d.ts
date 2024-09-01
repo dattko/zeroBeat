@@ -44,9 +44,18 @@ export interface SpotifyPlaylist {
 }
 
 export interface Artist {
-  id?: string;
-  name?: string;
-  images?: { url: string }[];
+  id: string;
+  title: string;
+  uri?: string;
+  artist: string;
+  artists?: { name: string }[];  
+  album: string;
+  album_art_url: string;
+  images?: { url: string }[]; 
+  release_date?: string;
+  duration: string;
+  popularity_rank?: number;
+  name?: string;  
 }
 
 export interface MusicList {
@@ -66,10 +75,17 @@ export interface MusicList {
 
 export interface Album {
   id: string;
-  name: string;
-  artists: { name: string }[];
-  images: { url: string }[];
-  release_date: string;
+  title: string;
+  uri?: string;
+  artist: string;
+  artists?: { name: string }[];  
+  album: string;
+  album_art_url: string;
+  images?: { url: string }[]; 
+  release_date?: string;
+  duration: string;
+  popularity_rank?: number;
+  name?: string;  
 }
 
 export interface SearchResults {

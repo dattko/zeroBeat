@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
 import { usePlayTrack } from './usePlayTrack';
 import { 
-  setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack, setVolume, setProgress, setRepeatMode, setDuration, setVisibilityChange
+  setIsPlaying, setDeviceId, setIsPlayerReady, setIsSDKLoaded, setQueue, nextTrack, previousTrack, setVolume, setProgress, setRepeatMode, setDuration, setVisibilityChange, setCurrentTrackIndex, setCurrentTrack
 } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { 
@@ -23,6 +23,14 @@ export const useMusicPlayer = () => {
   const { handlePlayTrack } = usePlayTrack();
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
+  const currentIndexRef = useRef(currentTrackIndex);
+  const isHandlingTrackEndRef = useRef(false);
+
+
+  useEffect(() => {
+    currentIndexRef.current = currentTrackIndex;
+  }, [currentTrackIndex]);
+
 
   const initializePlayer = useCallback(() => {
     if (!session?.user?.accessToken || isSDKLoaded || isInitializing) return;
@@ -77,51 +85,140 @@ export const useMusicPlayer = () => {
   }, [session, isSDKLoaded, dispatch]);
 
 
-  const handleNextTrack = async () => {
-    if (repeatMode === 1) {
-      // 단일 곡 반복 모드일 경우, 현재 곡을 다시 재생
-      if (currentTrack) {
-        await handlePlayTrack(currentTrack, false, currentTrackIndex);
+  const loadMoreTracks = useCallback(async () => {
+    if (!currentTrack) return;
+
+    try {
+      const recommendations = await getRecommendations(currentTrack.id, 20);
+      dispatch(setQueue([...queue, ...recommendations]));
+    } catch (error) {
+      console.error('Error loading more tracks:', error);
+      setError('Failed to load more tracks. Please try again.');
+    }
+  }, [currentTrack, queue, dispatch]);
+  
+  const handleNextTrack = useCallback(async () => {
+    console.log('Handling next track. Current index:', currentIndexRef.current);
+    let nextIndex = currentIndexRef.current + 1;
+  
+    if (nextIndex >= queue.length) {
+      if (repeatMode === 2) {
+        // 전체 반복 모드일 경우 첫 번째 트랙으로 돌아가기
+        nextIndex = 0;
+      } else {
+        // 대기열의 끝에 도달했을 때 더 많은 트랙을 로드
+        await loadMoreTracks();
+        nextIndex = currentIndexRef.current + 1;
       }
-      return;
     }
   
-    dispatch(nextTrack());
-    if (currentTrackIndex < queue.length - 1) {
-      const nextTrackToPlay = queue[currentTrackIndex + 1];
-      if (session && deviceId && nextTrackToPlay) {
+    const nextTrack = queue[nextIndex];
+    if (nextTrack) {
+      dispatch(setCurrentTrackIndex(nextIndex));
+      dispatch(setCurrentTrack(nextTrack));
+      if (session && deviceId) {
         try {
-          await playTrack(session, nextTrackToPlay, isPlayerReady, deviceId);
+          console.log('Playing next track:', nextTrack.title);
+          await playTrack(session, nextTrack, isPlayerReady, deviceId);
+          dispatch(setIsPlaying(true));
         } catch (err) {
           console.error('Error playing next track:', err);
           setError('Failed to play next track. Please try again.');
         }
       }
+    } else {
+      console.error('No next track available');
     }
-  };
+  }, [queue, repeatMode, session, deviceId, isPlayerReady, dispatch, loadMoreTracks]);
 
-  const handlePreviousTrack = async () => {
-    if (repeatMode === 1) {
-      // 단일 곡 반복 모드일 경우, 현재 곡을 다시 재생
-      if (repeatMode !== 1) {
-        player?.seek(0); 
-      }
-      return;
-    }
   
-    dispatch(previousTrack());
-    if (currentTrackIndex > 0) {
-      const prevTrackToPlay = queue[currentTrackIndex - 1];
-      if (session && deviceId && prevTrackToPlay) {
-        try {
-          await playTrack(session, prevTrackToPlay, isPlayerReady, deviceId);
-        } catch (err) {
-          console.error('Error playing previous track:', err);
-          setError('Failed to play previous track. Please try again.');
+  
+
+  const handlePreviousTrack = useCallback(async () => {
+    console.log('Handling previous track. Current index:', currentIndexRef.current);
+    if (currentIndexRef.current > 0) {
+      const prevIndex = currentIndexRef.current - 1;
+      const prevTrack = queue[prevIndex];
+      if (prevTrack) {
+        dispatch(setCurrentTrackIndex(prevIndex));
+        dispatch(setCurrentTrack(prevTrack));
+        if (session && deviceId) {
+          try {
+            await playTrack(session, prevTrack, isPlayerReady, deviceId);
+          } catch (err) {
+            console.error('Error playing previous track:', err);
+            setError('Failed to play previous track. Please try again.');
+          }
+        }
+      }
+    } else if (repeatMode === 2) {
+      // 전체 반복 모드일 경우 마지막 트랙으로 이동
+      const lastIndex = queue.length - 1;
+      const lastTrack = queue[lastIndex];
+      if (lastTrack) {
+        dispatch(setCurrentTrackIndex(lastIndex));
+        dispatch(setCurrentTrack(lastTrack));
+        if (session && deviceId) {
+          try {
+            await playTrack(session, lastTrack, isPlayerReady, deviceId);
+          } catch (err) {
+            console.error('Error playing last track:', err);
+            setError('Failed to play last track. Please try again.');
+          }
         }
       }
     }
-  };
+  }, [queue, repeatMode, currentIndexRef, session, deviceId, isPlayerReady, dispatch]);
+
+  const handleTrackEnd = useCallback(async () => {
+    if (isHandlingTrackEndRef.current) return;
+    isHandlingTrackEndRef.current = true;
+
+    console.log('Handling track end. Repeat mode:', repeatMode);
+    try {
+      switch (repeatMode) {
+        case 1: // Single track repeat
+          if (currentTrack) {
+            console.log('Repeating current track');
+            await handlePlayTrack(currentTrack, false, currentIndexRef.current);
+          }
+          break;
+        case 0: // No repeat
+        case 2: // Repeat all
+          console.log('Playing next track');
+          await handleNextTrack();
+          break;
+      }
+      // 트랙 변경 후 재생 상태 확인 및 재생 시작
+      dispatch(setIsPlaying(true));
+      if (session && deviceId) {
+        await resumePlayback(session, deviceId);
+      }
+    } catch (error) {
+      console.error('Error handling track end:', error);
+      setError('Failed to play next track. Please try again.');
+    } finally {
+      setTimeout(() => {
+        isHandlingTrackEndRef.current = false;
+      }, 1000);
+    }
+  }, [repeatMode, currentTrack, handlePlayTrack, handleNextTrack, session, deviceId, dispatch]);
+
+  const handlePlayerStateChange = useCallback((state: SpotifySDK.PlaybackState | null) => {
+    if (!state) return;
+  
+    const { position, duration, paused, track_window } = state;
+    dispatch(setProgress(position / 1000));
+    dispatch(setDuration(duration / 1000));
+    dispatch(setIsPlaying(!paused));
+  
+    // 트랙이 끝났는지 정확하게 감지
+    if (position === 0 && paused && track_window.previous_tracks.find(t => t.id === track_window.current_track.id)) {
+      console.log('Track ended, handling next action');
+      handleTrackEnd();
+    }
+  }, [dispatch, handleTrackEnd]);
+
 
   const handlePlayPause = useCallback(async () => {
     if (!session) {
@@ -166,17 +263,6 @@ export const useMusicPlayer = () => {
     dispatch(setRepeatMode(newRepeatMode));
   };
 
-  const loadMoreTracks = useCallback(async () => {
-    if (!currentTrack) return;
-
-    try {
-      const recommendations = await getRecommendations(currentTrack.id, 20);
-      dispatch(setQueue([...queue, ...recommendations]));
-    } catch (error) {
-      console.error('Error loading more tracks:', error);
-      setError('Failed to load more tracks. Please try again.');
-    }
-  }, [currentTrack, queue, dispatch]);
   
   const handleProgressChange = async (newProgress: number) => {
     if (player) {
@@ -239,6 +325,21 @@ export const useMusicPlayer = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [restorePlayerState]);
+
+  useEffect(() => {
+    console.log('Player state changed listener added');
+    if (player) {
+      player.addListener('player_state_changed', handlePlayerStateChange);
+    }
+  
+    return () => {
+      if (player) {
+        player.removeListener('player_state_changed', handlePlayerStateChange);
+        console.log('Player state changed listener removed');
+      }
+    };
+  }, [player, handlePlayerStateChange]);
+  
 
 
   return { 
