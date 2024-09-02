@@ -1,5 +1,6 @@
 import React from "react"
 import Image from "next/image"
+import styles from "./icon.module.scss"
 
 interface IconProps {
   name: string
@@ -17,7 +18,7 @@ const Zicon: React.FC<IconProps> = ({
   const iconPath = `/icon/${name}.svg`
 
   return (
-    <div style={iconBox} onClick={click}>
+    <div className={styles.zicon} onClick={click}>
       <Image src={iconPath} alt={name} width={width} height={height} />
     </div>
   )
@@ -25,12 +26,3 @@ const Zicon: React.FC<IconProps> = ({
 
 export default Zicon
 
-const iconBox: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  width: "32px",
-  height: "32px",
-  borderRadius: "4px",
-  cursor: "pointer",
-}

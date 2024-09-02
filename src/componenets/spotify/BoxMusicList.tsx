@@ -44,7 +44,7 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type }) => {
               </AlbumImge>
               <MusicInfoTitle>{item.title}</MusicInfoTitle>
               <MusicInfoText>{type === 'track' ? item.artist : item.artist || '다양한 아티스트'}</MusicInfoText>
-              {type === 'track' && <MusicInfoText>{item.album}</MusicInfoText>}
+              {type === 'track' && <AlbumInfoText>{item.album}</AlbumInfoText>}
             </SwiperList>
           ))}
         </SwiperWrap>
@@ -62,8 +62,8 @@ const Section = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  margin-bottom: 50px;
+  gap: 20px;
+  margin-bottom: 40px;
 `;
 
 const SectionTitleBox = styled.div`
@@ -80,7 +80,12 @@ const SectionTitle = styled.span`
 const SwiperList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
+  height: 100%;
+  width: 200px;
+  padding: 15px 10px;
+  background-color: rgba(141, 141, 141, 0.1);
+  border-radius: 4px;
 `;
 
 interface AlbumImgeProps {
@@ -88,9 +93,11 @@ interface AlbumImgeProps {
 }
 
 const AlbumImge = styled.div<AlbumImgeProps>`
-  width: ${(props) => (props.$small ? '48px' : '220px')};
-  height: ${(props) => (props.$small ? '48px' : '220px')};
+  width: 180px;
+  height: 180px;
   background-color: #d9d9d9;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 4px;
   img {
     width: 100%;
     height: 100%;
@@ -107,17 +114,34 @@ interface MusicInfoTextProps {
 }
 
 const MusicInfoTitle = styled.span<MusicInfoTextProps>`
-  font-size: ${(props) => (props.$regular ? '16px' : '18px')};
+  /* font-size: 14px; */
   color: #e0e0e0;
-  font-weight: 600;
+  font-weight: 700;
   flex: 1;
+  line-height: 1.2;
+  word-break: break-all;
 `;
 
 const MusicInfoText = styled.span<MusicInfoTextProps>`
   color: #e0e0e0;
+  font-weight: 500;
   max-width: ${(props) => props.width};
   text-align: ${(props) => (props.$center ? 'center' : 'left')};
   width: 100%;
+  font-size: 13px;
+  line-height: 1.2;
+  word-break: break-all;
+`;
+
+const AlbumInfoText = styled.span<MusicInfoTextProps>`
+  color: #9e9e9e;
+  max-width: ${(props) => props.width};
+  text-align: ${(props) => (props.$center ? 'center' : 'left')};
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.2;
+  word-break: break-all;
+
 `;
 
 

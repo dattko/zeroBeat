@@ -327,7 +327,6 @@ export const useMusicPlayer = () => {
   }, [restorePlayerState]);
 
   useEffect(() => {
-    console.log('Player state changed listener added');
     if (player) {
       player.addListener('player_state_changed', handlePlayerStateChange);
     }
@@ -335,7 +334,6 @@ export const useMusicPlayer = () => {
     return () => {
       if (player) {
         player.removeListener('player_state_changed', handlePlayerStateChange);
-        console.log('Player state changed listener removed');
       }
     };
   }, [player, handlePlayerStateChange]);

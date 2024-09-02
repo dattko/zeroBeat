@@ -80,8 +80,8 @@
 .playlistContainer {
   position: fixed;
   right: 0;
-  top: 80px;
-  height: calc(100dvh - 160px);
+  top: $headerH;
+  height: calc(100dvh - $playerBarH - $headerH);
   bottom: 0;
   width: 300px; 
   z-index: 10;

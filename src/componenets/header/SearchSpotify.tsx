@@ -4,7 +4,7 @@ import styled from "styled-components"
 import { useRouter } from "next/navigation"
 import { searchSpotify } from "@/lib/spotify"
 import { MusicList, Artist, SearchResults } from "@/types/spotify"
-
+import Zicon from '@component/icon/icon';
 export const SearchComponent = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [searchResults, setSearchResults] = useState<SearchResults>({
@@ -83,14 +83,13 @@ export const SearchComponent = () => {
         onFocus={() => setIsFocused(true)}
         onBlur={() => setTimeout(() => setIsFocused(false), 200)}
       />
-      <button
-        className="icon-btn n-b"
-        style={{ width: "34px" }}
-        onClick={handleSearchButtonClick}
-        disabled={isLoading}
-      >
-        <img src="/images/search.svg" alt="로고" />
-      </button>
+      <Zicon 
+      width={16}
+      height={16}
+      name='search'
+      click={handleSearchButtonClick}
+    >
+      </Zicon>
       {isFocused && searchTerm.trim() && (
         <InputContent>
           {error && <p>{error}</p>}

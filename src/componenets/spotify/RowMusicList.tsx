@@ -7,6 +7,7 @@ interface RowMusicListProps {
   data: MusicListType[];
   title: string;
   limit?: number;
+
 }
 
 const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit }) => {
@@ -31,7 +32,7 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit }) => {
               <MusicInfoTitle $regular>{song.title}</MusicInfoTitle>
               <MusicInfoText width="22%">{song.artist}</MusicInfoText>
               <MusicInfoText width="22%">{song.album}</MusicInfoText>
-              <MusicInfoText $grey width="60px">
+              <MusicInfoText $grey width="60px" fontSize={14}>
                 {song.duration}
               </MusicInfoText>
               <IconBtn>
@@ -79,7 +80,7 @@ const MusicListContainer = styled.div`
 const MusicListUl = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   list-style-type: none;
   padding: 0;
 `;
@@ -87,10 +88,10 @@ const MusicListUl = styled.ul`
 const MusicListLi = styled.li`
   display: flex;
   justify-content: space-between;
-  padding-bottom: 17px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #d9d9d9;
   align-items: center;
-  gap: 16px;
+  gap: 15px;
   
 `;
 
@@ -99,8 +100,8 @@ interface AlbumImgeProps {
   }
   
   const AlbumImge = styled.div<AlbumImgeProps>`
-    width: ${(props) => (props.$small ? '48px' : '220px')};
-    height: ${(props) => (props.$small ? '48px' : '220px')};
+    width: 40px;
+    height: 40px;
     background-color: #D9D9D9;
     img {
       width: 100%;
@@ -116,22 +117,23 @@ interface MusicInfoTextProps {
     $grey?: boolean;
     width?: string;
     $center?: boolean;
+    fontSize?: number;
   }
   
   const MusicInfoTitle = styled.span<MusicInfoTextProps>`
-    font-size: ${(props) => (props.$regular ? '16px' : '18px')};
+   font-size: 15px;
     font-weight: 700;
     flex: 1;
     color: #e0e0e0;
   `;
 
 const MusicInfoText = styled.span<MusicInfoTextProps>`
-  color: #e0e0e0;
+color: ${(props) => (props.$grey ? '#9e9e9e' : '#e0e0e0')};
 max-width: ${(props) => props.width};
 text-align: ${(props) => (props.$center ? 'center' : 'left')};
 width: 100%;
-
-`;
+font-size: ${(props) => (props.fontSize ? props.fontSize : 15)}px;
+`
 
 const IconBtn = styled.button`
 display: flex;
