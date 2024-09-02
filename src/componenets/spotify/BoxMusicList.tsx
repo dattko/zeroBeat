@@ -72,8 +72,9 @@ const SectionTitleBox = styled.div`
 `;
 
 const SectionTitle = styled.span`
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 700;
+  color: #e0e0e0;
 `;
 
 const SwiperList = styled.div`
@@ -107,12 +108,13 @@ interface MusicInfoTextProps {
 
 const MusicInfoTitle = styled.span<MusicInfoTextProps>`
   font-size: ${(props) => (props.$regular ? '16px' : '18px')};
-  font-weight: 700;
+  color: #e0e0e0;
+  font-weight: 600;
   flex: 1;
 `;
 
 const MusicInfoText = styled.span<MusicInfoTextProps>`
-  color: ${(props) => (props.$grey ? '#7a7a7a' : '#000')};
+  color: #e0e0e0;
   max-width: ${(props) => props.width};
   text-align: ${(props) => (props.$center ? 'center' : 'left')};
   width: 100%;
@@ -121,7 +123,7 @@ const MusicInfoText = styled.span<MusicInfoTextProps>`
 
 const NoDataMessage = styled.div`
   font-size: 18px;
-  color: #666;
+  color: #e0e0e0;
   text-align: center;
   margin-top: 20px;
 `;

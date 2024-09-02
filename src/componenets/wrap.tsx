@@ -2,13 +2,14 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
-import Sidebar from '@component/sidebar'; 
-import { Content } from '@component/content'; 
+import { Header } from './header';
+import Content from '@component/mainBody';
 import ReduxProvider from '@redux/provider';
 import GlobalModal from '@modal/globalModal';
 import Loading from '@/app/loading';
 import Playbar from './spotify/PlayerBar';
 import PlayList from './spotify/PlayList';
+
 
 interface WrapProps {
   children: ReactNode;
@@ -46,14 +47,12 @@ const Wrap: React.FC<WrapProps> = ({ children }) => {
     <ReduxProvider>
       <div className='wrap'>
         <GlobalModal /> 
-        <div className='main-body'>
-          <Sidebar/>
+          <Header/>
           <Content>
             {children}
-            <Playbar onTogglePlayList={togglePlayList} />
           </Content>
           <PlayList isOpen={isPlayListOpen} />
-        </div>
+          <Playbar onTogglePlayList={togglePlayList} />
       </div>
     </ReduxProvider>
   );

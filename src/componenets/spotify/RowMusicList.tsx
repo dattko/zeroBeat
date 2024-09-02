@@ -58,13 +58,15 @@ const Section = styled.div`
 `;
 
 const SectionTitleBox = styled.div`
+
   display: flex;
   align-items: center;
 `;
 
 const SectionTitle = styled.span`
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 700;
+  color: #e0e0e0;
 `;
 
 const MusicListContainer = styled.div`
@@ -89,6 +91,7 @@ const MusicListLi = styled.li`
   border-bottom: 1px solid #d9d9d9;
   align-items: center;
   gap: 16px;
+  
 `;
 
 interface AlbumImgeProps {
@@ -119,13 +122,15 @@ interface MusicInfoTextProps {
     font-size: ${(props) => (props.$regular ? '16px' : '18px')};
     font-weight: 700;
     flex: 1;
+    color: #e0e0e0;
   `;
 
 const MusicInfoText = styled.span<MusicInfoTextProps>`
-color: ${(props) => (props.$grey ? '#7a7a7a' : '#000')};
+  color: #e0e0e0;
 max-width: ${(props) => props.width};
 text-align: ${(props) => (props.$center ? 'center' : 'left')};
 width: 100%;
+
 `;
 
 const IconBtn = styled.button`

@@ -20,7 +20,7 @@
 }
 
 .container {
-  position: absolute;
+  position: fixed;
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -30,7 +30,7 @@
   left: 0;
   width: 100dvw;
   height: 100dvh;
-  background: linear-gradient(0deg, rgb(64, 64, 64), rgb(29, 29, 29));
+  background: rgba($color: #000000, $alpha: .6);
   animation: gradientAnimation 10s ease infinite;
 }
 

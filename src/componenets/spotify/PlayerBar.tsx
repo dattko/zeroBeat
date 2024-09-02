@@ -4,6 +4,8 @@ import { RootState } from '@redux/store';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 import styles from './Spotify.module.scss';
 import { setCurrentTime, setProgress } from '@redux/slice/playerSlice';
+import { PlayIcon, PauseIcon, SkipBackIcon, SkipForwardIcon, RepeatIcon, Volume2, Repeat1 } from 'lucide-react'
+
 interface PlaybarProps {
   onTogglePlayList: () => void;
 }
@@ -12,7 +14,8 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
   const dispatch = useDispatch();
   const { currentTrack, isPlaying, volume, queue, currentTrackIndex, progress, duration, repeatMode, currentTime, } = useSelector((state: RootState) => state.player);
   const [localCurrentTime, setLocalCurrentTime] = useState(0);
-
+  const PlayBarUse = !!useSelector((state: RootState) => state.player.currentTrack);
+  
   const { 
     handleNextTrack, 
     handlePreviousTrack, 
@@ -106,13 +109,17 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
       
       {/* 플레이어 컨트롤 */}
       <div className={styles.playerControls} onClick={handleControlClick}>
-        <button onClick={handlePreviousTrack} className={styles.controlButton}>Previous</button>
-        <button onClick={handlePlayPause} className={styles.controlButton}>
-          {isPlaying ? 'Pause' : 'Play'}
+        <button onClick={handlePreviousTrack} className={styles.controlButton}>
+          <SkipBackIcon/>
         </button>
-        <button onClick={handleNextTrack} className={styles.controlButton}>Next</button>
+        <button onClick={handlePlayPause} className={styles.controlButton}>
+          {isPlaying ? <PauseIcon/> : <PlayIcon/>}
+        </button>
+        <button onClick={handleNextTrack} className={styles.controlButton}>
+          <SkipForwardIcon/>
+        </button>
         <button onClick={handleRepeatMode} className={styles.controlButton}>
-          Repeat: {repeatMode === 0 ? 'Off' : repeatMode === 1 ? 'Single' : 'All'}
+         {repeatMode === 0 ? <RepeatIcon style={{opacity: .4}}/> : repeatMode === 1 ? <Repeat1/> : <RepeatIcon/>}
         </button>
       </div>
       
@@ -141,7 +148,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
           onChange={handleVolumeSliderChange}
           className={styles.volumeSlider}
         />
-        <span>{volume}</span>
+        <span><Volume2/>{volume}</span>
       </div>
       
       {/* 다음 트랙 정보 */}

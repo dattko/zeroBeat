@@ -30,9 +30,9 @@ const Sidebar = () => {
 
   return (
     <div className='sidebar'>
-      <div className="logo">
+      {/* <div className="logo">
         <img src="/images/row-logo.svg" alt="logo" />
-      </div>
+      </div> */}
       <ul>
         {menuItems.map((menuItem) => (
           <li key={menuItem.id} className={pathName === menuItem.link ? 'active' : ''}> 

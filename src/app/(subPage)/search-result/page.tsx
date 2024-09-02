@@ -184,12 +184,12 @@ const PickTrackName = styled.h3`
 
 const PickArtistName = styled.p`
   font-size: 18px;
-  color: #666;
+  color: #e0e0e0;
 `;
 
 const PickAlbumName = styled.h3`
   font-size: 16px;
-  color: #666;
+  color: #e0e0e0;
   font-weight: 400;
 `;
 
@@ -221,7 +221,7 @@ const TrackName = styled.h3`
 
 const ArtistName = styled.p`
   font-size: 14px;
-  color: #666;
+  color: #e0e0e0;
 `;
 
 const ArtistList = styled.div`
