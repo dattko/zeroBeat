@@ -117,7 +117,8 @@ const MusicInfoTitle = styled.span<MusicInfoTextProps>`
   /* font-size: 14px; */
   color: #e0e0e0;
   font-weight: 700;
-  flex: 1;
+  min-height: 22px;
+  /* flex: 1; */
   line-height: 1.2;
   word-break: break-all;
 `;

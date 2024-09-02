@@ -89,7 +89,7 @@ const MusicListLi = styled.li`
   display: flex;
   justify-content: space-between;
   padding-bottom: 10px;
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid #9e9e9e;
   align-items: center;
   gap: 15px;
   

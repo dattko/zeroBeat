@@ -83,90 +83,32 @@
   top: $headerH;
   height: calc(100dvh - $playerBarH - $headerH);
   bottom: 0;
-  width: 300px; 
+  width: 320px; 
   z-index: 10;
+  padding-top: 20px;
   background-color: $medium-gray; 
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
   transform: translateX(100%);
 
   &.open {
     transform: translateX(0);
   }
-
-  .sectionTitle {
-    font-size: 24px;
+  
+  .playlistTitle{
+    font-size: 18px;
+    font-weight: 500;
+    color: $color;
+    padding-left: 14px;
+    display: block;
     margin-bottom: 15px;
-    color: #1DB954;
   }
+}
 
-  .nowPlaying {
-    margin-bottom: 30px;
-
-    .trackItem {
-      background-color: #282828;
-      padding: 10px;
-      border-radius: 5px;
-    }
-  }
-
-  .recommendedTracks {
-    .trackList {
-      &::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: #121212;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: #535353;
-        border-radius: 4px;
-      }
-    }
-  }
-
-  .trackItem {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    transition: background-color 0.2s;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #282828;
-    }
-
-    .albumArt {
-      width: 40px;
-      height: 40px;
-      margin-right: 15px;
-      border-radius: 2px;
-    }
-
-    .trackInfo {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-
-      .trackTitle {
-        font-size: 16px;
-        font-weight: bold;
-        margin-bottom: 4px;
-      }
-
-      .artistName {
-        font-size: 14px;
-        color: #b3b3b3;
-      }
-    }
-
-    .trackDuration {
-      font-size: 14px;
-      color: #b3b3b3;
-    }
-  }
+.playlist{
+  display: flex;
+  flex-direction: column;
+  gap: 10px !important;
+  overflow-y: auto;
 }
 
 .loading, .error {
@@ -179,8 +121,36 @@
   color: #ff4136;
 }
 
+.trackRow{
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 12px;
+}
 .activeTrack {
   background-color: rgba(29, 185, 84, 0.1);  // Spotify 녹색의 연한 버전
   font-weight: bold;
-  border-left: 4px solid #1DB954;  // Spotify 녹색
+  // border-left: 4px solid red;  // Spotify 녹색
+}
+
+.playlistTrackInfo{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  gap: 8px;
+  overflow: hidden;
+  span{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    color: $color;
+    font-size: 13px;
+  }
+}
+
+.duration{
+  font-size: 13px;
+  color: $g !important;
 }

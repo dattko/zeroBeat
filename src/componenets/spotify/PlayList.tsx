@@ -22,7 +22,7 @@ const PlayList: React.FC<PlayListProps> = ({ isOpen }) => {
     const updateHeight = () => {
       if (containerRef.current) {
         const containerHeight = containerRef.current.clientHeight;
-        const headerHeight = 24; 
+        const headerHeight = 53; 
         setListHeight(containerHeight - headerHeight);
       }
     };
@@ -71,19 +71,20 @@ const PlayList: React.FC<PlayListProps> = ({ isOpen }) => {
         className={`${styles.trackRow} ${isCurrentTrack ? styles.currentTrack : ''} ${isCurrentTrack ? styles.activeTrack : ''}`}
       >
         <img src={track.album_art_url} alt={track.album} width="40" height="40" />
-        <div className={styles.trackInfo}>
-          <strong>{track.title}</strong>
+        <div className={styles.playlistTrackInfo}>
+          <span>{track.title}</span>
           <span>{track.artist}</span>
         </div>
-        <span>{track.duration}</span>
-        {isCurrentTrack && <span className={styles.nowPlaying}>Now Playing</span>}
+        <span className={styles.duration}>{track.duration}</span>
       </div>
     );
   };
 
   return (
     <div ref={containerRef} className={`${styles.playlistContainer} ${isOpen ? styles.open : ''}`}>
-      <h2>Current Queue {queue.length > 0 ? `(${queue.length})` : ''}</h2>
+      <span className={styles.playlistTitle}>재생목록 
+      {/* {queue.length > 0 ? `(${queue.length})` : ''} */}
+      </span>
       {queue.length > 0 ? (
         <InfiniteLoader
           isItemLoaded={isItemLoaded}
@@ -92,22 +93,23 @@ const PlayList: React.FC<PlayListProps> = ({ isOpen }) => {
           threshold={1}
         >
           {({ onItemsRendered, ref }) => (
-            <List
-              ref={(list) => {
-                listRef.current = list;
-                if (typeof ref === 'function') {
-                  ref(list);
-                }
-              }}
-              height={listHeight}
-              itemCount={itemCount}
-              itemSize={50}
-              width="100%"
-              onItemsRendered={onItemsRendered}
-              overscanCount={5}
-            >
-              {TrackRow}
-            </List>
+              <List
+                ref={(list) => {
+                  listRef.current = list;
+                  if (typeof ref === 'function') {
+                    ref(list);
+                  }
+                }}
+                height={listHeight}
+                itemCount={itemCount}
+                itemSize={45}
+                width="100%"
+                onItemsRendered={onItemsRendered}
+                overscanCount={5}
+                style={{ display: 'flex' }}
+              >
+                {TrackRow}
+              </List>
           )}
         </InfiniteLoader>
       ) : (
