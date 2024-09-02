@@ -75,6 +75,9 @@ const MusicListContainer = styled.div`
   flex-direction: column;
   width: 100%;
   padding-right: 80px;
+  @media (max-width: 1200px) {
+    padding-right: 20px;
+  }
 `;
 
 const MusicListUl = styled.ul`

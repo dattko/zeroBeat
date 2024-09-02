@@ -26,8 +26,9 @@ export const Header = () => {
   return (
     <header className="main-header">
       <div className="logo">
-        {/* <img src="/images/row-logo.svg" alt="logo" /> */}
-        ZeroBeat
+        <img src="/images/row-logo.svg" alt="logo" className='pc-view'/>
+        <img src="/images/logo-icon.png" alt="logo" className='m-view'/>
+        {/* ZeroBeat */}
       </div>
       <div className="main-header-inner">
         <div className="main-search">

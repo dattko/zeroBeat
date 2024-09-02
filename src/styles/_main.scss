@@ -13,9 +13,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 700;
-            font-size: 24px;
-            color: $color;
+            img{
+                max-width: 120px;
+                filter: invert(1) brightness(1.2);
+                &:nth-child(2){
+                    width: 26px;
+                }
+            }
+            @include responsive(1024px){
+                width: 58px;
+            }
         }
 		&-inner{
 			flex: 1;
@@ -23,6 +30,9 @@
 			justify-content: space-between;
 			padding:  0 80px ;
             align-items: center;
+            @include responsive(1024px){
+                padding: 0 20px 0 30px;
+            }
 		}
 	}
     &-body{
@@ -54,7 +64,12 @@
             padding-top: 35px;
             padding-left: 50px;
             padding-bottom: 40px;
+            transition: ease-in-out .3s;
             // width: 100%;
+            @include responsive(1200px){
+                padding-left: 20px;
+                padding-top: 30px;
+            }
         }
     }
     &-search{

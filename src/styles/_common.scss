@@ -139,4 +139,15 @@ input{
 	font-weight: 400;
 }
 
-
+.pc-view{
+	display: block;
+	@include responsive(1024px){
+		display: none;
+	}
+}
+.m-view{
+	display: none;
+	@include responsive(1024px){
+		display: block;
+	}
+}

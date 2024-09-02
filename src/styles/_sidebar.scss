@@ -50,4 +50,22 @@
             }
         }
     }
+
+    @include responsive(1024px){
+        width: auto;
+        .logo{
+            display: none;
+        }
+        ul{
+
+        }
+        li{
+            a{
+
+            }
+            .menu-title{
+                display: none;
+            }
+        }
+    }
 }

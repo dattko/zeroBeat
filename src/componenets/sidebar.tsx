@@ -38,7 +38,9 @@ const Sidebar = () => {
           <li key={menuItem.id} className={pathName === menuItem.link ? 'active' : ''}> 
             <Link href={menuItem.link}>
               <img src={`/icon/${menuItem.img}.svg`} alt="메뉴 아이콘" />
-              {menuItem.name}
+              <span className='menu-title'>
+                {menuItem.name}
+              </span>
             </Link>
           </li>
         ))}
