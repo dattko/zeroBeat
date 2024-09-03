@@ -1,6 +1,6 @@
 import React from "react"
 import Image from "next/image"
-import styles from "./icon.module.scss"
+import styles from "./Icon.module.scss"
 
 interface IconProps {
   name: string
