@@ -152,11 +152,11 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
       </div>
       
       {/* 다음 트랙 정보 */}
-      {nextTrackInfo && (
+      {/* {nextTrackInfo && (
         <div className={styles.nextTrackInfo}>
           <p>Next: {nextTrackInfo.title} - {nextTrackInfo.artist}</p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

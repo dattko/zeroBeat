@@ -125,6 +125,9 @@
         // &:hover{
         //     background-color: $wop;
         // }
+        @include responsive(1024px){
+            padding: 0 0 0 20px;
+        }
         &-profile{
             width: 36px;
             height: 36px;
@@ -149,6 +152,9 @@
         &-id{
             font-size: 16px;
             color: $color;
+            @include responsive(1024px){
+                display: none;
+            }
         }
     }
 
