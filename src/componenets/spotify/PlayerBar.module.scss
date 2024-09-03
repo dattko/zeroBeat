@@ -1,0 +1,120 @@
+// 플레이어바
+
+.playerBarContainer {
+  border-top: 1px solid #cdd3dd;
+  height: 80px;
+  padding: 0 20px;
+  background-color: $medium-gray;
+  color: $color;
+  position: sticky;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playerBar{
+  max-width: 2200px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.playerTrackInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+}
+
+.playerAlbumArt {
+  width: 60px;
+  height: 60px;
+}
+
+.playerTextInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 300px;
+  overflow: hidden;
+  span{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.playerTrackTitle {
+  font-size: 14px;
+  margin: 0;
+}
+
+.playerArtistName {
+  font-size: 12px;
+  color: $color;
+  margin: 0;
+}
+
+.playerControls {
+  display: flex;
+  align-items: center;
+}
+
+.controlButton {
+  background: none;
+  border: none;
+  color:$color;
+  font-size: 14px;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.controlButton:disabled {
+  color: #b3b3b3;
+  cursor: not-allowed;
+}
+
+.progressTime{
+  font-size: 13px;
+}
+
+.volumeControl {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+}
+.volumeInfo{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.volumeSlider {
+  flex: 1;
+  max-width: 80px;
+}
+
+.playerOptions{
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  > div:nth-child(2){
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+.errorMessage {
+  background-color: #ff4444;
+  color: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}

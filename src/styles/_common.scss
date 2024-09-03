@@ -26,66 +26,66 @@
 
 // 프리텐다드
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 900;
 	font-display: swap;
-	src: local('Pretendard Black'), url('/font/pretendard/Pretendard-Black.woff2') format('woff2')
+	src: local('Paperlogy Black'), url('/font/Paperlogy/Paperlogy-Black.ttf') format('truetype')
 }
 
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 800;
 	font-display: swap;
-	src: local('Pretendard ExtraBold'), url('/font/pretendard/Pretendard-ExtraBold.woff2') format('woff2')
+	src: local('Paperlogy ExtraBold'), url('/font/Paperlogy/Paperlogy-ExtraBold.ttf') format('truetype')
 }
 
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 700;
 	font-display: swap;
-	src: local('Pretendard Bold'), url('/font/pretendard/Pretendard-Bold.woff2') format('woff2')
+	src: local('Paperlogy Bold'), url('/font/Paperlogy/Paperlogy-Bold.ttf') format('truetype')
 }
 
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 600;
 	font-display: swap;
-	src: local('Pretendard SemiBold'), url('/font/pretendard/Pretendard-SemiBold.woff2') format('woff2')
+	src: local('Paperlogy SemiBold'), url('/font/Paperlogy/Paperlogy-SemiBold.ttf') format('truetype')
 }
 
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 500;
 	font-display: swap;
-	src: local('Pretendard Medium'), url('/font/pretendard/Pretendard-Medium.woff2') format('woff2')
+	src: local('Paperlogy Medium'), url('/font/Paperlogy/Paperlogy-Medium.ttf') format('truetype')
 }
 
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 400;
 	font-display: swap;
-	src: local('Pretendard Regular'), url('/font/pretendard/Pretendard-Regular.woff2') format('woff2')
+	src: local('Paperlogy Regular'), url('/font/Paperlogy/Paperlogy-Regular.ttf') format('truetype')
 }
 
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 300;
 	font-display: swap;
-	src: local('Pretendard Light'), url('/font/pretendard/Pretendard-Light.woff2') format('woff2')
+	src: local('Paperlogy Light'), url('/font/Paperlogy/Paperlogy-Light.ttf') format('truetype')
 }
 
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 200;
 	font-display: swap;
-	src: local('Pretendard ExtraLight'), url('/font/pretendard/Pretendard-ExtraLight.woff2') format('woff2')
+	src: local('Paperlogy ExtraLight'), url('/font/Paperlogy/Paperlogy-ExtraLight.ttf') format('truetype')
 }
 
 @font-face {
-	font-family: 'Pretendard';
+	font-family: 'Paperlogy';
 	font-weight: 100;
 	font-display: swap;
-	src: local('Pretendard Thin'), url('/font/pretendard/Pretendard-Thin.woff2') format('woff2')
+	src: local('Paperlogy Thin'), url('/font/Paperlogy/Paperlogy-Thin.ttf') format('truetype')
 }
 //  루트
 :root{
@@ -99,10 +99,11 @@
     --f-m-title: 25px;
     --f-l-title: 25px;
     --f-s-title: 16px;
+		--s-title: 24px
 }
 
 body{
-	font-family: 'Pretendard', sans-serif; 
+	font-family: 'Paperlogy', sans-serif; 
 }
 // 공통 css
 .flex-space{
@@ -129,6 +130,7 @@ body{
 }
 
 input{
+	font-family: 'Paperlogy', sans-serif; 
 	font-size: 12px;
 	border: none;
 	border-radius: 4px;

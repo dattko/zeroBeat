@@ -288,3 +288,8 @@ export const resumePlayback = async (session: Session, deviceId?: string | null)
     throw new Error('Failed to resume playback');
   }
 };
+
+
+export async function getSavedTracks() {
+  return fetchSpotifyAPI('/me/tracks?limit=20');
+}

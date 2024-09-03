@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
-import styles from './Spotify.module.scss';
+import styles from './PlayList.module.scss';
 import { usePlayList } from '@/hooks/usePlayList';
 
 interface PlayListProps {

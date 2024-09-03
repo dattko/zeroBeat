@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
-import styles from './Spotify.module.scss';
+import styles from './PlayerBar.module.scss';
 import { setCurrentTime, setProgress } from '@redux/slice/playerSlice';
 import { PlayIcon, PauseIcon, SkipBackIcon, SkipForwardIcon, RepeatIcon, Volume2, Repeat1 } from 'lucide-react'
 
@@ -98,65 +98,72 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
 
   return (
     <div className={styles.playerBarContainer} onClick={onTogglePlayList}>
-      {/* 트랙 정보 */}
-      <div className={styles.trackInfo}>
-        <img src={currentTrack.album_art_url} alt={currentTrack.album} className={styles.albumArt} />
-        <div className={styles.textInfo}>
-          <h3 className={styles.trackTitle}>{currentTrack.title}</h3>
-          <p className={styles.artistName}>{currentTrack.artist}</p>
+      <div className={styles.playerBar}>
+      <div className={styles.playerOptions}>
+        {/* 트랙 정보 */}
+        <div className={styles.playerTrackInfo}>
+          <img src={currentTrack.album_art_url} alt={currentTrack.album} className={styles.playerAlbumArt} />
+          <div className={styles.playerTextInfo}>
+            <span className={styles.playerTrackTitle}>{currentTrack.title}</span>
+            <span className={styles.playerArtistName}>{currentTrack.artist}</span>
+          </div>
         </div>
-      </div>
-      
-      {/* 플레이어 컨트롤 */}
-      <div className={styles.playerControls} onClick={handleControlClick}>
-        <button onClick={handlePreviousTrack} className={styles.controlButton}>
-          <SkipBackIcon/>
-        </button>
-        <button onClick={handlePlayPause} className={styles.controlButton}>
-          {isPlaying ? <PauseIcon/> : <PlayIcon/>}
-        </button>
-        <button onClick={handleNextTrack} className={styles.controlButton}>
-          <SkipForwardIcon/>
-        </button>
-        <button onClick={handleRepeatMode} className={styles.controlButton}>
-         {repeatMode === 0 ? <RepeatIcon style={{opacity: .4}}/> : repeatMode === 1 ? <Repeat1/> : <RepeatIcon/>}
-        </button>
-      </div>
-      
-      {/* 프로그레스 바 */}
-<div className={styles.progressControl} onClick={handleControlClick}>
-        <input
-          type="range"
-          min="0"
-          max={duration}
-          value={localCurrentTime}
-          onChange={handleProgressChangeWrapper}
-          className={styles.progressSlider}
-        />
-        <div className={styles.progressTime}>
-          <span>{formatTime(localCurrentTime)}</span> / <span>{formatTime(duration)}</span>
+        {/* 프로그레스 바 */}
+        <div className={styles.progressControl} onClick={handleControlClick}>
+            <input
+              type="range"
+              min="0"
+              max={duration}
+              value={localCurrentTime}
+              onChange={handleProgressChangeWrapper}
+              className={styles.progressSlider}
+            />
+            <div className={styles.progressTime}>
+              <span>{formatTime(localCurrentTime)}</span> / <span>{formatTime(duration)}</span>
+            </div>
+          </div>
+          </div>
+        {/* 플레이어 컨트롤 */}
+        <div className={styles.playerControls} onClick={handleControlClick}>
+          <button onClick={handlePreviousTrack} className={styles.controlButton}>
+            <SkipBackIcon/>
+          </button>
+          <button onClick={handlePlayPause} className={styles.controlButton}>
+            {isPlaying ? <PauseIcon/> : <PlayIcon/>}
+          </button>
+          <button onClick={handleNextTrack} className={styles.controlButton}>
+            <SkipForwardIcon/>
+          </button>
+          <button onClick={handleRepeatMode} className={styles.controlButton}>
+           {repeatMode === 0 ? <RepeatIcon style={{opacity: .4}}/> : repeatMode === 1 ? <Repeat1/> : <RepeatIcon/>}
+          </button>
         </div>
+        
+        
+
+
+          
+          {/* 볼륨 컨트롤 */}
+          <div className={styles.volumeControl} onClick={handleControlClick}>
+            <div className={styles.volumeInfo}><Volume2/></div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={volume}
+              onChange={handleVolumeSliderChange}
+              className={styles.volumeSlider}
+            />
+            {volume}
+       </div>
+        
+        {/* 다음 트랙 정보 */}
+        {/* {nextTrackInfo && (
+          <div className={styles.nextTrackInfo}>
+            <p>Next: {nextTrackInfo.title} - {nextTrackInfo.artist}</p>
+          </div>
+        )} */}
       </div>
-      
-      {/* 볼륨 컨트롤 */}
-      <div className={styles.volumeControl} onClick={handleControlClick}>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={volume}
-          onChange={handleVolumeSliderChange}
-          className={styles.volumeSlider}
-        />
-        <span><Volume2/>{volume}</span>
-      </div>
-      
-      {/* 다음 트랙 정보 */}
-      {/* {nextTrackInfo && (
-        <div className={styles.nextTrackInfo}>
-          <p>Next: {nextTrackInfo.title} - {nextTrackInfo.artist}</p>
-        </div>
-      )} */}
     </div>
   );
 };
