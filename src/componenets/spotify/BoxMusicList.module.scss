@@ -13,26 +13,32 @@
 
 .sectionTitle {
   font-size: var(--s-title);
-  font-weight: 700;
+  font-weight: 600;
   color: $color;
 }
 
 .swiperList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   height: 100%;
   width: 200px;
   padding: 15px 10px;
-  background-color: rgba(141, 141, 141, 0.1);
   border-radius: 4px;
+  cursor: pointer;
+  &:hover{
+    background-color: rgba(141, 141, 141, 0.1);
+    :global(.play-track) {
+      display: flex;
+    }
+  }
   .albumImage {
+    position: relative;
     width: 180px;
     height: 180px;
     background-color: #d9d9d9;
     border: 1px solid $color;
-    margin-bottom: 4px;
-  
+    margin-bottom: 6px;
     img {
       width: 100%;
       height: 100%;
@@ -44,37 +50,34 @@
 .musicInfoBox{
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 .musicInfoTitle {
   color: $color;
   font-weight: 600;
-  min-height: 22px;
-  line-height: 1.3;
+  // min-height: 22px;
+  line-height: 1.2;
   word-break: break-all;
   font-size: 14px;
-  letter-spacing: 1.2px;
   @include ellipsis(2);
 }
 
 .musicInfoText {
-  color: $color;
+  color: #9e9e9e;
   font-weight: 500;
   width: 100%;
   font-size: 12px;
-  line-height: 1.3;
+  line-height: 1.2;
   word-break: break-all;
-  letter-spacing: 1.2px;
-  @include ellipsis(2);
+  @include ellipsis(1);
 }
 
 .albumInfoText {
   color: #9e9e9e;
   width: 100%;
   font-size: 10px;
-  line-height: 1.3;
+  line-height: 1.2;
   word-break: break-all;
-  letter-spacing: 1.2px;
   @include ellipsis(1);
 }
 
@@ -84,4 +87,99 @@
   color: $color;
   text-align: center;
   margin-top: 20px;
+}
+
+
+
+//논 스와이퍼
+.sectionTitleLikeTrack {
+  @include gradient-text(#ff6b6b, #feca57);
+}
+.sectionTitleLikeAlbum {
+  @include gradient-text( #54a0ff, #ff7dd4);
+}
+.sectionTitleSavePlaylist {
+  @include gradient-text(#ff9ff3, #ff6b6b);
+}
+.sectionTitleLikeArtist {
+  @include gradient-text(#48dbfb, #ff9ff3);
+}
+
+.TrackContainer{
+  max-width: 1800px;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-right: 80px;
+  @include responsive(1200px){
+    padding-right: 50px;
+  }
+}
+
+.TrackList{
+  max-width: 140px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 6px;
+  border-radius: 4px;
+  @include responsive(1200px){
+    width: calc((100% - 12px * 5 ) / 6 );
+  }
+  cursor: pointer;
+  &:hover{
+    background-color: rgba(141, 141, 141, 0.1);
+    :global(.play-track) {
+      display: flex;
+    }
+  }
+}
+
+
+.TrackAlbumImage{
+  border-radius: 4px;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 3px;
+  position: relative;
+}
+
+
+.TrackMusicInfoTitle{
+  font-size: 12px;
+  font-weight: 600;
+  word-break: break-all;
+  color: $color;
+  @include ellipsis(1);
+}
+
+.TrackMusicInfoText{
+  font-size: 10px;
+  color: $g;
+  @include ellipsis(1);
+}
+
+.TrackAlbumInfoText{
+  font-size: 8px;
+  color: $g;
+  @include ellipsis(1);
+}
+
+.noImage{
+  width: 100%;
+  background-color: $color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+//아티스트
+.TrackListLikeArtist{
+  align-items: center;
+}
+
+.TrackAlbumImageLikeArtist{
+  border-radius: 50%;
 }

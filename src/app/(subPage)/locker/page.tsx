@@ -43,10 +43,10 @@ const Locker = () => {
 
   return (
     <>
-      <BoxMusicList data={savedTracks} title='좋아요 표시한 곡' type="track" name='save-track'/>
-      <BoxMusicList data={savedAlbums} title='앨범' type='album' name='save-album'/>
-      <BoxMusicList data={savedPlaylists} title='플레이리스트' type='playlist' name='save-playlist'/>
-      <BoxMusicList data={followedArtists} title='팔로우한 아티스트' type='artist' name='save-artist'/>
+      <BoxMusicList data={savedTracks} title='좋아요 표시 곡' type="track" name='LikeTrack'/>
+      <BoxMusicList data={savedAlbums} title='좋아요 표시 앨범' type='album' name='LikeAlbum'/>
+      <BoxMusicList data={savedPlaylists} title='플레이리스트' type='playlist' name='SavePlaylist'/>
+      <BoxMusicList data={followedArtists} title='팔로우한 아티스트' type='artist' name='LikeArtist'/>
     </>
   )
 }

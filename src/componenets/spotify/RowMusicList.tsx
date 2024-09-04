@@ -2,6 +2,8 @@ import React from 'react';
 import { MusicList as MusicListType } from '@/types/spotify';
 import { usePlayTrack } from '@/hooks/usePlayTrack';
 import styles from './RowMusicList.module.scss';
+import PlayTrack from './PlayTrack';
+
 interface RowMusicListProps {
   data: MusicListType[];
   title: string;
@@ -27,6 +29,7 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit }) => {
               </span>
               <div className={styles.smallAlbumImage}>
                 <img src={data.album_art_url} alt={data.title} />
+                <PlayTrack size={12} BoxSize={24}/>
               </div>
               <span className={styles.rowMusicInfoTitle}>{data.title}</span>
               <span className={styles.rowMusicInfoText } style={{width: '22%'}}>{data.artist}</span>

@@ -32,9 +32,10 @@
                 border-radius: 4px;
                 padding: 0 12px;
                 font-size: var(--f-s);
+                border-radius: 8px;
                 &:hover{
-                    // background-color: rgba($color: #ebebeb, $alpha: 0.5);
-                    // border-radius: 8px;
+                    background-color: rgba(141, 141, 141, 0.1);
+
                 }
     
                 >img{
@@ -44,8 +45,7 @@
             }
             &.active{
                 a{
-                    // background-color: rgba($color: #ebebeb, $alpha: 0.8);
-                    // border-radius: 8px;
+                    background-color: rgba(141, 141, 141, 0.1);
                 }
             }
         }
@@ -60,9 +60,9 @@
 
         }
         li{
-            a{
+            // a{
 
-            }
+            // }
             .menu-title{
                 display: none;
             }

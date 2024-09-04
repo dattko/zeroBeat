@@ -54,7 +54,6 @@ const LoginWrap = styled.div`
 const LoginBtn = styled.button`
   font-size: 18px;
   font-weight: 500;
-  letter-spacing: 1px;
   padding: 0 20px;
   height: 54px;
   background-color: #1ed760;

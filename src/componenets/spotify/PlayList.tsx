@@ -5,7 +5,7 @@ import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import styles from './PlayList.module.scss';
 import { usePlayList } from '@/hooks/usePlayList';
-
+import PlayTrack from './PlayTrack';
 interface PlayListProps {
   isOpen: boolean;
 }
@@ -70,7 +70,10 @@ const PlayList: React.FC<PlayListProps> = ({ isOpen }) => {
         onClick={() => playTrackFromPlaylist(track, index)} 
         className={`${styles.trackRow} ${isCurrentTrack ? styles.currentTrack : ''} ${isCurrentTrack ? styles.activeTrack : ''}`}
       >
-        <img src={track.album_art_url} alt={track.album} width="40" height="40" />
+        <div className={styles.albumImg}>
+          <img src={track.album_art_url} alt={track.album}/>
+          <PlayTrack size={12} BoxSize={24} />
+        </div>
         <div className={styles.playlistTrackInfo}>
           <span>{track.title}</span>
           <span>{track.artist}</span>

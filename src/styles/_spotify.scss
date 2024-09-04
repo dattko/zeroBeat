@@ -1,0 +1,13 @@
+.play-track{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #E4003A;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}

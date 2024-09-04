@@ -40,6 +40,18 @@ $playerBarH: 80px;
     }
   }
 
+  @mixin gradient-text($start-color, $end-color) {
+    background: linear-gradient(to right, $start-color ,  $end-color );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+
+  @mixin neon-text($neon-color ){
+    text-shadow: 0 0 3px $color, 0 0 10px $neon-color, 0 0 12px $neon-color, 0 0 14px $neon-color
+  }
+
 // for 문
 //   $_length: 10;
 //   $_color: #b2c0d5;
