@@ -1,31 +1,8 @@
 //박스 로우 뮤직
-.sectionTitleBox {
-  display: flex;
-  align-items: center;
-}
-
-.sectionTitle {
-  font-size: var(--s-title);
-  font-weight: 700;
-  color: $color;
-}
-
-
-.rowSection {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
 .musicListContainer {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-right: 80px;
-  @include responsive(1200px){
-    padding-right: 50px;
-  }
 }
 
 .musicListUl {
@@ -67,25 +44,29 @@
 }
 
 .rowMusicInfoTitle {
-  font-size: 13px;
+  font-size: var(--f-m);
   font-weight: 600;
   flex: 1;
   color: $color;
+  @include ellipsis(2);
 }
 
 .rowMusicInfoText {
   width: 100%;
-  font-size: 13px;
+  font-size: var(--f-m);
   color: $color;
-  &.grey {
-    color: #9e9e9e;
-  }
-
-  &.center {
-    text-align: center;
+  @include ellipsis(1);
+}
+.rowMusicInfoTextAlbum{
+  width: 100%;
+  font-size: var(--f-m);
+  color: $color;
+  @include ellipsis(1);
+  color: $g;
+  @include responsive(1200px){
+    display: none;
   }
 }
-
 .iconBtn {
   display: flex;
   align-items: center;

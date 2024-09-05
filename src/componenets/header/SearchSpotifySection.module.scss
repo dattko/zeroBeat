@@ -1,0 +1,116 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+
+    :global(.play-track) {
+      display: flex;
+    }
+  }
+
+  &track {
+    background-color: rgba(255, 107, 107, 0.1);
+  }
+
+  &album {
+    background-color: rgba(84, 160, 255, 0.1);
+  }
+
+  &artist {
+    background-color: rgba(72, 219, 251, 0.1);
+
+    padding: 12px;
+  }
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  &artist {
+    border-radius: 50%;
+  }
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playButton {
+  position: absolute;
+  bottom: 0.25rem;
+  right: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  &artist{
+    align-items: center;
+  }
+}
+
+.title {
+  font-size: var(--f-m);
+  font-weight: 600;
+  color: $color;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  font-size: var(--f-s);
+  color: $g;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.album {
+  font-size: var(--f-s);
+  color: $g;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noDataMessage {
+  font-size: var(--f-l);
+  color: $g;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+}

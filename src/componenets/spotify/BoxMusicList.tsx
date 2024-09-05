@@ -3,6 +3,7 @@ import { MusicList as MusicListType } from '@/types/spotify';
 import SwiperWrap from '@component/swiper/SwiperWrap';
 import { usePlayTrack } from '@/hooks/usePlayTrack';
 import styles from './BoxMusicList.module.scss';
+import GradientSectionTitle from '@component/layouts/gradientTitle/GradientSectionTitle';
 import PlayTrack from './PlayTrack';
 
 interface BoxMusicListProps {
@@ -27,9 +28,9 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
   };
 
   return (
-    <div className={styles.section}>
-      <div className={styles.sectionTitleBox}>
-        <span className={`${ styles.sectionTitle} ${name ? styles['sectionTitle' + name] : ''}`}>{title}</span>
+    <section className={'section'}>
+      <div className={'section-title_box'}>
+        <GradientSectionTitle title={title}/>
       </div>
       {data.length > 0 ? (
         name ? (
@@ -41,11 +42,9 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
                 onClick={() => handleItemClick(item)}
               >
                 <div className={`${styles['TrackAlbumImage' + name]} ${styles.TrackAlbumImage}`}>
-                  {item.album_art_url ? 
-                  <img src={item.album_art_url} alt={item.title} /> 
-                  : <img src="/images/no-image.png" alt={item.title} /> }
+                <img src={item.album_art_url ? item.album_art_url : '/images/no-image.png'} alt={item.title} />
                   <PlayTrack size={18} BoxSize={38}/>
-                </div>
+                </div> 
                 <span className={`${styles['TrackMusicInfoTitle' + name]} ${styles.TrackMusicInfoTitle}`}>
                   {item.title}
                 </span>
@@ -70,7 +69,7 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
                 onClick={() => handleItemClick(item)}
               >
                 <div className={styles.albumImage}>
-                  <img src={item.album_art_url} alt={item.title} />
+                  <img src={item.album_art_url ? item.album_art_url : '/images/no-image.png'} alt={item.title} />
                   <PlayTrack size={30} BoxSize={60}/>
                 </div>
                 <span className={styles.musicInfoTitle}>{item.title}</span>
@@ -86,7 +85,7 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
       ) : (
         <div className={styles.noDataMessage}>{name} 목록이 없습니다.</div>
       )}
-    </div>
+    </section>
   );
 };
 

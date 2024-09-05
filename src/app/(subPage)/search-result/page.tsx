@@ -1,14 +1,16 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import styled from 'styled-components';
 import { searchSpotify, getTrackDetails } from '@/lib/spotify';
-import { MusicList as MusicListType , SearchResults } from '@/types/spotify';
+import { MusicList as MusicListType, SearchResults } from '@/types/spotify';
 import { usePlayTrack } from '@/hooks/usePlayTrack';
-import { useRouter } from 'next/navigation';
+import SearchSpotifySection from '@component/header/SearchSpotifySection';
+import styles from './Page.module.scss';
+import { PlayIcon } from 'lucide-react';
 
 
-const SearchResultPage = () => {
+export default function SearchResultPage() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('q');
   const trackId = searchParams.get('id');
@@ -18,19 +20,6 @@ const SearchResultPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const { handlePlayTrack } = usePlayTrack();
-
-  const handleItemClick = (item: MusicListType, type='string') => {
-    if (type === 'album') {
-      console.log('Album clicked:', item);
-      // router.push(`/album/${item.id}`);
-    }else if (type === 'artist') {
-      console.log('Artist clicked:', item);
-      // router.push(`/album/${item.id}`);
-    }
-     else {
-      handlePlayTrack(item, true);  // null을 전달하여 인덱스를 0으로 설정
-    }
-  };
 
 
   useEffect(() => {
@@ -59,241 +48,49 @@ const SearchResultPage = () => {
     fetchData();
   }, [searchQuery, trackId, isSelected]);
 
-  if (isLoading) return <div>로딩</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (isLoading) return <div className={styles.loading}>로딩 중...</div>;
+  if (error) return <div className={styles.error}>Error: {error}</div>;
 
   return (
-    <Container>
-        <SearchTitle>
-           검색 : {searchQuery}
-         </SearchTitle>
+    <>
+      <h1 className={styles.searchTitle}>
+        검색 결과: {searchQuery}
+      </h1>
       
       {isSelected && selectedTrack && (
-        <PickTrack>
-          <PickTitle>선택한 트랙</PickTitle>
-          <TrackItem>
-            <PickImage src={selectedTrack.album_art_url} alt={selectedTrack.title} />
-            <PickColText>
-              <PickTrackName>{selectedTrack.title}</PickTrackName>
-              <PickArtistName>{selectedTrack.artist}</PickArtistName>
-              <PickAlbumName>{selectedTrack.album}</PickAlbumName>
-            </PickColText>
-          </TrackItem>
-        </PickTrack>
+        <div className={styles.selectedTrack}>
+          <h2 className={styles.selectedTitle}>선택한 트랙</h2>
+          <div className={styles.trackItem}>
+            <div className={styles.imageWrapper}>
+              <img className={styles.selectedImage} src={selectedTrack.album_art_url} alt={selectedTrack.title} />
+              <button className={styles.playButton} aria-label="Play" onClick={()=>{handlePlayTrack(selectedTrack)}}>
+                <PlayIcon size={24} />
+              </button>
+            </div>
+            <div className={styles.selectedInfo}>
+              <h3 className={styles.selectedTrackName}>{selectedTrack.title}</h3>
+              <p className={styles.selectedArtistName}>{selectedTrack.artist}</p>
+              <p className={styles.selectedAlbumName}>{selectedTrack.album}</p>
+            </div>
+          </div>
+        </div>
       )}
 
-      <Section>
-        <SectionTitle>노래</SectionTitle>
-        <TrackList>
-            <ListScroll>
-              {searchResults.tracks.map((track) => (
-                <TrackItem key={track.id} onClick={()=>handleItemClick(track)}>
-                  <Image src={track.album_art_url} alt={track.title} />
-                  <ColText>
-                    <TrackName>{track.title}</TrackName>
-                    <ArtistName>{track.artist}</ArtistName>
-                  </ColText>
-                </TrackItem>
-              ))}
-            </ListScroll>
-        </TrackList>
-      </Section>
-
-      <Section>
-        <SectionTitle>아티스트</SectionTitle>
-        <ArtistList>
-            <ListScroll>
-              {searchResults.artists.map((artist) => (
-                <ArtistItem key={artist.id} onClick={()=>handleItemClick(artist, 'artist')}>
-                  <Image src={artist.images?.[0]?.url} alt={artist.name} />
-                  <ArtistName>{artist.name}</ArtistName>
-                </ArtistItem>
-              ))}
-            </ListScroll>
-        </ArtistList>
-      </Section>
-
-      <Section>
-        <SectionTitle>앨범</SectionTitle>
-        <AlbumList>
-            <ListScroll>
-                {searchResults.albums.map((album) => (
-                    <AlbumItem key={album.id} onClick={()=>handleItemClick(album, 'album')}>
-                    <AlbumImage src={album.images?.[0]?.url} alt={album.name} />
-                    <ColText>
-                        <AlbumName>{album.name}</AlbumName>
-                        <ArtistName>{album?.artists?.map(a => a.name).join(', ')}</ArtistName>
-                    </ColText>
-                    </AlbumItem>
-                ))}
-            </ListScroll>
-        </AlbumList>
-      </Section>
-    </Container>
+      <SearchSpotifySection 
+        data={searchResults.tracks} 
+        title="노래" 
+        type="track" 
+      />
+      <SearchSpotifySection 
+        data={searchResults.artists} 
+        title="아티스트" 
+        type="artist" 
+      />
+      <SearchSpotifySection 
+        data={searchResults.albums} 
+        title="앨범" 
+        type="album" 
+      />
+    </>
   );
-};
-
-
-// 스타일
-const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-`;
-const SearchTitle = styled.span`
-    font-size: 24px;
-    font-weight: 800;
-`
-const PickTitle = styled.span`
-    font-size: 22px;
-    font-weight: 600;
-     margin-bottom: 16px;
-`
-
-
-const Section = styled.div`
-    display: flex;
-    flex-direction: column;
-`;
-const PickTrack = styled.div`
-border: 1px solid #cdd3dd;
-padding: 30px;
-border-radius: 8px;
-background-color: rgba(0, 0, 0, 0.03);
-display: flex;
-width: fit-content;
-flex-direction: column;
-`
-
-const PickImage = styled.img`
-    min-width: 150px;
-    min-height: 150px;
-    max-width: 150px;
-    max-height: 150px;
-    border-radius: 32px;
-`
-const PickColText = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-`
-const PickTrackName = styled.h3`
-  font-size: 22px;
-  margin: 0;
-`;
-
-const PickArtistName = styled.p`
-  font-size: 18px;
-  color: #e0e0e0;
-`;
-
-const PickAlbumName = styled.h3`
-  font-size: 16px;
-  color: #e0e0e0;
-  font-weight: 400;
-`;
-
-const SectionTitle = styled.span`
-  font-size: 20px;
-  margin-bottom:12px;
-  font-weight: 600;
-`;
-
-const TrackList = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-direction: row;
-  width: 100%;
-  overflow-x: auto;
-`;
-
-const TrackItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  white-space: nowrap;
-`;
-
-const TrackName = styled.h3`
-  font-size: 15px;
-  margin: 0;
-`;
-
-const ArtistName = styled.p`
-  font-size: 14px;
-  color: #e0e0e0;
-`;
-
-const ArtistList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  overflow-x: auto;
-  width: 100%;
-  flex-direction: row;
-  
-`;
-
-const ArtistItem = styled.div`
-  display: flex;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  white-space: nowrap;
-`;
-
-const AlbumList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-    flex-direction: row;
-    overflow-x: auto;
-    width: 100%;
-`;
-
-const AlbumItem = styled.div`
-  display: flex;
-  line-height: 1.2;
-  /* white-space: nowrap; */
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const AlbumName = styled.h3`
-  font-size: 14px;
-  margin: 0;
-`;
-
-
-
-const ListScroll = styled.div`
-    display: flex;
-    gap: 30px;
-    padding: 10px 0;
-    margin-right: 50px;
-`
-const Image = styled.img`
-    min-width: 64px;
-    min-height: 64px;
-    max-width: 64px;
-    max-height: 64px;
-    border-radius: 32px;
-`
-const AlbumImage = styled.img`
-    min-width: 140px;
-    min-height: 140px;
-    max-width: 140px;
-    max-height: 140px;
-    border-radius: 8px;
-    border: 1px solid #cdd3dd;
-
-`
-
-const ColText = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-`
-
-export default SearchResultPage;
+}

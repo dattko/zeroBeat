@@ -40,12 +40,12 @@ $playerBarH: 80px;
     }
   }
 
-  @mixin gradient-text($start-color, $end-color) {
-    background: linear-gradient(to right, $start-color ,  $end-color );
+  @mixin gradient-text($start-color, $end-color, $angle: 'to right') {
+    background: linear-gradient(#{$angle}, $start-color, $end-color);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-fill-color: transparent;
+    color: transparent;
   }
 
   @mixin neon-text($neon-color ){

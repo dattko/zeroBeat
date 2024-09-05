@@ -1,22 +1,4 @@
 //박스 로우 뮤직
-.section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.sectionTitleBox {
-  display: flex;
-  align-items: center;
-}
-
-.sectionTitle {
-  font-size: var(--s-title);
-  font-weight: 600;
-  color: $color;
-}
-
 .swiperList {
   display: flex;
   flex-direction: column;
@@ -50,7 +32,7 @@
 .musicInfoBox{
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .musicInfoTitle {
   color: $color;
@@ -58,15 +40,15 @@
   // min-height: 22px;
   line-height: 1.2;
   word-break: break-all;
-  font-size: 14px;
+  font-size: var(--f-m);
   @include ellipsis(2);
 }
 
 .musicInfoText {
-  color: #9e9e9e;
+  color: $color;
   font-weight: 500;
   width: 100%;
-  font-size: 12px;
+  font-size: var(--f-s);
   line-height: 1.2;
   word-break: break-all;
   @include ellipsis(1);
@@ -75,7 +57,7 @@
 .albumInfoText {
   color: #9e9e9e;
   width: 100%;
-  font-size: 10px;
+  font-size: var(--f-s);
   line-height: 1.2;
   word-break: break-all;
   @include ellipsis(1);
@@ -111,10 +93,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  padding-right: 80px;
-  @include responsive(1200px){
-    padding-right: 50px;
-  }
 }
 
 .TrackList{
@@ -148,7 +126,7 @@
 
 
 .TrackMusicInfoTitle{
-  font-size: 12px;
+  font-size: var(--f-m);
   font-weight: 600;
   word-break: break-all;
   color: $color;
@@ -156,13 +134,13 @@
 }
 
 .TrackMusicInfoText{
-  font-size: 10px;
+  font-size: var(--f-s);
   color: $g;
   @include ellipsis(1);
 }
 
 .TrackAlbumInfoText{
-  font-size: 8px;
+  font-size: 10px;
   color: $g;
   @include ellipsis(1);
 }
