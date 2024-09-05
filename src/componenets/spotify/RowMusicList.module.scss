@@ -56,6 +56,13 @@
   font-size: var(--f-m);
   color: $color;
   @include ellipsis(1);
+
+  &.grey {
+    color: $g;
+  }
+  &.center {
+    text-align: center;
+  }
 }
 .rowMusicInfoTextAlbum{
   width: 100%;

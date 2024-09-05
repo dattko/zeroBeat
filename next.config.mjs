@@ -15,6 +15,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   reactStrictMode: false,
   webpack: (config) => {
     config.resolve.alias = {

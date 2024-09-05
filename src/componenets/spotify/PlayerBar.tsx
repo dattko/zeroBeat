@@ -6,6 +6,7 @@ import styles from './PlayerBar.module.scss';
 import { setCurrentTime, setProgress } from '@redux/slice/playerSlice';
 import { PlayIcon, PauseIcon, SkipBackIcon, SkipForwardIcon, RepeatIcon, Volume2, Repeat1 } from 'lucide-react'
 
+
 interface PlaybarProps {
   onTogglePlayList: () => void;
 }

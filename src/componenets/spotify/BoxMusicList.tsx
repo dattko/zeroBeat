@@ -2,6 +2,7 @@ import React from 'react';
 import { MusicList as MusicListType } from '@/types/spotify';
 import SwiperWrap from '@component/swiper/SwiperWrap';
 import { usePlayTrack } from '@/hooks/usePlayTrack';
+import { useRouter } from 'next/navigation';
 import styles from './BoxMusicList.module.scss';
 import GradientSectionTitle from '@component/layouts/gradientTitle/GradientSectionTitle';
 import PlayTrack from './PlayTrack';
@@ -18,12 +19,16 @@ interface BoxMusicListProps {
 
 const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) => {
   const { handlePlayTrack } = usePlayTrack();
-  
+  const router = useRouter();
+
   const handleItemClick = (item: MusicListType) => {
     if (type === 'track') {
       handlePlayTrack(item, true);
-    } else {
-      console.log('item :', item);
+    } else if (type === 'album') {
+      console.log('Item clicked:', item);
+      router.push(`/album/${item.id}`);
+    } else if (type === 'artist') {
+      router.push(`/artist/${item.id}`);
     }
   };
 

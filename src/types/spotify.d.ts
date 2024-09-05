@@ -6,6 +6,7 @@ export interface SpotifyTrack {
   album: SpotifyAlbum;
   duration_ms: number;
   popularity?: number;
+
 }
 
 
@@ -16,6 +17,8 @@ export interface SpotifyAlbum {
   images: SpotifyImage[];
   release_date: string;
   popularity?: number;
+  tracks: { items: SpotifyTrack[] };
+  total_tracks?: number;
 }
 
 export interface SpotifyImage {
@@ -65,8 +68,7 @@ export interface MusicList {
   album_art_url?: string;
   images?: { url: string }[]; 
   release_date?: string;
-  duration?: string;
-  duration_ms?: number;
+  duration?: numbrt;
   popularity_rank?: number;
   name?: string;  
 }

@@ -90,8 +90,7 @@ export function transformTrack(item: SpotifyTrack): MusicList {
     album: item.album.name,
     album_art_url: Array.isArray(item.album.images) && item.album.images.length > 0 ? item.album.images[0].url : '',
     release_date: item.album.release_date || '',
-    duration: msToMinutesAndSeconds(item.duration_ms),
-    popularity_rank: item.popularity || 0,
+    duration: item.duration_ms,
   };
 }
 
@@ -110,7 +109,7 @@ export function transformAlbum(item: SpotifyAlbum): MusicList {
     album: item.name,
     album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
     release_date: item.release_date || '',
-    duration: '', 
+    duration: 0, 
     popularity_rank: item.popularity || 0,
   };
 }
@@ -118,26 +117,27 @@ export function transformAlbum(item: SpotifyAlbum): MusicList {
 export function transformPlaylist(item: SpotifyPlaylist): MusicList {
   return {
     id: item.id,
+    uri: `spotify:playlist:${item.id}`,
     title: item.name,
     artist: item.owner.display_name,
     album: 'Playlist',
     album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
     release_date: '',
-    duration: '',
-    popularity_rank: 0,
+    duration: 0, // 플레이리스트의 경우 duration이 없으므로 0으로 설정
   };
 }
+
 
 export function transformArtist(item: SpotifyArtist): MusicList {
   return {
     id: item.id,
+    uri: `spotify:artist:${item.id}`,
     title: item.name,
     artist: item.name,
     album: 'Artist',
     album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
     release_date: '',
-    duration: '',
-    popularity_rank: item.popularity || 0,
+    duration: 0, // 아티스트의 경우 duration이 없으므로 0으로 설정
   };
 }
 
@@ -289,7 +289,31 @@ export const resumePlayback = async (session: Session, deviceId?: string | null)
   }
 };
 
-
 export async function getSavedTracks() {
   return fetchSpotifyAPI('/me/tracks?limit=20');
+}
+
+export async function getAlbumDetails(albumId: string): Promise<SpotifyAlbum> {
+  const data = await fetchSpotifyAPI(`/albums/${albumId}`);
+  return data;
+}
+
+export const formatTime = (ms: number): string => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = ((ms % 60000) / 1000).toFixed(0);
+  return `${minutes}:${Number(seconds) < 10 ? '0' : ''}${seconds}`;
+};
+
+export function transformSpotifyTrackToMusicList(track: SpotifyTrack, albumImage?: string): MusicList {
+  return {
+    id: track.id,
+    uri: track.uri,
+    title: track.name,
+    artist: track.artists?.map(artist => artist.name).join(', ') ?? 'Unknown Artist',
+    album: track.album?.name ?? 'Unknown Album',
+    album_art_url: albumImage ?? track.album?.images?.[0]?.url ?? '',
+    release_date: track.album?.release_date ?? '',
+    duration: track.duration_ms ?? 0,
+    popularity_rank: track.popularity ?? 0,
+  };
 }

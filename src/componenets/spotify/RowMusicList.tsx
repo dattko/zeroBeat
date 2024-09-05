@@ -35,7 +35,7 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit }) => {
               <span className={styles.rowMusicInfoText } style={{width: '22%'}}>{data.artist}</span>
               <span className={styles.rowMusicInfoTextAlbum} style={{width: '22%'}}>{data.album}</span>
               <span className={`${styles.rowMusicInfoText} ${styles.grey}`} style={{width: '60px', fontSize: '14px'}}>
-                {data.duration_ms}
+                {data.duration}
               </span>
               <button className={styles.iconBtn}>
                 <img src="/icon/three-dot.svg" alt="재생" />

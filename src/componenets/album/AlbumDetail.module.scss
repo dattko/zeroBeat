@@ -1,0 +1,111 @@
+.albumDetailContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.albumInfo {
+  display: flex;
+  margin-bottom: 30px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.albumCover {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  margin-right: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}
+
+.albumMeta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  p {
+    font-size: 1.2em;
+    color: #777;
+    margin: 5px 0;
+  }
+}
+
+.trackList {
+  h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: #333;
+  }
+}
+
+.trackItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.trackNumber {
+  width: 30px;
+  text-align: right;
+  margin-right: 20px;
+  color: #777;
+  font-weight: bold;
+}
+
+.trackInfo {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.trackName {
+  font-size: 1.1em;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.artistName {
+  font-size: 0.9em;
+  color: #777;
+}
+
+.trackDuration {
+  margin-right: 20px;
+  color: #777;
+}
+
+.playButton {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}

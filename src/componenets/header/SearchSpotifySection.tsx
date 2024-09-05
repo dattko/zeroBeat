@@ -23,7 +23,7 @@ export default function SearchSpotifySection({ data, title, type }: SearchSpotif
   };
 
   const getImageUrl = (item: MusicListType) => {
-    return item.album_art_url || item.images?.[0]?.url || '/images/no-image.png';
+    return item.album_art_url || '/images/no-image.png';
   };
 
   return (
@@ -40,14 +40,14 @@ export default function SearchSpotifySection({ data, title, type }: SearchSpotif
               onClick={() => handleItemClick(item)}
             >
               <div className={`${styles.imageWrapper} ${styles[`imageWrapper${type}`]}`}>
-                <img src={getImageUrl(item)} alt={item.title || item.name} className={styles.image} />
+                <img src={getImageUrl(item)} alt={item.title} className={styles.image} />
                <PlayTrack size={16} BoxSize={32}/>
               </div>
               <div className={`${styles.info} ${styles[`info${type}`]}`}>
-                <span className={styles.title}>{item.title || item.name}</span>
+                <span className={styles.title}>{item.title }</span>
                 {type !== 'artist' && (
                   <span className={styles.subtitle}>
-                    {type === 'track' ? item.artist : (item.artists?.map(a => a.name).join(', ') || '')}
+                    {type === 'track' ? item.artist : ''}
                   </span>
                 )}
                 {type === 'track' && (
