@@ -1,3 +1,17 @@
+@keyframes aniUp {
+  0% {
+    top: 65%;
+  }
+  50% {
+    top: 40%;
+  }
+  75% {
+    top: 60%;
+  }
+  100% {
+    top: 50%;
+  }
+}
 .play-track{
   position: absolute;
   top: 50%;
@@ -10,4 +24,5 @@
   align-items: center;
   justify-content: center;
   display: none;
+  animation: aniUp 0.32s ease-in;
 }

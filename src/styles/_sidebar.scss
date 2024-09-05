@@ -23,6 +23,7 @@
         gap:4px;
         li{
             a{
+                transition: .2s ease-in-out;
                 height: 42px;
                 color: $color;
                 display: flex;

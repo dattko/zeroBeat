@@ -51,7 +51,7 @@ const Wrap: React.FC<WrapProps> = ({ children }) => {
           <Content>
             {children}
           </Content>
-          <PlayList isOpen={isPlayListOpen} />
+          <PlayList isOpen={isPlayListOpen} onClose={()=>{setIsPlayListOpen(false)}}/>
           <Playbar onTogglePlayList={togglePlayList} />
       </div>
     </ReduxProvider>

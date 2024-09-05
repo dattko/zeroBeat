@@ -10,7 +10,7 @@
   z-index: 10;
   padding-top: 20px;
   background-color: $medium-gray; 
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.2s ease-in-out;
   transform: translateX(100%);
 
   &.open {
@@ -21,9 +21,12 @@
     font-size: 18px;
     font-weight: 500;
     color: $color;
-    padding-left: 14px;
+    padding: 0 14px;
     display: block;
     margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 
@@ -95,3 +98,11 @@
 }
 
 
+.closeButton{
+  padding: 4px;
+  border-radius: 4px;
+  &:hover{
+    background-color: rgba($color: #E4003A, $alpha: 0.3); 
+
+  }
+}
