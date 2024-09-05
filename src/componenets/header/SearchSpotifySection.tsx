@@ -41,7 +41,7 @@ export default function SearchSpotifySection({ data, title, type }: SearchSpotif
             >
               <div className={`${styles.imageWrapper} ${styles[`imageWrapper${type}`]}`}>
                 <img src={getImageUrl(item)} alt={item.title || item.name} className={styles.image} />
-                {type === 'track' && <PlayTrack size={16} BoxSize={32}/>}
+               <PlayTrack size={16} BoxSize={32}/>
               </div>
               <div className={`${styles.info} ${styles[`info${type}`]}`}>
                 <span className={styles.title}>{item.title || item.name}</span>

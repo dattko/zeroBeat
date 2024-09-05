@@ -2,15 +2,12 @@ export interface SpotifyTrack {
   id: string;
   name: string;
   uri: string;
-  artists: Array<{ name: string }>;
-  album: {
-    name: string;
-    images: Array<{ url: string }>;
-    release_date: string;
-  };
+  artists: SpotifyArtist[];
+  album: SpotifyAlbum;
   duration_ms: number;
-  popularity: number;
+  popularity?: number;
 }
+
 
 export interface SpotifyAlbum {
   id: string;
@@ -18,7 +15,7 @@ export interface SpotifyAlbum {
   artists: SpotifyArtist[];
   images: SpotifyImage[];
   release_date: string;
-  popularity: number;
+  popularity?: number;
 }
 
 export interface SpotifyImage {
@@ -60,15 +57,16 @@ export interface Artist {
 
 export interface MusicList {
   id: string;
-  title: string;
+  title?: string;
   uri?: string;
-  artist: string;
+  artist?: string;
   artists?: { name: string }[];  
   album: string;
-  album_art_url: string;
+  album_art_url?: string;
   images?: { url: string }[]; 
   release_date?: string;
-  duration: string;
+  duration?: string;
+  duration_ms?: number;
   popularity_rank?: number;
   name?: string;  
 }

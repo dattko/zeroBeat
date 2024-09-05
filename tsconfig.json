@@ -24,6 +24,7 @@
       "@type/*": ["src/types/*"],
       "@modal/*": ["src/componenets/modal/*"],
       "@redux/*": ["src/redux/*"],
+      "@hook/*": ["src/hooks/*"],
     },
     "plugins": [
       {

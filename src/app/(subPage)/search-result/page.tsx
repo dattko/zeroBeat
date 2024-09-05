@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { searchSpotify, getTrackDetails } from '@/lib/spotify';
-import { MusicList as MusicListType, SearchResults } from '@/types/spotify';
+import { MusicList, SearchResults } from '@/types/spotify';
 import { usePlayTrack } from '@/hooks/usePlayTrack';
 import SearchSpotifySection from '@component/header/SearchSpotifySection';
 import styles from './Page.module.scss';
@@ -16,7 +16,7 @@ export default function SearchResultPage() {
   const trackId = searchParams.get('id');
   const isSelected = searchParams.get('selected') === 'true';
   const [searchResults, setSearchResults] = useState<SearchResults>({ tracks: [], artists: [], albums: [] });
-  const [selectedTrack, setSelectedTrack] = useState<MusicListType | null>(null);
+  const [selectedTrack, setSelectedTrack] = useState<MusicList | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const { handlePlayTrack } = usePlayTrack();
