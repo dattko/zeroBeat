@@ -4,7 +4,7 @@ import { usePlayTrack } from '@/hooks/usePlayTrack';
 import styles from './RowMusicList.module.scss';
 import PlayTrack from './PlayTrack';
 import GradientSectionTitle from '@component/layouts/gradientTitle/GradientSectionTitle';
-import { formatTime } from '@/lib/spotify';
+import { formatTime } from '@/lib/spotify/utils';
 
 interface RowMusicListProps {
   data: SpotifyTrack[];

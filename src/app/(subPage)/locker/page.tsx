@@ -1,7 +1,7 @@
 "use client"
 
 import { SpotifyTrack, SpotifyAlbum, SpotifyPlaylist, SpotifyArtist } from '@/types/spotify';
-import { getSavedAlbums, getSavedPlaylists, getFollowedArtists, getSavedTracks } from '@/lib/spotify';
+import { getSavedAlbums, getSavedPlaylists, getFollowedArtists, getSavedTracks } from '@/lib/spotify/api';
 import React, { useEffect, useState } from 'react';
 import Loading from '@/app/loading';
 import BoxMusicList from '@/componenets/spotify/BoxMusicList';

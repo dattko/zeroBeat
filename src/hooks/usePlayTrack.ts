@@ -6,20 +6,25 @@ import {
 } from '@redux/slice/playerSlice';
 import { SpotifyTrack, SpotifySDK } from '@/types/spotify';
 import { RootState } from '@redux/store';
-import { 
-  activateDevice, playTrack, getRecommendations, 
-} from '@/lib/spotify';
+import { getRecommendations} from '@/lib/spotify/api';
+import { activateDevice, playTrack} from '@/lib/spotify/player';
+import { useRouter } from 'next/navigation';
 
 export const usePlayTrack = () => {
 const dispatch = useDispatch();
-const { data: session } = useSession();
+const { data: session, status } = useSession();
 const { 
   isPlayerReady, deviceId, repeatMode 
 } = useSelector((state: RootState) => state.player);
 const [error, setError] = useState<string | null>(null);
 const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
+const router = useRouter();
+  const handlePlayTrack = async (track: SpotifyTrack, updateQueue: boolean = true, playlistIndex: number | null = null) => {   
+    
+    if (status === "unauthenticated" ) {
+      router.push('/login');
+    }
 
-  const handlePlayTrack = async (track: SpotifyTrack, updateQueue: boolean = true, playlistIndex: number | null = null) => {    
     if (!deviceId) {
       setError('No active device found. Please refresh the page and try again.');
       return;

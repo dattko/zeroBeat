@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { searchSpotify } from "@/lib/spotify"
+import { searchSpotify } from "@/lib/spotify/api"
 import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from "@/types/spotify"
 import Zicon from '@component/icon/icon';
 import styles from './SearchSpotify.module.scss'

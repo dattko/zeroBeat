@@ -1,10 +1,15 @@
 // MusicSwiper.tsx
 
-import React from 'react';
+import React, {ReactNode} from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
-import { MusicSwiperProps } from 'swiperTypes';
-const SwiperWrap: React.FC<MusicSwiperProps> = ({ children }) => {
+
+interface SwiperWrapProps {
+    children: ReactNode; 
+}
+
+
+const SwiperWrap: React.FC<SwiperWrapProps> = ({ children }) => {
     return (
         <Swiper
             pagination={{ clickable: true }}

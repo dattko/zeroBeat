@@ -1,11 +1,11 @@
 "use client"
-import React from 'react';
+import React from 'react'
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
   React.useEffect(() => {

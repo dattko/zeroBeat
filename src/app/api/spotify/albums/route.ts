@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAlbumDetails } from '@/lib/spotify';
+import { getAlbumDetails } from '@/lib/spotify/api';
 import { getSession } from 'next-auth/react';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {

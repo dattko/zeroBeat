@@ -7,10 +7,10 @@ import {
 } from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import { 
-  playTrack, getRecommendations, pausePlayback, resumePlayback 
-} from '@/lib/spotify';
+  playTrack, pausePlayback, resumePlayback } from '@/lib/spotify/player';
+import { getRecommendations,} from '@/lib/spotify/api';
 import {SpotifySDK } from '@/types/spotify';
-import { formatTime } from '@/lib/spotify';
+// import { formatTime } from '@/lib/spotify/utils';
 let isInitializing = false;
 
 export const useMusicPlayer = () => {

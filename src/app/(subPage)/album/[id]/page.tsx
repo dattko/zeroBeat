@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
 import { SpotifyAlbum, SpotifyTrack } from '@type/spotify';
-import { getAlbumDetails } from '@/lib/spotify';
+import { getAlbumDetails } from '@/lib/spotify/api';
 import styles from './Page.module.scss';
 import RowMusicList from '@/componenets/spotify/RowMusicList';
 
@@ -50,7 +50,7 @@ const AlbumPage: React.FC<AlbumPageProps> = ({ params }) => {
   if (!album) return <div>Album not found</div>;
 
   const albumImageUrl = album.images[0]?.url || '/images/no-image.png';
-
+  console.log('album', album);
   return (
     <div className={styles.albumPageContainer}>
       <div className={styles.albumInfo}>
@@ -60,9 +60,9 @@ const AlbumPage: React.FC<AlbumPageProps> = ({ params }) => {
           className={styles.albumCover}
         />
         <div className={styles.albumMeta}>
-          <h1>{album.name}</h1>
-          <p>{album.artists.map(artist => artist.name).join(', ')}</p>
-          <p>{new Date(album.release_date).getFullYear()} • {album.total_tracks} songs</p>
+          <span className={styles.albumTitle}>{album.name}</span>
+          <span className={styles.albumArtist}>{album.artists.map(artist => artist.name).join(', ')}</span>
+          <span className={styles.albumRelease}>{album.release_date} • {album.total_tracks} 곡</span>
         </div>
       </div>
       <RowMusicList data={album.tracks.items} title="목록" type='album' albumImage={albumImageUrl} />

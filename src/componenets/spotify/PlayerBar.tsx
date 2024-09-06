@@ -5,7 +5,7 @@ import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 import styles from './PlayerBar.module.scss';
 import { setCurrentTime, setProgress } from '@redux/slice/playerSlice';
 import { PlayIcon, PauseIcon, SkipBackIcon, SkipForwardIcon, RepeatIcon, Volume2, Repeat1 } from 'lucide-react';
-import { formatTime } from '@/lib/spotify';
+import { formatTime } from '@/lib/spotify/utils';
 
 interface PlaybarProps {
   onTogglePlayList: () => void;

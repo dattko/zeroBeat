@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { usePlayTrack } from './usePlayTrack';
 import { setQueue} from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
-import {  getRecommendations} from '@/lib/spotify';
+import {  getRecommendations} from '@/lib/spotify/api';
 import { SpotifyTrack } from '@/types/spotify';
 
 

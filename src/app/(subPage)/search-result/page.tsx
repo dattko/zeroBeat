@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { searchSpotify, getTrackDetails } from '@/lib/spotify';
+import { searchSpotify, getTrackDetails } from '@/lib/spotify/api';
 import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from '@/types/spotify';
 import { usePlayTrack } from '@/hooks/usePlayTrack';
 import SearchSpotifySection from '@component/header/SearchSpotifySection';

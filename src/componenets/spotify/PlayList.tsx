@@ -7,7 +7,7 @@ import styles from './PlayList.module.scss';
 import { usePlayList } from '@/hooks/usePlayList';
 import PlayTrack from '@component/spotify/PlayTrack';
 import { ListX } from 'lucide-react';
-import { formatTime } from '@/lib/spotify';
+import { formatTime } from '@/lib/spotify/utils';
 
 
 interface PlayListProps {

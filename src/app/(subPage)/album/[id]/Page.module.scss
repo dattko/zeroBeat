@@ -34,78 +34,20 @@
   flex-direction: column;
   justify-content: center;
 
-  h1 {
-    font-size: 2.5em;
+  .albumTitle {
+    font-size: var(--s-title);
     margin-bottom: 10px;
-    color: #333;
+    color: $color;
   }
 
-  p {
-    font-size: 1.2em;
-    color: #777;
+  .albumArtist {
+    font-size: var(--f-l);
+    color: $g;
     margin: 5px 0;
   }
-}
-
-.trackList {
-  h2 {
-    font-size: 1.8em;
-    margin-bottom: 20px;
-    color: #333;
-  }
-}
-
-.trackItem {
-  display: flex;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #f9f9f9;
-  }
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.trackNumber {
-  width: 30px;
-  text-align: right;
-  margin-right: 20px;
-  color: #777;
-  font-weight: bold;
-}
-
-.trackInfo {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.trackName {
-  font-size: 1.1em;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.artistName {
-  font-size: 0.9em;
-  color: #777;
-}
-
-.trackDuration {
-  margin-right: 20px;
-  color: #777;
-}
-
-.playButton {
-  cursor: pointer;
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: scale(1.1);
+  .albumRelease{
+    font-size: var(--f-l);
+    color: $g;
+    margin: 5px 0;
   }
 }
