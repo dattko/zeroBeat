@@ -4,8 +4,8 @@ import { RootState } from '@redux/store';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 import styles from './PlayerBar.module.scss';
 import { setCurrentTime, setProgress } from '@redux/slice/playerSlice';
-import { PlayIcon, PauseIcon, SkipBackIcon, SkipForwardIcon, RepeatIcon, Volume2, Repeat1 } from 'lucide-react'
-
+import { PlayIcon, PauseIcon, SkipBackIcon, SkipForwardIcon, RepeatIcon, Volume2, Repeat1 } from 'lucide-react';
+import { formatTime } from '@/lib/spotify';
 
 interface PlaybarProps {
   onTogglePlayList: () => void;
@@ -13,10 +13,15 @@ interface PlaybarProps {
 
 const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
   const dispatch = useDispatch();
-  const { currentTrack, isPlaying, volume, queue, currentTrackIndex, progress, duration, repeatMode, currentTime, } = useSelector((state: RootState) => state.player);
-  const [localCurrentTime, setLocalCurrentTime] = useState(0);
-  const PlayBarUse = !!useSelector((state: RootState) => state.player.currentTrack);
-  
+  const { 
+    currentTrack, 
+    isPlaying, 
+    volume, 
+    queue, 
+    currentTrackIndex, 
+    duration_ms, 
+    repeatMode, 
+  } = useSelector((state: RootState) => state.player);
   const { 
     handleNextTrack, 
     handlePreviousTrack, 
@@ -27,13 +32,13 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     getCurrentTime,
     initializePlayer
   } = useMusicPlayer();
-
+  const [localProgress, setLocalProgress] = useState(0);
+  
   useEffect(() => {
     initializePlayer();
   }, []);
-  // 스페이스바 제어를 위한 이벤트 핸들러
+
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    // 입력 요소나 contentEditable 요소에 포커스가 있는 경우 무시
     if (
       event.target instanceof HTMLInputElement ||
       event.target instanceof HTMLTextAreaElement ||
@@ -43,16 +48,13 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     }
 
     if (event.code === 'Space') {
-      event.preventDefault(); // 스크롤 방지
+      event.preventDefault();
       handlePlayPause();
     }
   }, [handlePlayPause]);
 
   useEffect(() => {
-    // 컴포넌트 마운트 시 이벤트 리스너 추가
     document.addEventListener('keydown', handleKeyPress);
-
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
@@ -60,16 +62,23 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
+    let updateCount = 0;
     if (isPlaying) {
       interval = setInterval(async () => {
         const time = await getCurrentTime();
-        setLocalCurrentTime(time);
-        dispatch(setCurrentTime(time));
-        dispatch(setProgress(time / duration * 100));
+        setLocalProgress((time / duration_ms) * 100);
+        
+        // Update Redux state less frequently
+        updateCount++;
+        if (updateCount >= 5) { // Update every 5 seconds
+          dispatch(setCurrentTime(time));
+          dispatch(setProgress((time / duration_ms) * 100));
+          updateCount = 0;
+        }
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isPlaying, getCurrentTime, dispatch, duration]);
+  }, [isPlaying, getCurrentTime, dispatch, duration_ms]);
 
   const handleVolumeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(e.target.value);
@@ -78,7 +87,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
 
   const handleProgressChangeWrapper = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newProgress = Number(e.target.value);
-    setLocalCurrentTime(newProgress);
+    setLocalProgress(newProgress);
     handleProgressChange(newProgress);
   }, [handleProgressChange]);
 
@@ -86,84 +95,65 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
 
   const nextTrackInfo = queue[currentTrackIndex + 1];
 
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  };
-
   const handleControlClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
   };
 
+  const albumArtUrl = currentTrack.album.images[0]?.url || '';
+  const trackTitle = currentTrack.name;
+  const artistName = currentTrack.artists[0]?.name || 'Unknown Artist';
 
   return (
     <div className={styles.playerBarContainer} onClick={onTogglePlayList}>
       <div className={styles.playerBar}>
-      <div className={styles.playerOptions}>
-        {/* 트랙 정보 */}
-        <div className={styles.playerTrackInfo}>
-          <img src={currentTrack.album_art_url} alt={currentTrack.album} className={styles.playerAlbumArt} />
-          <div className={styles.playerTextInfo}>
-            <span className={styles.playerTrackTitle}>{currentTrack.title}</span>
-            <span className={styles.playerArtistName}>{currentTrack.artist}</span>
-          </div>
-        </div>
-        {/* 프로그레스 바 */}
-        <div className={styles.progressControl} onClick={handleControlClick}>
-            <input
-              type="range"
-              min="0"
-              max={duration}
-              value={localCurrentTime}
-              onChange={handleProgressChangeWrapper}
-              className={styles.progressSlider}
-            />
-            <div className={styles.progressTime}>
-              <span>{formatTime(localCurrentTime)}</span> / <span>{formatTime(duration)}</span>
+        <div className={styles.playerOptions}>
+          <div className={styles.playerTrackInfo}>
+            <img src={albumArtUrl} alt={currentTrack.album.name} className={styles.playerAlbumArt} />
+            <div className={styles.playerTextInfo}>
+              <span className={styles.playerTrackTitle}>{trackTitle}</span>
+              <span className={styles.playerArtistName}>{artistName}</span>
             </div>
           </div>
-          </div>
-        {/* 플레이어 컨트롤 */}
-        <div className={styles.playerControls} onClick={handleControlClick}>
-          <button onClick={handlePreviousTrack} className={styles.controlButton}>
-            <SkipBackIcon/>
-          </button>
-          <button onClick={handlePlayPause} className={styles.controlButton}>
-            {isPlaying ? <PauseIcon/> : <PlayIcon/>}
-          </button>
-          <button onClick={handleNextTrack} className={styles.controlButton}>
-            <SkipForwardIcon/>
-          </button>
-          <button onClick={handleRepeatMode} className={styles.controlButton}>
-           {repeatMode === 0 ? <RepeatIcon style={{opacity: .4}}/> : repeatMode === 1 ? <Repeat1/> : <RepeatIcon/>}
-          </button>
-        </div>
-        
-        
-
-
-          
-          {/* 볼륨 컨트롤 */}
-          <div className={styles.volumeControl} onClick={handleControlClick}>
-            <div className={styles.volumeInfo}><Volume2/></div>
+          <div className={styles.progressControl} onClick={handleControlClick}>
             <input
               type="range"
               min="0"
               max="100"
-              value={volume}
-              onChange={handleVolumeSliderChange}
-              className={styles.volumeSlider}
+              value={localProgress}
+              onChange={handleProgressChangeWrapper}
+              className={styles.progressSlider}
             />
-            {volume}
-       </div>
-        
-        {/* 다음 트랙 정보 */}
-        {/* {nextTrackInfo && (
-          <div className={styles.nextTrackInfo}>
-            <p>Next: {nextTrackInfo.title} - {nextTrackInfo.artist}</p>
+            <div className={styles.progressTime}>
+              <span>{formatTime(localProgress / 100 * duration_ms)}</span> / <span>{formatTime(currentTrack.duration_ms)}</span>
+            </div>
           </div>
-        )} */}
+        </div>
+        <div className={styles.playerControls} onClick={handleControlClick}>
+          <button onClick={handlePreviousTrack} className={styles.controlButton}>
+            <SkipBackIcon />
+          </button>
+          <button onClick={handlePlayPause} className={styles.controlButton}>
+            {isPlaying ? <PauseIcon /> : <PlayIcon />}
+          </button>
+          <button onClick={handleNextTrack} className={styles.controlButton}>
+            <SkipForwardIcon />
+          </button>
+          <button onClick={handleRepeatMode} className={styles.controlButton}>
+            {repeatMode === 0 ? <RepeatIcon style={{ opacity: .4 }} /> : repeatMode === 1 ? <Repeat1 /> : <RepeatIcon />}
+          </button>
+        </div>
+        <div className={styles.volumeControl} onClick={handleControlClick}>
+          <div className={styles.volumeInfo}><Volume2 /></div>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={volume}
+            onChange={handleVolumeSliderChange}
+            className={styles.volumeSlider}
+          />
+          {volume}
+        </div>
       </div>
     </div>
   );

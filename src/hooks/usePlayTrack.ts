@@ -4,12 +4,11 @@ import { useSession } from 'next-auth/react';
 import { 
   setCurrentTrack, setIsPlaying, setQueue, setCurrentTrackIndex,
 } from '@redux/slice/playerSlice';
-import { MusicList as MusicListType, SpotifySDK } from '@/types/spotify';
+import { SpotifyTrack, SpotifySDK } from '@/types/spotify';
 import { RootState } from '@redux/store';
 import { 
   activateDevice, playTrack, getRecommendations, 
 } from '@/lib/spotify';
-
 
 export const usePlayTrack = () => {
 const dispatch = useDispatch();
@@ -20,7 +19,7 @@ const {
 const [error, setError] = useState<string | null>(null);
 const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
 
-  const handlePlayTrack = async (track: MusicListType, updateQueue: boolean = true, playlistIndex: number | null = null) => {    
+  const handlePlayTrack = async (track: SpotifyTrack, updateQueue: boolean = true, playlistIndex: number | null = null) => {    
     if (!deviceId) {
       setError('No active device found. Please refresh the page and try again.');
       return;

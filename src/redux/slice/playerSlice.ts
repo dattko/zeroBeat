@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { MusicList } from '@/types/spotify';
+import { SpotifyTrack } from '@/types/spotify';
 
 interface PlayerState {
-  currentTrack: MusicList | null;
+  currentTrack: SpotifyTrack | null;
   isPlaying: boolean;
   volume: number;
   progress: number;
   shuffleOn: boolean;
   isPlayerReady: boolean;
   deviceId: string | null;
-  queue: MusicList[];  // 재생목록 상태 추가
+  queue: SpotifyTrack[];  // 재생목록 상태 추가
   isSDKLoaded: boolean;
   repeatMode: number; 
   currentTrackIndex: number; 
-  duration: number; 
-  recommendations: { [key: string]: MusicList[] };
+  duration_ms: number; 
+  recommendations: { [key: string]: SpotifyTrack[] };
   currentTime: number;
   setVisibilityChange: boolean;
 }
@@ -32,7 +32,7 @@ const initialState: PlayerState = {
   isSDKLoaded: false,
   currentTrackIndex: -1,
   recommendations: {},
-  duration: 0,
+  duration_ms: 0,
   currentTime: 0,
   setVisibilityChange: false,
 };
@@ -41,7 +41,7 @@ const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
-    setCurrentTrack: (state, action: PayloadAction<MusicList>) => {
+    setCurrentTrack: (state, action: PayloadAction<SpotifyTrack>) => {
       state.currentTrack = action.payload;
     },
     setIsPlaying: (state, action: PayloadAction<boolean>) => {
@@ -65,7 +65,7 @@ const playerSlice = createSlice({
     setDeviceId: (state, action: PayloadAction<string>) => {
       state.deviceId = action.payload;
     },
-    addToQueue: (state, action: PayloadAction<MusicList>) => {
+    addToQueue: (state, action: PayloadAction<SpotifyTrack>) => {
       state.queue.push(action.payload);
     },
     removeFromQueue: (state, action: PayloadAction<string>) => {
@@ -74,7 +74,7 @@ const playerSlice = createSlice({
     clearQueue: (state) => {
       state.queue = [];
     },
-    setQueue: (state, action: PayloadAction<MusicList[]>) => {
+    setQueue: (state, action: PayloadAction<SpotifyTrack[]>) => {
       state.queue = action.payload;
     },
     setIsSDKLoaded: (state, action: PayloadAction<boolean>) => {
@@ -84,7 +84,7 @@ const playerSlice = createSlice({
       state.currentTrackIndex = action.payload;
     },
     setDuration: (state, action: PayloadAction<number>) => {
-      state.duration = action.payload;
+      state.duration_ms = action.payload;
     },
     setCurrentTime: (state, action: PayloadAction<number>) => {
       state.currentTime = action.payload;

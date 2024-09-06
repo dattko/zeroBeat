@@ -2,9 +2,15 @@
 import React, { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { searchSpotify } from "@/lib/spotify"
-import { MusicList, Artist, SearchResults } from "@/types/spotify"
+import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from "@/types/spotify"
 import Zicon from '@component/icon/icon';
 import styles from './SearchSpotify.module.scss'
+
+interface SearchResults {
+  tracks: SpotifyTrack[];
+  artists: SpotifyArtist[];
+  albums: SpotifyAlbum[];
+}
 
 export const SearchComponent = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -62,11 +68,11 @@ export const SearchComponent = () => {
     setIsComposing(false)
   }
 
-  const handleTrackSelect = (track: MusicList) => {
+  const handleTrackSelect = (track: SpotifyTrack) => {
     router.push(`/search-result?id=${track.id}&q=${searchTerm}&selected=true`)
   }
 
-  const handleArtistSelect = (artist: Artist) => {
+  const handleArtistSelect = (artist: SpotifyArtist) => {
     router.push(`/artist/${artist.id}`)
   }
 
@@ -107,10 +113,10 @@ export const SearchComponent = () => {
                   <ul className={styles.searchUl}>
                     {searchResults.tracks.slice(0, 3).map((track) => (
                       <li key={track.id} className={styles.searchLi} onClick={() => handleTrackSelect(track)}>
-                        <img className={styles.itemImage} src={track.album_art_url || '/default-album-art.jpg'} alt={track.title} />
+                        <img className={styles.itemImage} src={track.album.images[0]?.url || '/default-album-art.jpg'} alt={track.name} />
                         <div className={styles.itemInfo}>
-                          <span className={styles.itemTitle}>{track.title}</span>
-                          <span className={styles.itemSubtitle}>{track.artist}</span>
+                          <span className={styles.itemTitle}>{track.name}</span>
+                          <span className={styles.itemSubtitle}>{track.artists.map(artist => artist.name).join(', ')}</span>
                         </div>
                       </li>
                     ))}
@@ -123,7 +129,7 @@ export const SearchComponent = () => {
                   <ul className={styles.searchUl}>
                     {searchResults.artists.slice(0, 3).map((artist) => (
                       <li key={artist.id} className={styles.searchLi} onClick={() => handleArtistSelect(artist)}>
-                        <img className={styles.itemImage} src={artist.images?.[0]?.url || '/default-artist-image.jpg'} alt={artist.name} />
+                        <img className={styles.itemImage} src={artist.images[0]?.url || '/default-artist-image.jpg'} alt={artist.name} />
                         <div className={styles.itemInfo}>
                           <span className={styles.itemTitle}>{artist.name}</span>
                           <span className={styles.itemSubtitle}>아티스트</span>

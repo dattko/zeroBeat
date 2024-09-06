@@ -1,3 +1,4 @@
+// 핵심 Spotify 인터페이스
 export interface SpotifyTrack {
   id: string;
   name: string;
@@ -6,9 +7,7 @@ export interface SpotifyTrack {
   album: SpotifyAlbum;
   duration_ms: number;
   popularity?: number;
-
 }
-
 
 export interface SpotifyAlbum {
   id: string;
@@ -21,17 +20,18 @@ export interface SpotifyAlbum {
   total_tracks?: number;
 }
 
-export interface SpotifyImage {
-  url: string;
-  height: number;
-  width: number;
-}
-
 export interface SpotifyArtist {
   id: string;
   name: string;
   images: SpotifyImage[];
   popularity: number;
+  uri?: string;
+}
+
+export interface SpotifyImage {
+  url: string;
+  height: number;
+  width: number;
 }
 
 export interface SpotifyPlaylist {
@@ -43,55 +43,19 @@ export interface SpotifyPlaylist {
   images: SpotifyImage[];
 }
 
-export interface Artist {
-  id: string;
-  title: string;
-  uri?: string;
-  artist: string;
-  artists?: { name: string }[];  
-  album: string;
-  album_art_url: string;
-  images?: { url: string }[]; 
-  release_date?: string;
-  duration: string;
-  popularity_rank?: number;
-  name?: string;  
-}
-
-export interface MusicList {
-  id: string;
-  title?: string;
-  uri?: string;
-  artist?: string;
-  artists?: { name: string }[];  
-  album: string;
-  album_art_url?: string;
-  images?: { url: string }[]; 
-  release_date?: string;
-  duration?: numbrt;
-  popularity_rank?: number;
-  name?: string;  
-}
-
-export interface Album {
-  id: string;
-  title: string;
-  uri?: string;
-  artist: string;
-  artists?: { name: string }[];  
-  album: string;
-  album_art_url: string;
-  images?: { url: string }[]; 
-  release_date?: string;
-  duration: string;
-  popularity_rank?: number;
-  name?: string;  
+export interface SpotifyGlobalChart {
+  added_at: string;
+  added_by: any;
+  is_local: boolean;
+  primary_color: string | null;
+  track: SpotifyTrack;
+  video_thumbnail: { url: string | null };
 }
 
 export interface SearchResults {
-  tracks: MusicList[];
-  artists: Artist[];
-  albums: Album[];
+  tracks: SpotifyTrack[];
+  artists: SpotifyArtist[];
+  albums: SpotifyAlbum[];
 }
 
 export namespace SpotifySDK {

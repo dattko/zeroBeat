@@ -3,12 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { searchSpotify, getTrackDetails } from '@/lib/spotify';
-import { MusicList, SearchResults } from '@/types/spotify';
+import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from '@/types/spotify';
 import { usePlayTrack } from '@/hooks/usePlayTrack';
 import SearchSpotifySection from '@component/header/SearchSpotifySection';
 import styles from './Page.module.scss';
 import { PlayIcon } from 'lucide-react';
 
+interface SearchResults {
+  tracks: SpotifyTrack[];
+  artists: SpotifyArtist[];
+  albums: SpotifyAlbum[];
+}
 
 export default function SearchResultPage() {
   const searchParams = useSearchParams();
@@ -16,11 +21,10 @@ export default function SearchResultPage() {
   const trackId = searchParams.get('id');
   const isSelected = searchParams.get('selected') === 'true';
   const [searchResults, setSearchResults] = useState<SearchResults>({ tracks: [], artists: [], albums: [] });
-  const [selectedTrack, setSelectedTrack] = useState<MusicList | null>(null);
+  const [selectedTrack, setSelectedTrack] = useState<SpotifyTrack | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const { handlePlayTrack } = usePlayTrack();
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,15 +66,15 @@ export default function SearchResultPage() {
           <h2 className={styles.selectedTitle}>선택한 트랙</h2>
           <div className={styles.trackItem}>
             <div className={styles.imageWrapper}>
-              <img className={styles.selectedImage} src={selectedTrack.album_art_url} alt={selectedTrack.title} />
-              <button className={styles.playButton} aria-label="Play" onClick={()=>{handlePlayTrack(selectedTrack)}}>
+              <img className={styles.selectedImage} src={selectedTrack.album.images[0]?.url} alt={selectedTrack.name} />
+              <button className={styles.playButton} aria-label="Play" onClick={() => handlePlayTrack(selectedTrack)}>
                 <PlayIcon size={24} />
               </button>
             </div>
             <div className={styles.selectedInfo}>
-              <h3 className={styles.selectedTrackName}>{selectedTrack.title}</h3>
-              <p className={styles.selectedArtistName}>{selectedTrack.artist}</p>
-              <p className={styles.selectedAlbumName}>{selectedTrack.album}</p>
+              <h3 className={styles.selectedTrackName}>{selectedTrack.name}</h3>
+              <p className={styles.selectedArtistName}>{selectedTrack.artists.map(artist => artist.name).join(', ')}</p>
+              <p className={styles.selectedAlbumName}>{selectedTrack.album.name}</p>
             </div>
           </div>
         </div>

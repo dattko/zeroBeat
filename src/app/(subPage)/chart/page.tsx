@@ -9,7 +9,6 @@ const Chart = () => {
   const { popularTracks, isLoading } = useSpotifyData();
 
 
-
     if (isLoading) return <Loading/>;
 
     return (

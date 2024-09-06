@@ -4,7 +4,7 @@ import { usePlayTrack } from './usePlayTrack';
 import { setQueue} from '@redux/slice/playerSlice';
 import { RootState } from '@redux/store';
 import {  getRecommendations} from '@/lib/spotify';
-import { MusicList as MusicListType } from '@/types/spotify';
+import { SpotifyTrack } from '@/types/spotify';
 
 
 export const usePlayList = () => {
@@ -15,7 +15,7 @@ export const usePlayList = () => {
   } = useSelector((state: RootState) => state.player);
   const [error, setError] = useState<string | null>(null);
 
-  const playTrackFromPlaylist = async (track: MusicListType, index: number) => {
+  const playTrackFromPlaylist = async (track: SpotifyTrack, index: number) => {
     await handlePlayTrack(track, false, index);  
   };
 

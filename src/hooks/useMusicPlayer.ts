@@ -10,7 +10,7 @@ import {
   playTrack, getRecommendations, pausePlayback, resumePlayback 
 } from '@/lib/spotify';
 import {SpotifySDK } from '@/types/spotify';
-
+import { formatTime } from '@/lib/spotify';
 let isInitializing = false;
 
 export const useMusicPlayer = () => {
@@ -18,7 +18,7 @@ export const useMusicPlayer = () => {
   const { data: session } = useSession();
   const { 
     isPlayerReady, deviceId, isSDKLoaded, currentTrackIndex, 
-    queue, currentTrack, isPlaying, volume, progress, repeatMode 
+    queue, currentTrack, isPlaying, volume, progress, repeatMode , duration_ms
   } = useSelector((state: RootState) => state.player);
   const { handlePlayTrack } = usePlayTrack();
   const [error, setError] = useState<string | null>(null);
@@ -74,8 +74,8 @@ export const useMusicPlayer = () => {
       newPlayer.addListener('player_state_changed', (state) => {
         if (state) {
           const { position, duration } = state;
-          dispatch(setProgress(position / 1000)); 
-          dispatch(setDuration(duration / 1000)); 
+          dispatch(setProgress(position)); 
+          dispatch(setDuration(duration)); 
         }
       });
 
@@ -118,7 +118,7 @@ export const useMusicPlayer = () => {
       dispatch(setCurrentTrack(nextTrack));
       if (session && deviceId) {
         try {
-          console.log('Playing next track:', nextTrack.title);
+          console.log('Playing next track:', nextTrack.name);
           await playTrack(session, nextTrack, isPlayerReady, deviceId);
           dispatch(setIsPlaying(true));
         } catch (err) {
@@ -208,8 +208,8 @@ export const useMusicPlayer = () => {
     if (!state) return;
   
     const { position, duration, paused, track_window } = state;
-    dispatch(setProgress(position / 1000));
-    dispatch(setDuration(duration / 1000));
+    dispatch(setProgress(position));
+    dispatch(setDuration(duration));
     dispatch(setIsPlaying(!paused));
   
     // 트랙이 끝났는지 정확하게 감지
@@ -267,8 +267,10 @@ export const useMusicPlayer = () => {
   const handleProgressChange = async (newProgress: number) => {
     if (player) {
       try {
-        player.seek(newProgress * 1000); // 밀리초 단위로 변환
-        dispatch(setProgress(newProgress)); // 상태 업데이트
+        const seekPosition = (newProgress / 100) * duration_ms;
+        player.seek(seekPosition); 
+        console.log('Seeking to:', seekPosition);
+        dispatch(setProgress(seekPosition));
       } catch (err) {
         console.error('Error changing progress:', err);
         setError('Failed to change progress. Please try again.');
@@ -279,7 +281,7 @@ export const useMusicPlayer = () => {
   const getCurrentTime = useCallback(async (): Promise<number> => {
     if (player) {
       const state = await player.getCurrentState();
-      return state ? state.position / 1000 : 0;
+      return state ? state.position : 0;
     }
     return 0;
   }, [player]);

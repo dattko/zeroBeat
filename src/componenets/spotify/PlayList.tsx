@@ -7,6 +7,8 @@ import styles from './PlayList.module.scss';
 import { usePlayList } from '@/hooks/usePlayList';
 import PlayTrack from '@component/spotify/PlayTrack';
 import { ListX } from 'lucide-react';
+import { formatTime } from '@/lib/spotify';
+
 
 interface PlayListProps {
   isOpen: boolean;
@@ -21,6 +23,8 @@ const PlayList: React.FC<PlayListProps> = React.memo(({ isOpen, onClose }) => {
   const listRef = useRef<List | null>(null);
   const [listHeight, setListHeight] = useState(400);
 
+
+  
   const updateHeight = useCallback(() => {
     if (containerRef.current) {
       const containerHeight = containerRef.current.clientHeight;
@@ -60,10 +64,15 @@ const PlayList: React.FC<PlayListProps> = React.memo(({ isOpen, onClose }) => {
     if (!isItemLoaded(index)) {
       return <div style={style} className={styles.loadingRow}>Loading more tracks...</div>;
     }
-
+  
     const track = queue[index];
     const isCurrentTrack = index === currentTrackIndex;
-
+  
+  //속성 맵핑
+    const albumImageUrl = track.album.images[0]?.url || '';
+    const trackTitle = track.name;
+    const trackArtist = track.artists[0]?.name || 'Unknown';
+  
     return (
       <div 
         style={style} 
@@ -71,17 +80,18 @@ const PlayList: React.FC<PlayListProps> = React.memo(({ isOpen, onClose }) => {
         className={`${styles.trackRow} ${isCurrentTrack ? styles.currentTrack : ''} ${isCurrentTrack ? styles.activeTrack : ''}`}
       >
         <div className={styles.albumImg}>
-          <img src={track.album_art_url} alt={track.album}/>
+          <img src={albumImageUrl} alt={track.album.name}/>
           <PlayTrack size={12} BoxSize={24} />
         </div>
         <div className={styles.playlistTrackInfo}>
-          <span>{track.title}</span>
-          <span>{track.artist}</span>
+          <span>{trackTitle}</span>
+          <span>{trackArtist}</span>
         </div>
-        <span className={styles.duration}>{track.duration}</span>
+        <span className={styles.duration}>{formatTime(track.duration_ms)}</span>
       </div>
     );
   }, [queue, currentTrackIndex, playTrackFromPlaylist, isItemLoaded]);
+  
 
   const memoizedList = useMemo(() => (
     <InfiniteLoader

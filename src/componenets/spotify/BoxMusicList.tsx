@@ -1,5 +1,5 @@
 import React from 'react';
-import { MusicList as MusicListType } from '@/types/spotify';
+import { SpotifyTrack, SpotifyAlbum, SpotifyArtist,SpotifyPlaylist  } from '@/types/spotify';
 import SwiperWrap from '@component/swiper/SwiperWrap';
 import { usePlayTrack } from '@/hooks/usePlayTrack';
 import { useRouter } from 'next/navigation';
@@ -7,31 +7,49 @@ import styles from './BoxMusicList.module.scss';
 import GradientSectionTitle from '@component/layouts/gradientTitle/GradientSectionTitle';
 import PlayTrack from './PlayTrack';
 
+type MusicItem = SpotifyTrack | SpotifyAlbum | SpotifyArtist | SpotifyPlaylist;
+
 interface BoxMusicListProps {
-  data: MusicListType[];
+  data: MusicItem[];
   title: string;
-  type?: 'track' | string;
+  type: string;
   name?: string;
 }
-
-
-
 
 const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) => {
   const { handlePlayTrack } = usePlayTrack();
   const router = useRouter();
 
-  const handleItemClick = (item: MusicListType) => {
+  const handleItemClick = (item: MusicItem) => {
     if (type === 'track') {
-      handlePlayTrack(item, true);
+    handlePlayTrack(item as SpotifyTrack, true);
     } else if (type === 'album') {
-      console.log('Item clicked:', item);
       router.push(`/album/${item.id}`);
     } else if (type === 'artist') {
       router.push(`/artist/${item.id}`);
+    }else if (type === 'playlist') {
+      router.push(`/playlist/${item.id}`);
     }
   };
 
+  const getItemImage = (item: MusicItem): string => {
+    if ('album' in item && item.album.images.length > 0) {
+      return item.album.images[0].url;
+    } else if ('images' in item && item.images && item.images.length > 0) {
+      return item.images[0].url;
+    }
+    return '/images/no-image.png';
+  };
+  
+
+  const getItemArtist = (item: MusicItem): string => {
+    if ('artists' in item) {
+      return item.artists.map(artist => artist.name).join(', ');
+    } else if ('name' in item) {
+      return item.name;
+    }
+    return '';
+  };
   return (
     <section className={'section'}>
       <div className={'section-title_box'}>
@@ -47,21 +65,16 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
                 onClick={() => handleItemClick(item)}
               >
                 <div className={`${styles['TrackAlbumImage' + name]} ${styles.TrackAlbumImage}`}>
-                <img src={item.album_art_url ? item.album_art_url : '/images/no-image.png'} alt={item.title} />
+                  <img src={getItemImage(item)} alt={item.name} />
                   <PlayTrack size={18} BoxSize={38}/>
                 </div> 
                 <span className={`${styles['TrackMusicInfoTitle' + name]} ${styles.TrackMusicInfoTitle}`}>
-                  {item.title}
+                  {item.name}
                 </span>
-                 {type !== 'artist' && 
+                {type !== 'artist' && 
                 <span className={`${styles['TrackMusicInfoText' + name]} ${styles.TrackMusicInfoText}`}>
-                  {type === 'track' ? item.artist : item.artist || ''}
+                  {getItemArtist(item)}
                 </span>}
-
-                {/* {type === 'track' && 
-                <span className={` ${styles['albumInfoText' + name], styles.TrackAlbumInfoText}`}>
-                  {item.album}
-                </span>} */}
               </div>
             ))}
           </div>
@@ -74,15 +87,15 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
                 onClick={() => handleItemClick(item)}
               >
                 <div className={styles.albumImage}>
-                  <img src={item.album_art_url ? item.album_art_url : '/images/no-image.png'} alt={item.title} />
+                  <img src={getItemImage(item)} alt={item.name} />
                   <PlayTrack size={30} BoxSize={60}/>
                 </div>
-                <span className={styles.musicInfoTitle}>{item.title}</span>
+                <span className={styles.musicInfoTitle}>{item.name}</span>
                 <span className={styles.musicInfoText}>
-                  {type === 'track' ? item.artist : item.artist || '다양한 아티스트'}
+                  {type === 'track' ? getItemArtist(item) : getItemArtist(item) || '다양한 아티스트'}
                 </span>
-                {type === 'track' && 
-                <span className={styles.albumInfoText}>{item.album}</span>}
+                {type === 'track' && 'album' in item && 
+                <span className={styles.albumInfoText}>{item.album.name}</span>}
               </div>
             ))}
           </SwiperWrap>

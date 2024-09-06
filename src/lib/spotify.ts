@@ -4,11 +4,8 @@ import {
   SpotifyAlbum,
   SpotifyArtist, 
   SpotifyPlaylist,
-  MusicList, 
   SpotifyTrack,
-  SearchResults, 
-  Artist, 
-  Album 
+  SearchResults
 } from '@/types/spotify';
 
 const BASE_URL = 'https://api.spotify.com/v1';
@@ -46,16 +43,17 @@ export async function fetchSpotifyAPI(endpoint: string, retryCount = 0): Promise
 export async function searchSpotify(query: string): Promise<SearchResults> {
   const data = await fetchSpotifyAPI(`/search?q=${encodeURIComponent(query)}&type=track,artist,album`);
   return {
-    tracks: data.tracks.items.map(transformTrack),
-    artists: data.artists.items as Artist[],
-    albums: data.albums.items as Album[]
+    tracks: data.tracks.items,
+    artists: data.artists.items,
+    albums: data.albums.items
   };
 }
 
-export async function getTrackDetails(trackId: string): Promise<MusicList> {
-  const data = await fetchSpotifyAPI(`/tracks/${trackId}`);
-  return transformTrack(data);
+
+export async function getTrackDetails(trackId: string): Promise<SpotifyTrack> {
+  return fetchSpotifyAPI(`/tracks/${trackId}`);
 }
+
 
 export async function getRecentlyPlayed() {
   return fetchSpotifyAPI('/me/player/recently-played?limit=20');
@@ -66,7 +64,8 @@ export async function getNewReleases() {
 }
 
 export async function getPopularTracks() {
-  return fetchSpotifyAPI('/playlists/37i9dQZEVXbMDoHDwVN2tF'); 
+  const data = await fetchSpotifyAPI('/playlists/37i9dQZEVXbMDoHDwVN2tF');
+  return data;
 }
 
 export async function getSavedAlbums() {
@@ -81,64 +80,10 @@ export async function getFollowedArtists() {
   return fetchSpotifyAPI('/me/following?type=artist&limit=20');
 }
 
-export function transformTrack(item: SpotifyTrack): MusicList {
-  return {
-    id: item.id,
-    uri: item.uri,
-    title: item.name,
-    artist: Array.isArray(item.artists) ? item.artists.map(artist => artist.name).join(', ') : '',
-    album: item.album.name,
-    album_art_url: Array.isArray(item.album.images) && item.album.images.length > 0 ? item.album.images[0].url : '',
-    release_date: item.album.release_date || '',
-    duration: item.duration_ms,
-  };
-}
-
 export function msToMinutesAndSeconds(ms: number): string {
   const minutes = Math.floor(ms / 60000);
   const seconds = ((ms % 60000) / 1000).toFixed(0);
   return `${minutes}:${parseInt(seconds) < 10 ? '0' : ''}${seconds}`;
-}
-
-export function transformAlbum(item: SpotifyAlbum): MusicList {
-  return {
-    id: item.id,
-    uri: `spotify:album:${item.id}`, 
-    title: item.name,
-    artist: Array.isArray(item.artists) ? item.artists.map(artist => artist.name).join(', ') : '',
-    album: item.name,
-    album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
-    release_date: item.release_date || '',
-    duration: 0, 
-    popularity_rank: item.popularity || 0,
-  };
-}
-
-export function transformPlaylist(item: SpotifyPlaylist): MusicList {
-  return {
-    id: item.id,
-    uri: `spotify:playlist:${item.id}`,
-    title: item.name,
-    artist: item.owner.display_name,
-    album: 'Playlist',
-    album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
-    release_date: '',
-    duration: 0, // 플레이리스트의 경우 duration이 없으므로 0으로 설정
-  };
-}
-
-
-export function transformArtist(item: SpotifyArtist): MusicList {
-  return {
-    id: item.id,
-    uri: `spotify:artist:${item.id}`,
-    title: item.name,
-    artist: item.name,
-    album: 'Artist',
-    album_art_url: Array.isArray(item.images) && item.images.length > 0 ? item.images[0].url : '',
-    release_date: '',
-    duration: 0, // 아티스트의 경우 duration이 없으므로 0으로 설정
-  };
 }
 
 export async function toggleShuffle(accessToken: string, state: boolean): Promise<void> {
@@ -161,7 +106,7 @@ export async function setRepeatMode(accessToken: string, state: 'off' | 'context
 
 export async function playTrack(
   session: Session | null, 
-  track: MusicList, 
+  track: SpotifyTrack, 
   isPlayerReady: boolean, 
   deviceId: string | null
 ): Promise<boolean> {
@@ -239,7 +184,7 @@ export const activateDevice = async (session: Session | null, deviceId: string) 
   }
 };
 
-export async function getRecommendations(trackId: string, limit: number = 20): Promise<MusicList[]> {
+export async function getRecommendations(trackId: string, limit: number = 20): Promise<SpotifyTrack[]> {
   const session = await getSession();
   if (!session?.user?.accessToken) {
     throw new Error('No access token');
@@ -256,7 +201,8 @@ export async function getRecommendations(trackId: string, limit: number = 20): P
   }
 
   const data = await response.json();
-  return data.tracks.map(transformTrack);
+  return data.tracks;
+
 }
 
 export const pausePlayback = async (session: Session) => {
@@ -303,17 +249,3 @@ export const formatTime = (ms: number): string => {
   const seconds = ((ms % 60000) / 1000).toFixed(0);
   return `${minutes}:${Number(seconds) < 10 ? '0' : ''}${seconds}`;
 };
-
-export function transformSpotifyTrackToMusicList(track: SpotifyTrack, albumImage?: string): MusicList {
-  return {
-    id: track.id,
-    uri: track.uri,
-    title: track.name,
-    artist: track.artists?.map(artist => artist.name).join(', ') ?? 'Unknown Artist',
-    album: track.album?.name ?? 'Unknown Album',
-    album_art_url: albumImage ?? track.album?.images?.[0]?.url ?? '',
-    release_date: track.album?.release_date ?? '',
-    duration: track.duration_ms ?? 0,
-    popularity_rank: track.popularity ?? 0,
-  };
-}

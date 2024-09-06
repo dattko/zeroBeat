@@ -1,42 +1,45 @@
 "use client"
 
-import { MusicList, SpotifyAlbum, SpotifyPlaylist, SpotifyArtist, SpotifyTrack } from '@/types/spotify';
-import { getSavedAlbums, getSavedPlaylists, getFollowedArtists, getSavedTracks, transformAlbum, transformPlaylist, transformArtist, transformTrack } from '@/lib/spotify';
+import { SpotifyTrack, SpotifyAlbum, SpotifyPlaylist, SpotifyArtist } from '@/types/spotify';
+import { getSavedAlbums, getSavedPlaylists, getFollowedArtists, getSavedTracks } from '@/lib/spotify';
 import React, { useEffect, useState } from 'react';
 import Loading from '@/app/loading';
 import BoxMusicList from '@/componenets/spotify/BoxMusicList';
 
 const Locker = () => {
-  const [savedTracks, setSavedTracks] = useState<MusicList[]>([]);
-  const [savedAlbums, setSavedAlbums] = useState<MusicList[]>([]);
-  const [savedPlaylists, setSavedPlaylists] = useState<MusicList[]>([]);
-  const [followedArtists, setFollowedArtists] = useState<MusicList[]>([]);
+  const [savedTracks, setSavedTracks] = useState<SpotifyTrack[]>([]);
+  const [savedAlbums, setSavedAlbums] = useState<SpotifyAlbum[]>([]);
+  const [savedPlaylists, setSavedPlaylists] = useState<SpotifyPlaylist[]>([]);
+  const [followedArtists, setFollowedArtists] = useState<SpotifyArtist[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+    console.log(
+      'savedPlaylists', savedPlaylists,'/',
+    );
   useEffect(() => {
     const fetchData = async () => {
-        try {
-          const [tracksData, albumsData, playlistsData, artistsData] = await Promise.all([
-            getSavedTracks(),
-            getSavedAlbums(),
-            getSavedPlaylists(),
-            getFollowedArtists()
-          ]);
+      try {
+        const [tracksData, albumsData, playlistsData, artistsData] = await Promise.all([
+          getSavedTracks(),
+          getSavedAlbums(),
+          getSavedPlaylists(),
+          getFollowedArtists()
+        ]);
 
-          setSavedTracks(tracksData.items.map((item: { track: SpotifyTrack }) => transformTrack(item.track)));
-          setSavedAlbums(albumsData.items.map((item: { album: SpotifyAlbum }) => transformAlbum(item.album)));
-          setSavedPlaylists(playlistsData.items.map((item: SpotifyPlaylist) => transformPlaylist(item)));
-          setFollowedArtists(artistsData.artists.items.map((item: SpotifyArtist) => transformArtist(item)));
-        } catch (error) {
-          console.error('Error fetching data:', error);
-          setError('Failed to fetch data. Please try again.');
-        } finally {
-          setIsLoading(false);
-        }
+        setSavedTracks(tracksData.items.map((item: { track: SpotifyTrack }) => item.track));
+        setSavedAlbums(albumsData.items.map((item: { album: SpotifyAlbum }) => item.album));
+        setSavedPlaylists(playlistsData.items);
+        setFollowedArtists(artistsData.artists.items);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to fetch data. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
+    }
     fetchData();
-  },[]);
+  }, []);
 
   if (isLoading) return <Loading/>;
   if (error) return <div>Error: {error}</div>;
