@@ -24,7 +24,7 @@ const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
       setError('No active device found. Please refresh the page and try again.');
       return;
     }
-
+    
     dispatch(setCurrentTrack(track));
     dispatch(setIsPlaying(true));
     dispatch(setCurrentTrackIndex(playlistIndex !== null ? playlistIndex : 0));

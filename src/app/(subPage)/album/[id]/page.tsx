@@ -1,11 +1,9 @@
 'use client';
-import React, { useEffect, useState,useCallback } from 'react';
-import { usePlayTrack } from '@hook/usePlayTrack';
-import { SpotifyAlbum } from '@type/spotify';
-import { formatTime } from '@/lib/spotify';
+import React, { useEffect, useState, useCallback } from 'react';
+import { SpotifyAlbum, SpotifyTrack } from '@type/spotify';
 import { getAlbumDetails } from '@/lib/spotify';
 import styles from './Page.module.scss';
-import PlayTrack from '@component/spotify/PlayTrack';
+import RowMusicList from '@/componenets/spotify/RowMusicList';
 
 interface AlbumPageProps {
   params: { id: string };
@@ -15,25 +13,37 @@ const AlbumPage: React.FC<AlbumPageProps> = ({ params }) => {
   const [album, setAlbum] = useState<SpotifyAlbum | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { handlePlayTrack } = usePlayTrack();
 
-const fetchAlbumDetail = useCallback(async () => {
-  setIsLoading(true);
-  try {
-    const data = await getAlbumDetails(params.id);
-    setAlbum(data);
-    setError(null);
-  } catch (err) {
-    setError(err instanceof Error ? err.message : 'Failed to fetch album details');
-  } finally {
-    setIsLoading(false);
-  }
-}, [params.id]);
+  const fetchAlbumDetail = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await getAlbumDetails(params.id);
+      // Add album image to each track
+      const tracksWithAlbumImage = data.tracks.items.map((track: SpotifyTrack) => ({
+        ...track,
+        album: {
+          ...track.album,
+          images: data.images
+        }
+      }));
+      setAlbum({
+        ...data,
+        tracks: {
+          ...data.tracks,
+          items: tracksWithAlbumImage
+        }
+      });
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch album details');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [params.id]);
 
-useEffect(() => {
-  fetchAlbumDetail();
-}, [fetchAlbumDetail]);
-
+  useEffect(() => {
+    fetchAlbumDetail();
+  }, [fetchAlbumDetail]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -55,28 +65,7 @@ useEffect(() => {
           <p>{new Date(album.release_date).getFullYear()} • {album.total_tracks} songs</p>
         </div>
       </div>
-      <div className={styles.trackList}>
-        <h2>Tracks</h2>
-        {album.tracks.items.map((track, index) => {
-          return (
-            <div key={track.id} className={styles.trackItem} onClick={() => handlePlayTrack(
-              track
-            )}>
-              <span className={styles.trackNumber}>{index + 1}</span>
-              <div className={styles.trackInfo}>
-                <span className={styles.trackName}>{track.name}</span>
-                <span className={styles.artistName}>
-                  {track.artists.map(artist => artist.name).join(', ')}
-                </span>
-              </div>
-              <span className={styles.trackDuration}>
-                {formatTime(track.duration_ms)}
-              </span>
-              <PlayTrack size={18} BoxSize={38} />
-            </div>
-          );
-        })}
-      </div>
+      <RowMusicList data={album.tracks.items} title="목록" type='album' albumImage={albumImageUrl} />
     </div>
   );
 };

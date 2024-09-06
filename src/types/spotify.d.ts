@@ -30,8 +30,8 @@ export interface SpotifyArtist {
 
 export interface SpotifyImage {
   url: string;
-  height: number;
-  width: number;
+  height?: number;
+  width?: number;
 }
 
 export interface SpotifyPlaylist {

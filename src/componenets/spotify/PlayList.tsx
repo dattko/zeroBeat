@@ -69,7 +69,7 @@ const PlayList: React.FC<PlayListProps> = React.memo(({ isOpen, onClose }) => {
     const isCurrentTrack = index === currentTrackIndex;
   
   //속성 맵핑
-    const albumImageUrl = track.album.images[0]?.url || '';
+    const albumImageUrl = track.album?.images[0]?.url || '/images/no-image.png';
     const trackTitle = track.name;
     const trackArtist = track.artists[0]?.name || 'Unknown';
   
@@ -80,7 +80,7 @@ const PlayList: React.FC<PlayListProps> = React.memo(({ isOpen, onClose }) => {
         className={`${styles.trackRow} ${isCurrentTrack ? styles.currentTrack : ''} ${isCurrentTrack ? styles.activeTrack : ''}`}
       >
         <div className={styles.albumImg}>
-          <img src={albumImageUrl} alt={track.album.name}/>
+          <img src={albumImageUrl} alt={track.album?.name}/>
           <PlayTrack size={12} BoxSize={24} />
         </div>
         <div className={styles.playlistTrackInfo}>

@@ -99,7 +99,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
     e.stopPropagation();
   };
 
-  const albumArtUrl = currentTrack.album.images[0]?.url || '';
+  const albumArtUrl = currentTrack.album?.images[0]?.url || '/images/no-image.png';
   const trackTitle = currentTrack.name;
   const artistName = currentTrack.artists[0]?.name || 'Unknown Artist';
 
@@ -108,7 +108,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
       <div className={styles.playerBar}>
         <div className={styles.playerOptions}>
           <div className={styles.playerTrackInfo}>
-            <img src={albumArtUrl} alt={currentTrack.album.name} className={styles.playerAlbumArt} />
+            <img src={albumArtUrl} alt={currentTrack.album?.name} className={styles.playerAlbumArt} />
             <div className={styles.playerTextInfo}>
               <span className={styles.playerTrackTitle}>{trackTitle}</span>
               <span className={styles.playerArtistName}>{artistName}</span>

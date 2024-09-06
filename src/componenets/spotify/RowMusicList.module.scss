@@ -55,13 +55,15 @@
   width: 100%;
   font-size: var(--f-m);
   color: $color;
+  height: 100%;
+  display: flex;
+  align-items: center;
   @include ellipsis(1);
-
   &.grey {
     color: $g;
   }
   &.center {
-    text-align: center;
+    justify-content: center;
   }
 }
 .rowMusicInfoTextAlbum{
