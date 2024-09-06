@@ -1,10 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SpotifyTrack, SpotifyAlbum } from '@/types/spotify';
+import { SpotifyTrack, SpotifyAlbum, SpotifyPlaylist } from '@/types/spotify';
 
 interface SpotifyState {
   recentlyPlayed: SpotifyTrack[];
   newReleases: SpotifyAlbum[];
   popularTracks: SpotifyTrack[];
+  recommendations: SpotifyTrack[];
+  featuredPlaylists: SpotifyPlaylist[];
   isLoading: boolean;
   error: string | null;
 }
@@ -13,6 +15,8 @@ const initialState: SpotifyState = {
   recentlyPlayed: [],
   newReleases: [],
   popularTracks: [],
+  featuredPlaylists: [],
+  recommendations: [],
   isLoading: false,
   error: null,
 };
@@ -30,6 +34,12 @@ const spotifySlice = createSlice({
     setPopularTracks: (state, action: PayloadAction<SpotifyTrack[]>) => {
       state.popularTracks = action.payload;
     },
+    setFeaturedPlaylists: (state, action: PayloadAction<SpotifyPlaylist[]>) => {
+      state.featuredPlaylists = action.payload;
+    },
+    setRecommendations: (state, action: PayloadAction<SpotifyTrack[]>) => {
+      state.recommendations = action.payload;
+    },
     setIsLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
@@ -43,6 +53,8 @@ export const {
   setRecentlyPlayed,
   setNewReleases,
   setPopularTracks,
+  setFeaturedPlaylists,
+  setRecommendations,
   setIsLoading,
   setError,
 } = spotifySlice.actions;

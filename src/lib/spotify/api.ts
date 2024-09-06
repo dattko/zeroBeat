@@ -80,9 +80,7 @@ export async function searchSpotify(query: string): Promise<SearchResults> {
   };
 }
 
-export async function getTrackDetails(trackId: string): Promise<SpotifyTrack> {
-  return fetchSpotifyAPI(`/tracks/${trackId}`, false);
-}
+
 
 export async function getNewReleases() {
   return fetchSpotifyAPI('/browse/new-releases?limit=20', false);
@@ -92,8 +90,24 @@ export async function getPopularTracks() {
   return fetchSpotifyAPI('/playlists/37i9dQZEVXbMDoHDwVN2tF', false);
 }
 
+export async function getFeaturedPlaylists() {
+  return fetchSpotifyAPI('/browse/featured-playlists', false);
+}
+
+export async function getPublicRecommendations(seedTracks: string[], seedArtists: string[], seedGenres: string[]) {
+  return fetchSpotifyAPI(`/recommendations?seed_tracks=${seedTracks.join(',')}&seed_artists=${seedArtists.join(',')}&seed_genres=${seedGenres.join(',')}`, false);
+}
+
+export async function getTopArtists() {
+  return fetchSpotifyAPI('/artists', false);
+}
+
 export async function getAlbumDetails(albumId: string): Promise<SpotifyAlbum> {
   return fetchSpotifyAPI(`/albums/${albumId}`, false);
+}
+
+export async function getTrackDetails(trackId: string): Promise<SpotifyTrack> {
+  return fetchSpotifyAPI(`/tracks/${trackId}`, false);
 }
 
 // Authenticated API functions (require user login)

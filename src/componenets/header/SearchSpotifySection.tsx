@@ -4,21 +4,29 @@ import { usePlayTrack } from '@/hooks/usePlayTrack';
 import PlayTrack from '@component/spotify/PlayTrack';
 import styles from './SearchSpotifySection.module.scss';
 import GradientSectionTitle from '@component/layouts/gradientTitle/GradientSectionTitle';
+import { useRouter } from 'next/navigation';
 
 type SpotifyItem = SpotifyTrack | SpotifyAlbum | SpotifyArtist;
 
 interface SearchSpotifySectionProps {
   data: SpotifyItem[];
   title: string;
-  type: 'track' | 'album' | 'artist';
+  type: string;
 }
 
 export default function SearchSpotifySection({ data, title, type }: SearchSpotifySectionProps) {
   const { handlePlayTrack } = usePlayTrack();
+  const router = useRouter();
   
   const handleItemClick = (item: SpotifyItem) => {
     if (type === 'track' && 'uri' in item) {
       handlePlayTrack(item as SpotifyTrack, true);
+    }else if (type === 'album') {
+      router.push(`/album/${item.id}`);
+    } else if (type === 'artist') {
+      router.push(`/artist/${item.id}`);
+    }else if (type === 'playlist') {
+      router.push(`/playlist/${item.id}`);
     }
   };
 
