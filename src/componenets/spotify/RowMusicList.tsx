@@ -6,6 +6,7 @@ import PlayTrack from './PlayTrack';
 import GradientSectionTitle from '@component/layouts/gradientTitle/GradientSectionTitle';
 import { formatTime } from '@/lib/spotify/utils';
 
+
 interface RowMusicListProps {
   data: SpotifyTrack[];
   title: string;
@@ -27,6 +28,15 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit, type, a
     return <div>No data available</div>;
   }
 
+  const dataClick = (track: SpotifyTrack) => {
+    handlePlayTrack({
+      ...track,
+      album: {
+        ...track.album,
+        images: [{ url: albumImage || track.album?.images[0]?.url || '/images/no-image.png' }]
+      }
+    });
+  }
   return (
     <div className={'section'}>
       {type !== 'album' && (

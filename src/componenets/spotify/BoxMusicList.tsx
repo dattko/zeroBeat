@@ -50,13 +50,21 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
     }
     return '';
   };
+
+  const getItemDescription = (item: MusicItem): string => {
+    if (type === 'playlist' && 'description' in item) {
+      return item.description || '';
+    }
+    return '';
+  };
+
   return (
     <section className={'section'}>
       <div className={'section-title_box'}>
         <GradientSectionTitle title={title}/>
       </div>
       {data.length > 0 ? (
-        name ? (
+        name && name !== 'recommendationPlaylist' ?  (
           <div className={styles.TrackContainer}>
             {data.map((item) => (
               <div 
@@ -91,8 +99,8 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
                   <PlayTrack size={30} BoxSize={60}/>
                 </div>
                 <span className={styles.musicInfoTitle}>{item.name}</span>
-                <span className={styles.musicInfoText}>
-                  {type === 'track' ? getItemArtist(item) : getItemArtist(item) || '다양한 아티스트'}
+                <span className={`${styles['musicInfoText' + name]} ${styles.musicInfoText}`}>
+                  {type === 'track' ? getItemArtist(item) : type === 'playlist' ? getItemDescription(item) : getItemArtist(item)}
                 </span>
                 {type === 'track' && 'album' in item && 
                 <span className={styles.albumInfoText}>{item.album.name}</span>}

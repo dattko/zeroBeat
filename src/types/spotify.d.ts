@@ -40,6 +40,7 @@ export interface SpotifyPlaylist {
   owner: {
     display_name: string;
   };
+  description: string;
   images: SpotifyImage[];
 }
 

@@ -1,4 +1,4 @@
-import {  useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSession } from 'next-auth/react';
 import { 
@@ -11,18 +11,20 @@ import { activateDevice, playTrack} from '@/lib/spotify/player';
 import { useRouter } from 'next/navigation';
 
 export const usePlayTrack = () => {
-const dispatch = useDispatch();
-const { data: session, status } = useSession();
-const { 
-  isPlayerReady, deviceId, repeatMode 
-} = useSelector((state: RootState) => state.player);
-const [error, setError] = useState<string | null>(null);
-const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
-const router = useRouter();
+  const dispatch = useDispatch();
+  const { data: session, status } = useSession();
+  const { 
+    isPlayerReady, deviceId, repeatMode 
+  } = useSelector((state: RootState) => state.player);
+  const [error, setError] = useState<string | null>(null);
+  const [player, setPlayer] = useState<SpotifySDK.Player | null>(null);
+  const router = useRouter();
+
   const handlePlayTrack = async (track: SpotifyTrack, updateQueue: boolean = true, playlistIndex: number | null = null) => {   
-    
-    if (status === "unauthenticated" ) {
+    if (status === "unauthenticated") {
+      setError('Please login to play tracks.');
       router.push('/login');
+      return;
     }
 
     if (!deviceId) {
@@ -45,7 +47,6 @@ const router = useRouter();
         throw new Error('Failed to play track');
       }
   
-      // 단일 곡 반복 모드에서는 곡의 시작으로 되돌리기 제거
       if (repeatMode === 1 && player) {
         player.seek(0);
       }
@@ -63,6 +64,7 @@ const router = useRouter();
   };
 
   return { 
-    handlePlayTrack, 
+    handlePlayTrack,
+    error
   };
 }

@@ -2,7 +2,7 @@
 import React from 'react'
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import styled from 'styled-components';
+import styles from './page.module.scss';
 
 export default function LoginPage() {
   const { data: session } = useSession();
@@ -24,43 +24,14 @@ export default function LoginPage() {
 
 
   return (
-    <LoginWrap>
-      <Logo>
+    <div className={styles.loginWrap}>
+      <div className={styles.logo}>
         <img src="/images/Spotify_Logo_RGB_Green.png" alt="로고" />
-      </Logo>
-      <LoginBtn onClick={handleLogin}>
+      </div>
+      <button className={styles.loginBtn} onClick={handleLogin}>
         Spotify 로그인
-      </LoginBtn>
-    </LoginWrap>
+      </button>
+    </div>
   );
 }
 
-const Logo = styled.div`
-  max-width: 330px;
-`; 
-
-const LoginWrap = styled.div`
-  display: flex;
-  background-color: #212121;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding-bottom: 50px;
-  width: 100%;
-  height: 100dvh;
-  gap: 46px;
-`;
-
-const LoginBtn = styled.button`
-  font-size: 18px;
-  font-weight: 500;
-  padding: 0 20px;
-  height: 54px;
-  background-color: #1ed760;
-  color: #212121;
-  border-radius: 8px;
-  cursor: pointer;
-  &:hover {
-    background-color: #1DB954;
-  }
-`;

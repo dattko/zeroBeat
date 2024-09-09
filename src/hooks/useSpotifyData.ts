@@ -6,6 +6,7 @@ import {
   setNewReleases,
   setPopularTracks,
   setFeaturedPlaylists,
+  setRandomGenreRecommendations,
   setIsLoading,
   setError,
 } from '@redux/slice/spotifySlice';
@@ -14,6 +15,7 @@ import {
   getNewReleases,
   getPopularTracks,
   getFeaturedPlaylists,
+  getRandomGenreRecommendations,
 } from '@/lib/spotify/api';
 import { SpotifyTrack } from '@/types/spotify';
 import { useSession } from 'next-auth/react';
@@ -22,7 +24,7 @@ export const useSpotifyData = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data: session } = useSession();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { recentlyPlayed, newReleases, popularTracks, featuredPlaylists, isLoading, error } = useSelector((state: RootState) => state.spotify);
+  const { recentlyPlayed, newReleases, popularTracks, featuredPlaylists, randomGenreRecommendations, isLoading, error } = useSelector((state: RootState) => state.spotify);
 
   // 인증 여부 체크
   useEffect(() => {
@@ -36,10 +38,12 @@ export const useSpotifyData = () => {
       dispatch(setError(null));
 
       try {
-        const [newReleasesData, popularTracksData, featuredPlaylistsData] = await Promise.all([
-          getNewReleases(),
+        const [newReleasesData, popularTracksData, featuredPlaylistsData, randomGenreRecommendationsDtata] = await Promise.all([
+          getNewReleases(20, 0, 'KR'),
           getPopularTracks(),
           getFeaturedPlaylists(),
+          getRandomGenreRecommendations(),
+
         ]);
 
         if (newReleasesData?.albums?.items) {
@@ -54,7 +58,11 @@ export const useSpotifyData = () => {
           const tracks: SpotifyTrack[] = popularTracksData.tracks.items.map((item: any) => item.track);
           dispatch(setPopularTracks(tracks));
         }
-        
+
+        if (randomGenreRecommendationsDtata?.tracks) {
+          dispatch(setRandomGenreRecommendations(randomGenreRecommendationsDtata.tracks));
+        }
+
       } catch (error) {
         console.error('Error fetching main data:', error);
         dispatch(setError('Failed to fetch data. Please try again.'));
@@ -90,5 +98,5 @@ export const useSpotifyData = () => {
     fetchRecentlyPlayed();
   }, [dispatch, isAuthenticated]);
 
-  return { recentlyPlayed, newReleases, popularTracks, isLoading, error, isAuthenticated, featuredPlaylists };
+  return { recentlyPlayed, newReleases, popularTracks, isLoading, error, isAuthenticated, featuredPlaylists, randomGenreRecommendations }; 
 };

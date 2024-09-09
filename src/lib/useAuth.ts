@@ -17,21 +17,17 @@ export const useAuth = () => {
     const handleLogout = async () => {
         try {
             await signOut();
-            dispatch(closeModal());
+
         } catch (error) {
             console.error("Logout failed:", error);
         }
     };
 
-    const showLoginModal = () => {
-        dispatch(openModal({ modalName: 'LoginModal', isOpen: true }));
-    };
 
     return {
         session,
         status,
         handleLogin,
         handleLogout,
-        showLoginModal
     };
 };

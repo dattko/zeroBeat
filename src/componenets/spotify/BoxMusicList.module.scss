@@ -55,8 +55,9 @@
   @include ellipsis(1);
 }
 
+
 .albumInfoText {
-  color: #9e9e9e;
+  color: $g;
   width: 100%;
   font-size: var(--f-s);
   line-height: 1.2;
@@ -64,6 +65,11 @@
   @include ellipsis(1);
 }
 
+.musicInfoTextrecommendationPlaylist{
+  color: $g;
+  @include ellipsis(2);
+  white-space: wrap;
+}
 
 .noDataMessage {
   font-size: 18px;

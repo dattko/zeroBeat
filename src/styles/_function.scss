@@ -15,6 +15,7 @@ $boxShadow: 0 1px 20px 0 rgba(0, 0, 0, 0.1);
 $sidebarW: 180px;
 $tabSidebarW: 60px;
 $playerBarH: 80px;
+$spotifyColor: #1DB954;
 
 @function px($size) {
     @return calc(calc($size / 16)  *  1rem);

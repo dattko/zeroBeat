@@ -137,3 +137,67 @@ input{
 		display: block;
 	}
 }
+
+
+.not-login {
+  display: flex;
+  justify-content: center;
+	height: 100%;
+	padding-top: 10%;
+
+  &__card {
+		padding: 32px 24px;
+		border-radius:8px;
+		background-color: $light-gray;
+		display: flex;
+		align-items: center;
+		align-self: baseline;
+		flex-direction: column;
+		gap: 24px;
+		max-width: 400px;
+		width: 100%;
+		box-shadow: $boxShadow;
+  }
+
+  &__icon {
+		color: $spotifyColor;
+		width: 32px;
+		height: 32px;
+		position: absolute;
+		right: calc(100% + 4px);
+		top: 50%;
+		transform: translateY(-50%);
+  }
+
+  &__title {
+		font-size: 26px;
+		color: $color;
+		font-weight: 500;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		position: relative;
+  }
+
+  &__description {
+    color: $g;
+		font-size: 18px;
+		text-align: center;
+		line-height: 1.3;
+  }
+
+  &__button {
+    background-color: $spotifyColor;
+    color: $color;
+		width: 100px;
+		height: 32px;
+		border-radius: 16px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 600;
+    &:hover {
+      background-color: darken(#1db954, 10%);
+    }
+  }
+}

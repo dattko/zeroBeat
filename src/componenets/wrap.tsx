@@ -14,10 +14,7 @@ interface WrapProps {
 }
 
 const Wrap: React.FC<WrapProps> = ({ children }) => {
-  const { status } = useSession();
-  const router = useRouter();
   const pathname = usePathname();
-  const isLoginPage = pathname === "/login";
   const [isPlayListOpen, setIsPlayListOpen] = useState(false);
 
   if (pathname === '/login') {

@@ -34,6 +34,14 @@
                 padding: 0 20px 0 30px;
             }
 		}
+        &_login{
+            color: $color;
+
+            &:hover{
+                text-underline-offset: 4px;
+                text-decoration: underline;
+            }
+        }
 	}
     &-body{
         height: calc(100dvh - $headerH);

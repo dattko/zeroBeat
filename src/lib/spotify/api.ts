@@ -80,10 +80,15 @@ export async function searchSpotify(query: string): Promise<SearchResults> {
   };
 }
 
+export async function getNewReleases(limit: number = 20, offset: number = 0, country?: string) {
+  let endpoint = `/browse/new-releases?limit=${limit}&offset=${offset}`;
+  
+  if (country) {
+    endpoint += `&country=${country}`;
+  }
 
-
-export async function getNewReleases() {
-  return fetchSpotifyAPI('/browse/new-releases?limit=20', false);
+  const data = await fetchSpotifyAPI(endpoint, false);
+  return data;
 }
 
 export async function getPopularTracks() {
@@ -94,20 +99,23 @@ export async function getFeaturedPlaylists() {
   return fetchSpotifyAPI('/browse/featured-playlists', false);
 }
 
-export async function getPublicRecommendations(seedTracks: string[], seedArtists: string[], seedGenres: string[]) {
-  return fetchSpotifyAPI(`/recommendations?seed_tracks=${seedTracks.join(',')}&seed_artists=${seedArtists.join(',')}&seed_genres=${seedGenres.join(',')}`, false);
-}
-
-export async function getTopArtists() {
-  return fetchSpotifyAPI('/artists', false);
-}
-
 export async function getAlbumDetails(albumId: string): Promise<SpotifyAlbum> {
   return fetchSpotifyAPI(`/albums/${albumId}`, false);
 }
 
 export async function getTrackDetails(trackId: string): Promise<SpotifyTrack> {
   return fetchSpotifyAPI(`/tracks/${trackId}`, false);
+}
+
+export async function getRandomGenreRecommendations(limit: number = 20) {
+  const genresData = await fetchSpotifyAPI('/recommendations/available-genre-seeds', false);
+  const genres = genresData.genres;
+  const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+  return fetchSpotifyAPI(`/recommendations?seed_genres=${randomGenre}&limit=${limit}`, false);
+}
+
+export async function getBrowseCategories(limit: number = 20) {
+  return fetchSpotifyAPI(`/browse/categories?limit=${limit}`, false);
 }
 
 // Authenticated API functions (require user login)
