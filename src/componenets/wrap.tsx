@@ -15,12 +15,16 @@ interface WrapProps {
 
 const Wrap: React.FC<WrapProps> = ({ children }) => {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
   const [isPlayListOpen, setIsPlayListOpen] = useState(false);
 
   if (pathname === '/login') {
     return <>{children}</>; 
   }
 
+  if (session?.user.isPremium === false) {
+    console.log('요금제 가입을 해야 음악을 들을 수 있습니다.');
+  }
   const togglePlayList = () => {
     setIsPlayListOpen(prev => !prev);
   };

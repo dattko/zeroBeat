@@ -1,13 +1,11 @@
 "use client"
 import React from "react"
 import Link from 'next/link'
-import { useDispatch } from "react-redux"
 import { SearchComponent } from "@component/header/SearchSpotify"
 import { useAuth } from "@/lib/useAuth"
 import Zicon from "./icon/icon"
 
 export const Header = () => {
-  const dispatch = useDispatch()
   const { session, handleLogout } = useAuth()
 
   return (

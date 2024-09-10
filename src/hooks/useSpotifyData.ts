@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSession } from 'next-auth/react';
 import { AppDispatch, RootState } from '@redux/store';
 import {
   setRecentlyPlayed,
@@ -15,10 +16,15 @@ import {
   getNewReleases,
   getPopularTracks,
   getFeaturedPlaylists,
-  getRandomGenreRecommendations,
+  fetchSpotifyAPI,
 } from '@/lib/spotify/api';
 import { SpotifyTrack } from '@/types/spotify';
-import { useSession } from 'next-auth/react';
+
+// 미리 정의된 인기 장르 목록
+const POPULAR_GENRES = [
+  'pop', 'rock', 'hip-hop', 'electronic', 'classical', 'jazz', 'r-n-b', 'country',
+  'indie', 'alternative', 'dance', 'latin', 'metal', 'folk', 'blues'
+];
 
 export const useSpotifyData = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,24 +32,29 @@ export const useSpotifyData = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { recentlyPlayed, newReleases, popularTracks, featuredPlaylists, randomGenreRecommendations, isLoading, error } = useSelector((state: RootState) => state.spotify);
 
-  // 인증 여부 체크
+  // 세션 상태에 따른 인증 여부 설정
   useEffect(() => {
     setIsAuthenticated(!!session);
   }, [session]);
 
-  // 신곡 및 인기 곡 데이터 로딩
+  // 랜덤 장르 추천 가져오기
+  const getRandomGenreRecommendations = useCallback(async (limit: number = 20) => {
+    const randomGenre = POPULAR_GENRES[Math.floor(Math.random() * POPULAR_GENRES.length)];
+    return fetchSpotifyAPI(`/recommendations?seed_genres=${randomGenre}&limit=${limit}`, false);
+  }, []);
+
+  // 메인 데이터 가져오기
   useEffect(() => {
     const fetchMainData = async () => {
       dispatch(setIsLoading(true));
       dispatch(setError(null));
 
       try {
-        const [newReleasesData, popularTracksData, featuredPlaylistsData, randomGenreRecommendationsDtata] = await Promise.all([
+        const [newReleasesData, popularTracksData, featuredPlaylistsData, randomGenreRecommendationsData] = await Promise.all([
           getNewReleases(20, 0, 'KR'),
           getPopularTracks(),
           getFeaturedPlaylists(),
           getRandomGenreRecommendations(),
-
         ]);
 
         if (newReleasesData?.albums?.items) {
@@ -59,22 +70,22 @@ export const useSpotifyData = () => {
           dispatch(setPopularTracks(tracks));
         }
 
-        if (randomGenreRecommendationsDtata?.tracks) {
-          dispatch(setRandomGenreRecommendations(randomGenreRecommendationsDtata.tracks));
+        if (randomGenreRecommendationsData?.tracks) {
+          dispatch(setRandomGenreRecommendations(randomGenreRecommendationsData.tracks));
         }
 
       } catch (error) {
-        console.error('Error fetching main data:', error);
-        dispatch(setError('Failed to fetch data. Please try again.'));
+        console.error('메인 데이터 가져오기 오류:', error);
+        dispatch(setError('데이터를 가져오는데 실패했습니다. 다시 시도해 주세요.'));
       } finally {
         dispatch(setIsLoading(false));
       }
     };
 
     fetchMainData();
-  }, [dispatch]);
+  }, [dispatch, getRandomGenreRecommendations]);
 
-  // 최근 재생 목록 로딩 (인증된 경우)
+  // 최근 재생 목록 가져오기 (인증된 경우에만)
   useEffect(() => {
     if (!isAuthenticated) {
       dispatch(setRecentlyPlayed([]));
@@ -90,13 +101,13 @@ export const useSpotifyData = () => {
           dispatch(setRecentlyPlayed(Array.from(uniqueTracksMap.values())));
         }
       } catch (error) {
-        console.error('Error fetching recently played:', error);
-        dispatch(setError('Failed to fetch recently played data.'));
+        console.error('최근 재생 목록 가져오기 오류:', error);
+        dispatch(setError('최근 재생 데이터를 가져오는데 실패했습니다.'));
       }
     };
 
     fetchRecentlyPlayed();
   }, [dispatch, isAuthenticated]);
 
-  return { recentlyPlayed, newReleases, popularTracks, isLoading, error, isAuthenticated, featuredPlaylists, randomGenreRecommendations }; 
+  return { recentlyPlayed, newReleases, popularTracks, isLoading, error, isAuthenticated, featuredPlaylists, randomGenreRecommendations };
 };

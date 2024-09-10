@@ -1,4 +1,5 @@
-import { getSession} from 'next-auth/react';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { getSession } from 'next-auth/react';
 import { 
   SpotifyAlbum,
   SpotifyTrack,
@@ -7,32 +8,53 @@ import {
 
 const BASE_URL = 'https://api.spotify.com/v1';
 
+const spotifyAPI: AxiosInstance = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 async function getClientCredentialsToken(): Promise<string> {
-  const response = await fetch('/api/spotify/token', {
-    method: 'POST',
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to get client credentials token');
-  }
-  
-  const data = await response.json();
-  return data.access_token;
+  const response = await axios.post('/api/spotify/token');
+  return response.data.access_token;
 }
 
 let clientCredentialsToken: string | null = null;
 
-async function fetchSpotifyAPI(endpoint: string, requiresAuth: boolean = true): Promise<any> {
-  let headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  };
+async function axiosWithRetry(config: AxiosRequestConfig, retries = 3, backoff = 300): Promise<any> {
+  try {
+    const response = await spotifyAPI(config);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 429 && retries > 0) {
+        const retryAfter = error.response.headers['retry-after'];
+        const delay = retryAfter ? parseInt(retryAfter) * 1000 : backoff;
+        console.log(`Rate limited. Retrying after ${delay}ms. Retries left: ${retries}`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return axiosWithRetry(config, retries - 1, backoff * 2);
+      }
+    }
+    if (retries > 0) {
+      console.log(`Request failed. Retrying after ${backoff}ms. Retries left: ${retries}`);
+      await new Promise(resolve => setTimeout(resolve, backoff));
+      return axiosWithRetry(config, retries - 1, backoff * 2);
+    }
+    throw error;
+  }
+}
 
+export async function fetchSpotifyAPI(endpoint: string, requiresAuth: boolean = true, requiresPremium: boolean = false): Promise<any> {
   let token: string;
 
   if (requiresAuth) {
     const session = await getSession();
     if (!session?.user?.accessToken) {
       throw new Error('No access token');
+    }
+    if (requiresPremium && !session.user.isPremium) {
+      throw new Error('This feature requires a Spotify Premium account');
     }
     token = session.user.accessToken;
   } else {
@@ -42,30 +64,22 @@ async function fetchSpotifyAPI(endpoint: string, requiresAuth: boolean = true): 
     token = clientCredentialsToken;
   }
 
-  headers['Authorization'] = `Bearer ${token}`;
+  const config: AxiosRequestConfig = {
+    url: endpoint,
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  };
 
   try {
-    const res = await fetch(`${BASE_URL}${endpoint}`, { headers });
-
-    if (res.status === 401 && !requiresAuth) {
-      // Token might be expired, try to get a new one
+    const data = await axiosWithRetry(config);
+    return data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response?.status === 401 && !requiresAuth) {
       clientCredentialsToken = await getClientCredentialsToken();
-      headers['Authorization'] = `Bearer ${clientCredentialsToken}`;
-      return fetchSpotifyAPI(endpoint, requiresAuth);
+      return fetchSpotifyAPI(endpoint, requiresAuth, requiresPremium);
     }
-
-    if (res.status === 429) {
-      const retryAfter = res.headers.get('Retry-After') || '5';
-      await new Promise(resolve => setTimeout(resolve, parseInt(retryAfter) * 1000));
-      return fetchSpotifyAPI(endpoint, requiresAuth);
-    }
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch data from Spotify API');
-    }
-
-    return res.json();
-  } catch (error) {
     console.error('Error fetching data from Spotify API:', error);
     throw error;
   }
@@ -87,8 +101,7 @@ export async function getNewReleases(limit: number = 20, offset: number = 0, cou
     endpoint += `&country=${country}`;
   }
 
-  const data = await fetchSpotifyAPI(endpoint, false);
-  return data;
+  return fetchSpotifyAPI(endpoint, false);
 }
 
 export async function getPopularTracks() {
@@ -120,26 +133,51 @@ export async function getBrowseCategories(limit: number = 20) {
 
 // Authenticated API functions (require user login)
 export async function getRecentlyPlayed() {
-  return fetchSpotifyAPI('/me/player/recently-played?limit=20');
+  return fetchSpotifyAPI('/me/player/recently-played?limit=20', true);
 }
 
 export async function getSavedAlbums() {
-  return fetchSpotifyAPI('/me/albums?limit=20');
+  return fetchSpotifyAPI('/me/albums?limit=20', true);
 }
 
 export async function getSavedPlaylists() {
-  return fetchSpotifyAPI('/me/playlists?limit=20');
+  return fetchSpotifyAPI('/me/playlists?limit=20', true);
 }
 
 export async function getFollowedArtists() {
-  return fetchSpotifyAPI('/me/following?type=artist&limit=20');
+  return fetchSpotifyAPI('/me/following?type=artist&limit=20', true);
 }
 
 export async function getSavedTracks() {
-  return fetchSpotifyAPI('/me/tracks?limit=20');
+  return fetchSpotifyAPI('/me/tracks?limit=20', true);
 }
 
 export async function getRecommendations(trackId: string, limit: number = 20): Promise<SpotifyTrack[]> {
-  const data = await fetchSpotifyAPI(`/recommendations?seed_tracks=${trackId}&limit=${limit}`);
+  const data = await fetchSpotifyAPI(`/recommendations?seed_tracks=${trackId}&limit=${limit}`, true);
   return data.tracks;
+}
+
+// Premium-only functions
+export async function getCurrentPlayback() {
+  return fetchSpotifyAPI('/me/player', true, true);
+}
+
+export async function pausePlayback() {
+  return fetchSpotifyAPI('/me/player/pause', true, true);
+}
+
+export async function resumePlayback() {
+  return fetchSpotifyAPI('/me/player/play', true, true);
+}
+
+export async function skipToNext() {
+  return fetchSpotifyAPI('/me/player/next', true, true);
+}
+
+export async function skipToPrevious() {
+  return fetchSpotifyAPI('/me/player/previous', true, true);
+}
+
+export async function setVolume(volumePercent: number) {
+  return fetchSpotifyAPI(`/me/player/volume?volume_percent=${volumePercent}`, true, true);
 }

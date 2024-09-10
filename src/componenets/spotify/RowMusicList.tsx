@@ -28,15 +28,8 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit, type, a
     return <div>No data available</div>;
   }
 
-  const dataClick = (track: SpotifyTrack) => {
-    handlePlayTrack({
-      ...track,
-      album: {
-        ...track.album,
-        images: [{ url: albumImage || track.album?.images[0]?.url || '/images/no-image.png' }]
-      }
-    });
-  }
+
+  
   return (
     <div className={'section'}>
       {type !== 'album' && (

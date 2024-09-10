@@ -5,8 +5,14 @@ import BoxMusicList from '@/componenets/spotify/BoxMusicList';
 import Loading from '@/app/loading';
 import { useSpotifyData } from '@/hooks/useSpotifyData';
 const Page = () => {
-  const { recentlyPlayed, newReleases, popularTracks, featuredPlaylists,
-     randomGenreRecommendations,isLoading, error, isAuthenticated } = useSpotifyData();
+  const { 
+    recentlyPlayed,
+    newReleases, 
+    popularTracks, 
+    featuredPlaylists,
+    randomGenreRecommendations,
+    isAuthenticated,
+    isLoading, error,  } = useSpotifyData();
 
   if (isLoading) return <Loading />;
   if (error) return <div>Error: {error}</div>;

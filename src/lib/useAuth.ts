@@ -1,10 +1,7 @@
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { useDispatch } from 'react-redux';
-import { openModal, closeModal } from '@redux/slice/modalSlice';
 
 export const useAuth = () => {
     const { data: session, status } = useSession();
-    const dispatch = useDispatch();
 
     const handleLogin = async () => {
         try {

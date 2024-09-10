@@ -21,12 +21,12 @@ export const usePlayTrack = () => {
   const router = useRouter();
 
   const handlePlayTrack = async (track: SpotifyTrack, updateQueue: boolean = true, playlistIndex: number | null = null) => {   
-    if (status === "unauthenticated") {
+    if (status !== "authenticated") {
       setError('Please login to play tracks.');
       router.push('/login');
       return;
     }
-
+    console.log(session.user.isPremium);
     if (!deviceId) {
       setError('No active device found. Please refresh the page and try again.');
       return;
