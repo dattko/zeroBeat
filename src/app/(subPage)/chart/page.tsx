@@ -14,7 +14,7 @@ const Chart = () => {
     return (
         <>
         <Section>
-          <RowMusicList title='Global 50' data={popularTracks}/>
+          <RowMusicList title='Global 50' data={popularTracks} type='track'/>
         </Section>
         </>
     )

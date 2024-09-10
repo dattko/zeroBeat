@@ -181,3 +181,13 @@ export async function skipToPrevious() {
 export async function setVolume(volumePercent: number) {
   return fetchSpotifyAPI(`/me/player/volume?volume_percent=${volumePercent}`, true, true);
 }
+
+export async function getAlbumTracks(albumId: string): Promise<SpotifyTrack[]> {
+  const data = await fetchSpotifyAPI(`/albums/${albumId}/tracks`, false); 
+  return data.items; 
+}
+
+export async function getPlaylistTracks(playlistId: string): Promise<SpotifyTrack[]> {
+  const data = await fetchSpotifyAPI(`/playlists/${playlistId}/tracks`, false); 
+  return data.items.map((item: any) => item.track); 
+}

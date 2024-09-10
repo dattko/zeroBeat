@@ -33,7 +33,7 @@ const Page: React.FC = () => {
       <BoxMusicList data={randomGenreRecommendations} title='오늘의 추천' type="track"/>
       <BoxMusicList data={newReleases} title='NEW 앨범' type="album"/>
       <BoxMusicList data={featuredPlaylists} title='추천 플레이리스트' type="playlist" name='recommendationPlaylist'/>
-      <RowMusicList title='Global 차트' data={popularTracks} limit={20}/>
+      <RowMusicList title='Global 차트' data={popularTracks} limit={20} type='track'/>
     </>
   );
 };

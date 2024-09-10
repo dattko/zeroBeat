@@ -49,6 +49,36 @@ export async function playTrack(
     return false;
   }
 }
+export async function playTracks(
+  session: Session | null,
+  tracks: SpotifyTrack[],
+  startIndex: number = 0,
+  isPlayerReady: boolean,
+  deviceId: string | null
+): Promise<boolean> {
+  if (!session?.user?.accessToken || !isPlayerReady || !deviceId) {
+    console.error('Missing required data for playback');
+    return false;
+  }
+
+  try {
+    await spotifyApi.put(`/me/player/play?device_id=${deviceId}`, 
+      { 
+        uris: tracks.map(track => track.uri),
+        offset: { position: startIndex }
+      },
+      { headers: { 'Authorization': `Bearer ${session.user.accessToken}` } }
+    );
+    return true;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('Spotify API Error:', error.response.data);
+    } else {
+      console.error('Failed to play tracks:', error);
+    }
+    return false;
+  }
+}
 
 export const getDevices = async (session: Session | null) => {
   if (!session?.user?.accessToken) return null;
@@ -94,19 +124,23 @@ export const pausePlayback = async (session: Session) => {
   }
 };
 
-export const resumePlayback = async (session: Session, deviceId?: string | null) => {
-  const url = deviceId ? `/me/player/play?device_id=${deviceId}` : '/me/player/play';
+export const resumePlayback = async (session: Session, deviceId?: string | null): Promise<void> => {
+  if (!session?.user?.accessToken) {
+    throw new Error('No access token available');
+  }
+
+  const url = `${BASE_URL}/me/player/play${deviceId ? `?device_id=${deviceId}` : ''}`;
 
   try {
-    await spotifyApi.put(url, null, {
+    await axios.put(url, null, {
       headers: { 'Authorization': `Bearer ${session.user.accessToken}` }
     });
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error('Failed to resume playback:', error.response.data);
-    } else {
-      console.error('Failed to resume playback:', error);
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.error?.message || error.message;
+      console.error('Spotify API Error:', error.response?.status, message);
+      throw new Error(`Failed to resume playback: ${message}`);
     }
-    throw new Error('Failed to resume playback');
+    throw error;
   }
 };
