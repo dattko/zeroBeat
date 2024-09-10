@@ -37,11 +37,22 @@ export interface SpotifyImage {
 export interface SpotifyPlaylist {
   id: string;
   name: string;
+  description: string;
   owner: {
+    id: string;
     display_name: string;
   };
-  description: string;
-  images: SpotifyImage[];
+  images: Array<{
+    url: string;
+    height: number | null;
+    width: number | null;
+  }>;
+  tracks: {
+    total: number;
+    items: Array<{
+      track: SpotifyTrack;
+    }>;
+  };
 }
 
 export interface SpotifyGlobalChart {

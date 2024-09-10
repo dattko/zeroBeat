@@ -1,0 +1,60 @@
+.albumDetailContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.playlistInfo {
+  display: flex;
+  margin-bottom: 30px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.playlistCover {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  margin-right: 30px;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}
+
+.playlistMeta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+
+  .playlistTitle {
+    font-size: var(--s-title);
+    margin-bottom: 10px;
+    color: $color;
+  }
+
+  .playlistOwner {
+    font-size: var(--f-l);
+    color: $g;
+  }
+  .playlistDetails{
+    font-size: var(--f-l);
+    color: $g;
+  }
+  .playlisTip{
+    font-size: var(--f-l);
+    color: $spotifyColor;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+}

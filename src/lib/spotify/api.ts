@@ -3,7 +3,8 @@ import { getSession } from 'next-auth/react';
 import { 
   SpotifyAlbum,
   SpotifyTrack,
-  SearchResults
+  SearchResults,
+  SpotifyPlaylist
 } from '@/types/spotify';
 
 const BASE_URL = 'https://api.spotify.com/v1';
@@ -118,6 +119,9 @@ export async function getAlbumDetails(albumId: string): Promise<SpotifyAlbum> {
 
 export async function getTrackDetails(trackId: string): Promise<SpotifyTrack> {
   return fetchSpotifyAPI(`/tracks/${trackId}`, false);
+}
+export async function getPlaylistDetails(playlistId: string): Promise<SpotifyPlaylist> {
+  return fetchSpotifyAPI(`/playlists/${playlistId}`, false);
 }
 
 export async function getRandomGenreRecommendations(limit: number = 20) {

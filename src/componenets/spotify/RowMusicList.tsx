@@ -12,12 +12,13 @@ type MusicItem = SpotifyTrack | SpotifyAlbum | SpotifyPlaylist;
 interface RowMusicListProps {
   data: SpotifyTrack[];
   title: string;
-  type?: string;
+  type?: 'track' | 'album' | 'playlist';
+  playlist?: SpotifyPlaylist;
   limit?: number;
   albumImageUrl?: string;
 }
 
-const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit, type, albumImageUrl }) => {
+const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit, type, albumImageUrl, playlist }) => {
   const { handlePlayTrack } = usePlayTrack();
   const { handlePlayTracks } = usePlayTracks();
 
@@ -25,20 +26,13 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit, type, a
     return track.artists?.map(artist => artist.name).join(', ') || 'Unknown';
   };
 
-  if (!Array.isArray(data) || data.length === 0) {
-    console.error('Invalid or empty data passed to RowMusicList');
-    return <div>No data available</div>;
-  }
-
-  const handleItemClick = (item: MusicItem) => {
+  const handleItemClick = (item: MusicItem, index: number) => {
     if (type === 'track') {
       handlePlayTrack(item as SpotifyTrack, true);
     } else if (type === 'album') {
-      handlePlayTracks(data as SpotifyTrack[], albumImageUrl);
+      handlePlayTracks(data, albumImageUrl);
     } else if (type === 'playlist') {
-      const playlist = item as SpotifyPlaylist;
-      // 플레이리스트 처리 로직 (필요한 경우)
-      console.log('Playlist handling not implemented yet');
+      handlePlayTracks(data, playlist?.images[0]?.url, index);
     }
   };
 
@@ -57,7 +51,7 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit, type, a
               return null;
             }
             return (
-              <li key={track.id} className={styles.musicListLi} onClick={() => handleItemClick(track)}>
+              <li key={track.id} className={styles.musicListLi} onClick={() => handleItemClick(track, i)}>
                 <span className={`${styles.rowMusicInfoText} ${styles.grey} ${styles.center}`} style={{width: '30px', position: 'relative'}}>
                   {i + 1}
                   <PlayTrack size={12} BoxSize={24} />
