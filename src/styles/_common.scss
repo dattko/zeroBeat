@@ -88,6 +88,8 @@
 
 body{
 	font-family: 'SUITE', sans-serif; 
+	scrollbar-width: thin;
+	scrollbar-color: $light-gray transparent;
 }
 // 공통 css
 .flex-space{
