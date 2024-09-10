@@ -23,7 +23,7 @@ export const usePlayList = () => {
     if (!currentTrack) return;
 
     try {
-      const recommendations = await getRecommendations(currentTrack.id, 30);
+      const recommendations = await getRecommendations(currentTrack.id);
       dispatch(setQueue([...queue, ...recommendations]));
     } catch (error) {
       console.error('Error loading more tracks:', error);

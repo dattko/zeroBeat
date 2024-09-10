@@ -152,7 +152,7 @@ export async function getSavedTracks() {
   return fetchSpotifyAPI('/me/tracks?limit=20', true);
 }
 
-export async function getRecommendations(trackId: string, limit: number = 20): Promise<SpotifyTrack[]> {
+export async function getRecommendations(trackId: string, limit: number = 30): Promise<SpotifyTrack[]> {
   const data = await fetchSpotifyAPI(`/recommendations?seed_tracks=${trackId}&limit=${limit}`, true);
   return data.tracks;
 }

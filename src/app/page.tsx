@@ -4,7 +4,8 @@ import RowMusicList from '@/componenets/spotify/RowMusicList';
 import BoxMusicList from '@/componenets/spotify/BoxMusicList';
 import Loading from '@/app/loading';
 import { useSpotifyData } from '@/hooks/useSpotifyData';
-const Page = () => {
+
+const Page: React.FC = () => {
   const { 
     recentlyPlayed,
     newReleases, 
@@ -12,10 +13,18 @@ const Page = () => {
     featuredPlaylists,
     randomGenreRecommendations,
     isAuthenticated,
-    isLoading, error,  } = useSpotifyData();
+    loading,
+    error,
+  } = useSpotifyData();
 
-  if (isLoading) return <Loading />;
-  if (error) return <div>Error: {error}</div>;
+  if (error) {
+    console.error('Error fetching data:', error);
+  }
+
+  if (Object.values(loading).every(isLoading => isLoading)) {
+    return <Loading />;
+  }
+
   return (
     <>
       {isAuthenticated && (

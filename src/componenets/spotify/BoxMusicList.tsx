@@ -20,6 +20,10 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
   const { handlePlayTrack } = usePlayTrack();
   const router = useRouter();
 
+  if (!data || data.length === 0) {
+    return null; 
+  }
+
   const handleItemClick = (item: MusicItem) => {
     if (type === 'track') {
     handlePlayTrack(item as SpotifyTrack, true);

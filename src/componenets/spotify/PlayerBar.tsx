@@ -36,7 +36,7 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
   
   useEffect(() => {
     initializePlayer();
-  }, []);
+  }, [initializePlayer]);
 
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     if (
