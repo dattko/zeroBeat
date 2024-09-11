@@ -26,7 +26,6 @@ export const usePlayTrack = () => {
       router.push('/login');
       return;
     }
-    console.log(deviceId);
     if (!deviceId) {
       setError('No active device found. Please refresh the page and try again.');
       return;

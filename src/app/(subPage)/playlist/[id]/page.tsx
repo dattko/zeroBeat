@@ -5,6 +5,7 @@ import { getPlaylistDetails, getPlaylistTracks } from '@/lib/spotify/api';
 import styles from './Page.module.scss';
 import RowMusicList from '@component/spotify/RowMusicList';
 import { Info } from 'lucide-react';
+import CircleLoading from '@/componenets/loading/CircleLoading';
 interface PlaylistPageProps {
   params: { id: string };
 }
@@ -36,7 +37,9 @@ const PlaylistPage: React.FC<PlaylistPageProps> = ({ params }) => {
     fetchPlaylistDetail();
   }, [fetchPlaylistDetail]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className='circle-loading-wrap'>
+    <CircleLoading/>
+  </div>;
   if (error) return <div>Error: {error}</div>;
   if (!playlist) return <div>Playlist not found</div>;
 
@@ -55,7 +58,7 @@ const PlaylistPage: React.FC<PlaylistPageProps> = ({ params }) => {
           <span className={styles.playlistTitle}>{playlist.name}</span>
           <span className={styles.playlistOwner}>By {playlist.owner.display_name}</span>
           <span className={styles.playlistDetails}>{playlist.tracks.total} 곡</span>
-          {playlist.tracks.total >= 0 && (
+          {playlist.tracks.total <= 0 && (
             <span className={styles.playlisTip}><Info width={18}/> 트랙목록를 추가해 주세요.</span>
           )}
         </div>

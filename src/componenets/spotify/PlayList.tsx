@@ -7,6 +7,7 @@ import styles from './PlayList.module.scss';
 import { usePlayList } from '@/hooks/usePlayList';
 import PlayTrack from '@component/spotify/PlayTrack';
 import { ListX } from 'lucide-react';
+import CircleLoading from '../loading/CircleLoading';
 import { formatTime } from '@/lib/spotify/utils';
 
 
@@ -28,7 +29,7 @@ const PlayList: React.FC<PlayListProps> = React.memo(({ isOpen, onClose }) => {
   const updateHeight = useCallback(() => {
     if (containerRef.current) {
       const containerHeight = containerRef.current.clientHeight;
-      const headerHeight = 53; 
+      const headerHeight = 48 + 16; 
       setListHeight(containerHeight - headerHeight);
     }
   }, []);
@@ -62,7 +63,7 @@ const PlayList: React.FC<PlayListProps> = React.memo(({ isOpen, onClose }) => {
 
   const TrackRow = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
     if (!isItemLoaded(index)) {
-      return <div style={style} className={styles.loadingRow}>Loading more tracks...</div>;
+      return <div style={style} className={styles.loadingRow}><CircleLoading/></div>;
     }
   
     const track = queue[index];

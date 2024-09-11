@@ -203,3 +203,24 @@ input{
     }
   }
 }
+
+.circle-loading{
+	animation: spin 1s infinite linear;
+	color: $color;
+	&-wrap{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+	}
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+}
+

@@ -13,6 +13,31 @@ const POPULAR_GENRES = [
 
 type DataType = 'recentlyPlayed' | 'newReleases' | 'popularTracks' | 'featuredPlaylists' | 'randomGenreRecommendations';
 
+// 로컬 스토리지에서 기존 트랙 목록과 날짜를 불러오는 함수
+const getStoredTracks = () => {
+  try {
+    const storedTracks = localStorage.getItem('randomTracks');
+    const storedDate = localStorage.getItem('randomTracksDate');
+    
+    if (storedTracks && storedDate) {
+      const today = new Date().toISOString().split('T')[0];
+      if (today === storedDate) {
+        return JSON.parse(storedTracks);
+      }
+    }
+  } catch (err) {
+    console.error("로컬 스토리지에서 데이터를 가져오지 못했습니다.", err);
+  }
+  return null;
+};
+
+// 새로운 트랙 목록을 로컬 스토리지에 저장하는 함수
+const storeTracks = (tracks: SpotifyTrack[]) => {
+  localStorage.setItem('randomTracks', JSON.stringify(tracks));
+  const today = new Date().toISOString().split('T')[0];
+  localStorage.setItem('randomTracksDate', today); // 저장된 날짜를 기록
+};
+
 interface FetchConfig {
   action: Function;
   apiCall: Function;
@@ -32,6 +57,7 @@ export const useSpotifyData = () => {
     featuredPlaylists: false,
     randomGenreRecommendations: false,
   });
+
   const [error, setError] = useState<Record<DataType, string | null>>({
     recentlyPlayed: null,
     newReleases: null,
@@ -73,13 +99,26 @@ export const useSpotifyData = () => {
     },
     randomGenreRecommendations: {
       action: spotifyActions.setRandomGenreRecommendations,
-      apiCall: () => {
+      apiCall: async () => {
+        // 먼저 로컬 스토리지에 저장된 트랙 목록을 확인
+        const storedTracks = getStoredTracks();
+        if (storedTracks) {
+          return { tracks: storedTracks }; // 저장된 트랙 목록 반환
+        }
+    
+        // 저장된 트랙이 없으면, 무작위 장르를 선택하여 API 호출
         const randomGenre = POPULAR_GENRES[Math.floor(Math.random() * POPULAR_GENRES.length)];
-        return spotifyAPI.fetchSpotifyAPI(`/recommendations?seed_genres=${randomGenre}&limit=20`, false);
+        const data = await spotifyAPI.fetchSpotifyAPI(`/recommendations?seed_genres=${randomGenre}&limit=20`, false);
+    
+        // 새로 가져온 트랙 목록을 로컬 스토리지에 저장
+        storeTracks(data.tracks);
+        
+        return data; // 반환
       },
       dataExtractor: (data) => data.tracks,
       errorMessage: '랜덤 장르 추천 데이터를 가져오는데 실패했습니다.',
     },
+    
   };
 
   const fetchData = useCallback(async (type: DataType) => {
@@ -89,20 +128,27 @@ export const useSpotifyData = () => {
     }
 
     setLoading(prev => ({ ...prev, [type]: true }));
-    setError(prev => ({ ...prev, [type]: null }));
+    setError(prev => ({ ...prev, [type]: null })); 
 
     try {
       const config = fetchConfig[type];
       const data = await config.apiCall();
+
+      if (!data) {
+        throw new Error('API로부터 유효한 데이터를 받지 못했습니다.');
+      }
+
       const extractedData = config.dataExtractor(data);
       dispatch(config.action(extractedData));
     } catch (err) {
-      console.error(`${type} 가져오기 오류:`, err);
-      setError(prev => ({ ...prev, [type]: fetchConfig[type].errorMessage }));
+      console.error(`${type} 데이터 가져오기 실패:`, err);
+      setError(prev => ({ ...prev, [type]: fetchConfig[type].errorMessage })); // 에러 발생 시 메시지 설정
     } finally {
       setLoading(prev => ({ ...prev, [type]: false }));
     }
   }, [dispatch, isAuthenticated]);
+
+
 
   useEffect(() => {
     ['newReleases', 'popularTracks', 'featuredPlaylists', 'randomGenreRecommendations'].forEach(

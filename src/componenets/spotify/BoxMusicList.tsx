@@ -23,7 +23,8 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
   if (!data || data.length === 0) {
     return null; 
   }
-console.log(data)
+
+  
   const handleItemClick = (item: MusicItem) => {
     if (type === 'track') {
     handlePlayTrack(item as SpotifyTrack, true);

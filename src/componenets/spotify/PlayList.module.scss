@@ -107,3 +107,12 @@
 
   }
 }
+
+.loadingRow{
+  display: flex;
+  justify-content: center;
+  height: 50px;
+  align-items: center;
+  color: $color;
+  font-size: 13px;
+}

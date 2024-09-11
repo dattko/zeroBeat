@@ -4,7 +4,7 @@ import { SpotifyAlbum, SpotifyTrack } from '@type/spotify';
 import { getAlbumDetails, getAlbumTracks } from '@/lib/spotify/api';
 import styles from './Page.module.scss';
 import RowMusicList from '@component/spotify/RowMusicList';
-
+import CircleLoading from '@/componenets/loading/CircleLoading';
 interface AlbumPageProps {
   params: { id: string };
 }
@@ -36,7 +36,9 @@ const AlbumPage: React.FC<AlbumPageProps> = ({ params }) => {
     fetchAlbumDetail();
   }, [fetchAlbumDetail]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className='circle-loading-wrap'>
+  <CircleLoading/>
+</div>;
   if (error) return <div>Error: {error}</div>;
   if (!album) return <div>Album not found</div>;
 

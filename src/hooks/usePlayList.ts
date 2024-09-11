@@ -15,13 +15,14 @@ export const usePlayList = () => {
   } = useSelector((state: RootState) => state.player);
   const [error, setError] = useState<string | null>(null);
 
-  const playTrackFromPlaylist = async (track: SpotifyTrack, index: number) => {
+  const playTrackFromPlaylist = useCallback(async (track: SpotifyTrack, index: number) => {
     await handlePlayTrack(track, false, index);  
-  };
+  }, [handlePlayTrack]);
+  
 
   const loadMoreTracks = useCallback(async () => {
     if (!currentTrack) return;
-
+  
     try {
       const recommendations = await getRecommendations(currentTrack.id);
       dispatch(setQueue([...queue, ...recommendations]));
@@ -29,7 +30,8 @@ export const usePlayList = () => {
       console.error('Error loading more tracks:', error);
       setError('Failed to load more tracks. Please try again.');
     }
-  }, [currentTrack, queue, dispatch]);
+  }, [currentTrack?.id, queue, dispatch]);
+  
 
 return { 
   playTrackFromPlaylist,

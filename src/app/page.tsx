@@ -17,13 +17,16 @@ const Page: React.FC = () => {
     error,
   } = useSpotifyData();
 
-  if (error) {
-    console.error('Error fetching data:', error);
-  }
+// 에러가 발생한 경우 에러를 콘솔에 출력
+if (Object.values(error).some(errMessage => errMessage !== null)) {
+  console.error('Error fetching data:', error);
+}
 
-  if (Object.values(loading).every(isLoading => isLoading)) {
-    return <Loading />;
-  }
+// 로딩 상태가 있으면 로딩 컴포넌트를 반환
+if (Object.values(loading).some(isLoading => isLoading)) {
+  return <Loading />;
+}
+
 
   return (
     <>
