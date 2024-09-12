@@ -129,7 +129,7 @@ export const SearchComponent = () => {
                   <ul className={styles.searchUl}>
                     {searchResults.artists.slice(0, 3).map((artist) => (
                       <li key={artist.id} className={styles.searchLi} onClick={() => handleArtistSelect(artist)}>
-                        <img className={styles.itemImage} src={artist.images[0]?.url || '/default-artist-image.jpg'} alt={artist.name} />
+                        <img className={styles.itemImage} src={artist.images[0]?.url || '/no-image'} alt={artist.name} />
                         <div className={styles.itemInfo}>
                           <span className={styles.itemTitle}>{artist.name}</span>
                           <span className={styles.itemSubtitle}>아티스트</span>

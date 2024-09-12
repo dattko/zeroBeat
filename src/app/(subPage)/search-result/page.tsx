@@ -58,9 +58,9 @@ export default function SearchResultPage() {
 
   return (
     <>
-      <h1 className={styles.searchTitle}>
+      <span className={styles.searchTitle}>
         검색 결과: {searchQuery}
-      </h1>
+      </span>
       
       {isSelected && selectedTrack && (
         <div className={styles.selectedTrack}>

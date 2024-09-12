@@ -1,10 +1,14 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1rem;
+  gap: 16px;
   list-style-type: none;
   padding: 0;
   margin: 0;
+  @include responsive(768px) {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 12px;
+  }
 }
 
 .item {
@@ -15,7 +19,10 @@
   border-radius: 8px;
   transition: all 0.3s ease;
   cursor: pointer;
-
+  @include responsive(768px) {
+    padding: 6px;
+    gap: 6px;
+  }
   &:hover {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 
@@ -105,12 +112,7 @@
   font-size: var(--f-l);
   color: $g;
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 16px;
 }
 
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  }
 
-}
