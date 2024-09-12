@@ -11,7 +11,7 @@ const Content = ({children}: {children: React.ReactNode}) => {
   const usePlayer = useSelector((state: RootState) => state.player.currentTrack);
 
   return(
-    <div className={`main-body ${usePlayer ? 'player-on' : ''}`}>
+    <div className={`main-body ${usePlayer ? '' : ''}`}>
         <Sidebar/>
         <div className='main-content'>
           <div className='main-content-inner'>

@@ -13,6 +13,7 @@
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
+    margin-bottom: 12px;
   }
 }
 
@@ -25,8 +26,10 @@
   border-radius: 50%;  // 아티스트 이미지는 보통 원형입니다
 
   @media (max-width: 768px) {
-    margin-right: 0;
-    margin-bottom: 20px;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 12px;
+    margin-right: 0px;
   }
 }
 
@@ -34,23 +37,21 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-
+  gap: 10px;
+  text-align: center;
   .artistName {
     font-size: var(--s-title);
-    margin-bottom: 10px;
     color: $color;
   }
 
   .artistFollowers {
     font-size: var(--f-l);
     color: $g;
-    margin: 5px 0;
   }
 
   .artistGenres {
     font-size: var(--f-m);
     color: $g;
-    margin: 5px 0;
   }
 }
 

@@ -106,27 +106,25 @@ const PlayerBar: React.FC<PlaybarProps> = ({ onTogglePlayList }) => {
   return (
     <div className={styles.playerBarContainer} onClick={onTogglePlayList}>
       <div className={styles.playerBar}>
-        <div className={styles.playerOptions}>
-          <div className={styles.playerTrackInfo}>
-            <img src={albumArtUrl} alt={currentTrack.album?.name} className={styles.playerAlbumArt} />
-            <div className={styles.playerTextInfo}>
-              <span className={styles.playerTrackTitle}>{trackTitle}</span>
-              <span className={styles.playerArtistName}>{artistName}</span>
-            </div>
+        <div className={styles.playerTrackInfo}>
+          <img src={albumArtUrl} alt={currentTrack.album?.name} className={styles.playerAlbumArt} />
+          <div className={styles.playerTextInfo}>
+            <span className={styles.playerTrackTitle}>{trackTitle}</span>
+            <span className={styles.playerArtistName}>{artistName}</span>
           </div>
-          <div className={styles.progressControl} onClick={handleControlClick}>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={localProgress}
-              onChange={handleProgressChangeWrapper}
-              className={styles.progressSlider}
-            />
-            <div className={styles.progressTime}>
-              <span>{formatTime(localProgress / 100 * duration_ms)}</span> / <span>{formatTime(currentTrack.duration_ms)}</span>
-            </div>
-          </div>
+        </div>
+        <div className={styles.progressControl} onClick={handleControlClick}>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={localProgress}
+            onChange={handleProgressChangeWrapper}
+            className={styles.progressSlider}
+          />
+          {/* <div className={styles.progressTime}>
+            <span>{formatTime(localProgress / 100 * duration_ms)}</span> / <span>{formatTime(currentTrack.duration_ms)}</span>
+          </div> */}
         </div>
         <div className={styles.playerControls} onClick={handleControlClick}>
           <button onClick={handlePreviousTrack} className={styles.controlButton}>

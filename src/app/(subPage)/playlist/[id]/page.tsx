@@ -48,7 +48,11 @@ const PlaylistPage: React.FC<PlaylistPageProps> = ({ params }) => {
 
   return (
     <div className={styles.playlistPageContainer}>
+      {playlist.tracks.total <= 0 && (
+        <span className={styles.playlisTip}><Info width={18}/> 트랙목록를 추가해 주세요.</span>
+      )}
       <div className={styles.playlistInfo}>
+
         <img 
           src={playlist.images !== null? playlist.images[0].url : '/images/no-image.png'}
           alt={playlist.name} 
@@ -58,9 +62,6 @@ const PlaylistPage: React.FC<PlaylistPageProps> = ({ params }) => {
           <span className={styles.playlistTitle}>{playlist.name}</span>
           <span className={styles.playlistOwner}>By {playlist.owner.display_name}</span>
           <span className={styles.playlistDetails}>{playlist.tracks.total} 곡</span>
-          {playlist.tracks.total <= 0 && (
-            <span className={styles.playlisTip}><Info width={18}/> 트랙목록를 추가해 주세요.</span>
-          )}
         </div>
       </div>
       <RowMusicList 

@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'src/styles')],
-    prependData: `@import "function.scss"; `,
+    prependData: `@import "function.scss"; @import "base.scss";`,
   },
   experimental: {
     scrollRestoration: false,

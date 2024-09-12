@@ -13,6 +13,10 @@
   transition: transform 0.2s ease-in-out;
   transform: translateX(100%);
   border-left: 1px solid $light-gray;
+  @include responsive(768px){
+    top: 40px;
+    height: calc(100dvh - 40px - 60px);
+  }
 
   &.open {
     transform: translateX(0);

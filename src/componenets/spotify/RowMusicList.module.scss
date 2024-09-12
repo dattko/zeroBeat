@@ -11,13 +11,15 @@
   list-style-type: none;
   padding: 0;
   max-width: 1800px;
+  width: 100%;
 }
 
 .musicListLi {
   height: 50px;
   display: flex;
+  width: 100%;
   justify-content: space-between;
-  border-bottom: 1px solid #767676;
+  border-bottom: 1px solid $light-gray;
   align-items: center;
   gap: 15px;
   cursor: pointer;
@@ -26,13 +28,17 @@
       display: flex;
     }
   };
+  @include responsive(768px) {
+    height: 42px;
+    gap: 8px;
+  }
 }
 
 .smallAlbumImage {
   width: 38px;
   height: 38px;
   background-color: #D9D9D9;
-  // border-radius: 4px;
+  border-radius: 4px;
   overflow: hidden;
   position: relative;
   img {
@@ -41,14 +47,44 @@
     object-fit: cover;
     object-position: center;
   }
+  @include responsive(768px) {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+  }
 }
-
+.rowMusicTextBox{
+  display: flex;
+  gap: 15px;
+  flex: 1;
+  min-width: 0;
+  @include responsive(768px){
+   flex-direction: column;
+   gap: 3px;
+  }
+}
 .rowMusicInfoTitle {
   font-size: var(--f-m);
   font-weight: 600;
-  flex: 1;
+  width: 100%;
   color: $color;
   @include ellipsis(2);
+  @include responsive(768px) {
+    @include ellipsis(1);
+  }
+}
+
+.rowMusicInfoNumber{
+  width: 30px;
+  font-size: var(--f-m);
+  color: $g;
+  position: relative;
+  text-align: center;
+  @include responsive(768px){
+    width: 18px;
+    min-width: 18px;
+  }
 }
 
 .rowMusicInfoText {
@@ -58,6 +94,7 @@
   height: 100%;
   display: flex;
   align-items: center;
+  max-width: 22%;
   @include ellipsis(1);
   &.grey {
     color: $g;
@@ -65,12 +102,17 @@
   &.center {
     justify-content: center;
   }
+  @include responsive(768px) {
+   max-width: 100%;
+    color: $g;
+  }
 }
 .rowMusicInfoTextAlbum{
   width: 100%;
   font-size: var(--f-m);
   color: $color;
   @include ellipsis(1);
+  max-width: 22%;
   color: $g;
   @include responsive(1200px){
     display: none;
@@ -85,5 +127,17 @@
   background: none;
   border: none;
   cursor: pointer;
+  @include responsive(768px){
+    width: 30px;
+    min-width: 30px;
+  }
 }
 
+
+
+.duration{
+  width: 60px;
+  @include responsive(768px){
+    display: none;
+  }
+}

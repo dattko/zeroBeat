@@ -2,6 +2,7 @@
 
 .playerBarContainer {
   border-top: 1px solid $light-gray;
+  position: relative;
   height: 80px;
   padding: 0 20px;
   background-color: $medium-gray;
@@ -14,6 +15,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  @include responsive(768px){
+    padding: 0px;
+    height: 60px;
+  }
 }
 
 .playerBar{
@@ -28,12 +33,21 @@
   display: flex;
   align-items: center;
   gap: 12px;
-
+  flex: 1;
+  max-width: 30%;
+  @include responsive(768px){
+   align-self: flex-end;
+  }
 }
 
 .playerAlbumArt {
   width: 60px;
   height: 60px;
+  @include responsive(768px){
+    width: 56px;
+    height: 56px;
+  }
+
 }
 
 .playerTextInfo {
@@ -64,6 +78,16 @@
 .playerControls {
   display: flex;
   align-items: center;
+  gap: 10px;
+  @include responsive(768px){
+    gap: 6px;
+  }
+  svg{
+    @include responsive(768px){
+      width: 20px ;
+      height: 20px ;
+    }
+  }
 }
 
 .controlButton {
@@ -71,8 +95,8 @@
   border: none;
   color:$color;
   font-size: var(--f-m);
-  margin: 0 10px;
   cursor: pointer;
+
 }
 
 .controlButton:disabled {
@@ -81,28 +105,48 @@
 }
 
 .progressTime{
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .volumeControl {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 13px;
+  font-size: var(--f-s);
+  flex: 1;
+  justify-content: flex-end;
+  max-width: 20%;
+  @include responsive(768px){
+    gap: 4px;
+    padding-right: 10px;
+  }
 }
 .volumeInfo{
   display: flex;
   align-items: center;
   gap: 5px;
+  svg{
+    width: 20px;
+    height: 20px;
+    @include responsive(768px){
+      width: 16px;
+      height: 16px;
+    }
+  }
 }
 .volumeSlider {
   flex: 1;
   max-width: 80px;
+  @include responsive(768px){
+    max-width: 40px;
+  }
 }
 
 .playerOptions{
   display: flex;
-  gap: 30px;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
   align-items: center;
   > div:nth-child(2){
     display: flex;
@@ -110,7 +154,17 @@
     gap: 10px;
   }
 }
-
+.progressControl{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  position: absolute;
+  top: -2px;
+  left: 0;
+  
+  z-index: 1;
+}
 .errorMessage {
   background-color: #ff4444;
   color: white;
@@ -118,3 +172,123 @@
   margin-bottom: 10px;
   border-radius: 4px;
 }
+
+.progressSlider, .volumeSlider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 0px;
+  padding: 0;
+  background: #ddd;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    position: relative;
+    // top: -2px;
+    border-radius: 50%;
+    background: #E4003A;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+    &:hover {
+      background: darken(#E4003A, 5%);
+      box-shadow: 0 0 0 6px rgba(228, 0, 58, 0.1);
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    // background: #E4003A;
+    cursor: pointer;
+    transition: background .2s ease-in-out;
+
+    &:hover {
+      background: darken(#E4003A, 10%);
+    }
+  }
+
+  &:focus {
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      box-shadow: 0 0 0 6px rgba(228, 0, 58, 0.2);
+    }
+
+    &::-moz-range-thumb {
+      box-shadow: 0 0 0 6px rgba(228, 0, 58, 0.2);
+    }
+  }
+}
+
+.volumeSlider {
+  border-radius: 3px;
+}
+// .progressSlider {
+//   // Progress 슬라이더 특정 스타일
+//   background: linear-gradient(to right, #E4003A 0%, #E4003A 50%, #ddd 50%, #ddd 100%);
+//   background-size: 200% 100%;
+//   background-position: right bottom;
+//   transition: all .2s ease-in;
+
+//   &::-webkit-slider-runnable-track {
+//     height: 5px;
+//     border-radius: 5px;
+//   }
+
+//   &::-moz-range-track {
+//     height: 5px;
+//     border-radius: 5px;
+//   }
+// }
+
+// .volumeSlider {
+//   // Volume 슬라이더 특정 스타일
+//   width: 100px;
+
+//   &::-webkit-slider-runnable-track {
+//     height: 3px;
+//     border-radius: 3px;
+//   }
+
+//   &::-moz-range-track {
+//     height: 3px;
+//     border-radius: 3px;
+//   }
+// }
+
+// .playerBar {
+//   // 기존 스타일에 추가
+//   .progressControl {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     width: 100%;
+//     margin: 10px 0;
+//   }
+
+//   .progressTime {
+//     font-size: 12px;
+//     color: #888;
+//     margin-top: 5px;
+//   }
+
+//   .volumeControl {
+//     display: flex;
+//     align-items: center;
+    
+//     .volumeInfo {
+//       margin-right: 10px;
+//     }
+//   }
+// }

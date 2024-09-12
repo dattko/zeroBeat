@@ -17,12 +17,14 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 30px;
-  height: 30px;
   border-radius: 50%;
   background-color: #E4003A;
   align-items: center;
   justify-content: center;
   display: none;
   animation: aniUp 0.32s ease-in;
+  transform-origin: center;
+  @include responsive(768px){
+    display: none !important;
+  }
 }
