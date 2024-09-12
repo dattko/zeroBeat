@@ -63,7 +63,9 @@ const ArtistPage: React.FC<ArtistPageProps> = ({ params }) => {
           <span className={styles.artistGenres}>{artist.genres.join(', ')}</span>
         </div>
       </div>
-      <RowMusicList data={topTracks.slice(0, 8)} title="인기 트랙" type="track" />
+      {topTracks.length > 0 && (
+        <RowMusicList data={topTracks.slice(0, 8)} title="인기 트랙" type="track" />
+        )}
       <BoxMusicList data={albums} title="앨범" type="album" />
       <BoxMusicList 
         data={relatedArtists.map(artist => ({
