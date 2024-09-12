@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MenuItem } from 'menuTypes'; 
 import axios from 'axios';
-import Loading from '@/app/loading';
+import CircleLoading from './loading/CircleLoading';
+
 const Sidebar = () => {
   const pathName = usePathname();
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +27,7 @@ const Sidebar = () => {
     fetchMenuItems();
   }, []); 
 
-   if (isLoading) return <Loading/>;
+   if (isLoading) return <div className='circle-loading-wrap'><CircleLoading/></div>;
 
   return (
     <div className='sidebar'>

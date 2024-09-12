@@ -5,6 +5,9 @@
     z-index: 1;
     border-right: 1px solid $light-gray;
     background-color: $medium-gray;
+    @include responsive(768px){
+        // display: none;
+    };
     .logo{
         height: $headerH;
         display: flex;

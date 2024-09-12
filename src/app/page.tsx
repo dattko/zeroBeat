@@ -2,7 +2,7 @@
 import React from 'react';
 import RowMusicList from '@/componenets/spotify/RowMusicList';
 import BoxMusicList from '@/componenets/spotify/BoxMusicList';
-import Loading from '@/app/loading';
+import CircleLoading from '@/componenets/loading/CircleLoading';
 import { useSpotifyData } from '@/hooks/useSpotifyData';
 
 const Page: React.FC = () => {
@@ -24,7 +24,7 @@ if (Object.values(error).some(errMessage => errMessage !== null)) {
 
 // 로딩 상태가 있으면 로딩 컴포넌트를 반환
 if (Object.values(loading).some(isLoading => isLoading)) {
-  return <Loading />;
+  return <div className='circle-loading-wrap'><CircleLoading/></div>
 }
 
 

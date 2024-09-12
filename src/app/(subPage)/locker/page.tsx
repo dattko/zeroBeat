@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Loading from '@/app/loading';
 import BoxMusicList from '@/componenets/spotify/BoxMusicList';
 import NotLoginLink from '@/componenets/login/NotLoginLink';
+import CircleLoading from '@/componenets/loading/CircleLoading';
 
 const Locker = () => {
   const [savedTracks, setSavedTracks] = useState<SpotifyTrack[]>([]);
@@ -46,7 +47,7 @@ const Locker = () => {
     }, []);
   }
 
-  if (isLoading) return <Loading/>;
+  if (isLoading) return <div className='circle-loading-wrap'><CircleLoading/></div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -55,7 +56,7 @@ const Locker = () => {
       <BoxMusicList data={savedTracks} title='좋아요 표시 곡' type="track" name='LikeTrack'/>
       <BoxMusicList data={savedAlbums} title='좋아요 표시 앨범' type='album' name='LikeAlbum'/>
       <BoxMusicList data={savedPlaylists} title='플레이리스트' type='playlist' name='SavePlaylist'/>
-      <BoxMusicList data={followedArtists} title='팔로우한 아티스트' type='artist' name='LikeArtist'/>
+      <BoxMusicList data={followedArtists} title='팔로우한 아티스트' type='artist' name='Artist'/>
     </>
   )
 }

@@ -13,11 +13,18 @@ const SwiperWrap: React.FC<SwiperWrapProps> = ({ children }) => {
     return (
         <Swiper
             pagination={{ clickable: true }}
-            spaceBetween={20}
             slidesPerView={"auto"}
             simulateTouch={true}
             grabCursor={true}
             // centeredSlides={true}
+            breakpoints={{
+                0: {
+                  spaceBetween: 12,
+                },
+                768: {
+                  spaceBetween: 16,
+                },
+              }}
         >
             {React.Children.map(children, (child, index) => (
                 <SwiperSlide key={index}>{child}</SwiperSlide>

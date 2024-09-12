@@ -96,19 +96,25 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
             {data.map((item) => (
               <div 
                 key={item.id} 
-                className={styles.swiperList}
+                className={`${styles.swiperList} ${styles[type]}`}
                 onClick={() => handleItemClick(item)}
               >
-                <div className={styles.albumImage}>
+                <div className={`${styles.albumImage} ${styles[type]}`}>
                   <img src={getItemImage(item)} alt={item.name} />
                   <PlayTrack size={30} BoxSize={60}/>
                 </div>
-                <span className={styles.musicInfoTitle}>{item.name}</span>
-                <span className={`${styles['musicInfoText' + name]} ${styles.musicInfoText}`}>
+                <span className={`${styles.musicInfoTitle} ${styles[type]}`}>
+                  {item.name}
+                </span>
+                {type !== 'artist' &&
+                <span className={`${styles.musicInfoText} ${styles[type]}`}>
                   {type === 'track' ? getItemArtist(item) : type === 'playlist' ? getItemDescription(item) : getItemArtist(item)}
                 </span>
+                }
                 {type === 'track' && 'album' in item && 
-                <span className={styles.albumInfoText}>{item.album.name}</span>}
+                <span className={`${styles.albumInfoText} ${styles[type]}`}>
+                  {item.album.name}
+                </span>}
               </div>
             ))}
           </SwiperWrap>

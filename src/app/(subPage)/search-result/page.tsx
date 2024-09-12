@@ -8,6 +8,7 @@ import { usePlayTrack } from '@/hooks/usePlayTrack';
 import SearchSpotifySection from '@component/header/SearchSpotifySection';
 import styles from './Page.module.scss';
 import { PlayIcon } from 'lucide-react';
+import CircleLoading from '@/componenets/loading/CircleLoading';
 
 interface SearchResults {
   tracks: SpotifyTrack[];
@@ -52,7 +53,7 @@ export default function SearchResultPage() {
     fetchData();
   }, [searchQuery, trackId, isSelected]);
 
-  if (isLoading) return <div className={styles.loading}>로딩 중...</div>;
+  if (isLoading) return <div className='circle-loading-wrap'><CircleLoading/></div>;
   if (error) return <div className={styles.error}>Error: {error}</div>;
 
   return (

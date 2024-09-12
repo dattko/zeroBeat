@@ -83,13 +83,22 @@
     --f-m: 14px;
     --f-l: 16px;
 		--s-title: 26px;
+}
 
+@include responsive(768px) {
+  :root {
+    --f-s: 10px;
+    --f-m: 12px;
+    --f-l: 14px;
+    --s-title: 18px;
+  }
 }
 
 body{
 	font-family: 'SUITE', sans-serif; 
 	scrollbar-width: thin;
 	scrollbar-color: $light-gray transparent;
+	background-color: $medium-gray;
 }
 // 공통 css
 .flex-space{

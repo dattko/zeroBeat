@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/react';
 import { 
   SpotifyAlbum,
   SpotifyTrack,
+  SpotifyArtist,
   SearchResults,
   SpotifyPlaylist
 } from '@/types/spotify';
@@ -134,6 +135,23 @@ export async function getRandomGenreRecommendations(limit: number = 20) {
 export async function getBrowseCategories(limit: number = 20) {
   return fetchSpotifyAPI(`/browse/categories?limit=${limit}`, false);
 }
+
+export async function getArtistDetails(artistId: string): Promise<SpotifyArtist> {
+  return fetchSpotifyAPI(`/artists/${artistId}`, false);
+}
+
+export async function getArtistTopTracks(artistId: string, country: string = 'US'): Promise<{tracks: SpotifyTrack[]}> {
+  return fetchSpotifyAPI(`/artists/${artistId}/top-tracks?market=${country}`, false);
+}
+
+export async function getArtistAlbums(artistId: string, limit: number = 20, offset: number = 0): Promise<{items: SpotifyAlbum[]}> {
+  return fetchSpotifyAPI(`/artists/${artistId}/albums?limit=${limit}&offset=${offset}`, false);
+}
+
+export async function getRelatedArtists(artistId: string): Promise<{artists: SpotifyArtist[]}> {
+  return fetchSpotifyAPI(`/artists/${artistId}/related-artists`, false);
+}
+
 
 // Authenticated API functions (require user login)
 export async function getRecentlyPlayed() {

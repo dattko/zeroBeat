@@ -4,12 +4,13 @@ import styled from 'styled-components';
 import Loading from '@/app/loading';
 import { useSpotifyData } from '@/hooks/useSpotifyData';
 import RowMusicList from '@/componenets/spotify/RowMusicList';
+import CircleLoading from '@/componenets/loading/CircleLoading';
 
 const Chart = () => {
   const { popularTracks, isLoading } = useSpotifyData();
 
 
-    if (isLoading) return <Loading/>;
+    if (isLoading) return <div className='circle-loading-wrap'><CircleLoading/></div>;
 
     return (
         <>

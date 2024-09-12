@@ -1,0 +1,102 @@
+.artistPageContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.artistInfo {
+  display: flex;
+  margin-bottom: 30px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.artistImage {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  margin-right: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 50%;  // 아티스트 이미지는 보통 원형입니다
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}
+
+.artistMeta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .artistName {
+    font-size: var(--s-title);
+    margin-bottom: 10px;
+    color: $color;
+  }
+
+  .artistFollowers {
+    font-size: var(--f-l);
+    color: $g;
+    margin: 5px 0;
+  }
+
+  .artistGenres {
+    font-size: var(--f-m);
+    color: $g;
+    margin: 5px 0;
+  }
+}
+
+.topTracks, .albums, .relatedArtists {
+  margin-top: 40px;
+
+  h2 {
+    font-size: var(--f-xl);
+    color: $color;
+    margin-bottom: 20px;
+  }
+}
+
+.topTracksList {
+  // 추가적인 스타일이 필요한 경우 여기에 작성
+}
+
+.albumGrid, .relatedArtistsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+.albumItem, .relatedArtistItem {
+  text-align: center;
+
+  img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .name {
+    font-size: var(--f-m);
+    color: $color;
+    margin-bottom: 5px;
+  }
+
+  .info {
+    font-size: var(--f-s);
+    color: $g;
+  }
+}
