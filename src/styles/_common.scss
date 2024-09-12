@@ -99,6 +99,7 @@ body{
 	scrollbar-width: thin;
 	scrollbar-color: $light-gray transparent;
 	background-color: $medium-gray;
+	overflow: hidden;
 }
 // 공통 css
 .flex-space{
