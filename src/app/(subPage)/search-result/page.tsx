@@ -9,6 +9,7 @@ import SearchSpotifySection from '@component/header/SearchSpotifySection';
 import styles from './Page.module.scss';
 import { PlayIcon } from 'lucide-react';
 import CircleLoading from '@/componenets/loading/CircleLoading';
+import RowMusicList from '@/componenets/spotify/RowMusicList';
 
 interface SearchResults {
   tracks: SpotifyTrack[];
@@ -81,7 +82,7 @@ export default function SearchResultPage() {
         </div>
       )}
 
-      <SearchSpotifySection 
+      <RowMusicList 
         data={searchResults.tracks} 
         title="노래" 
         type="track" 
