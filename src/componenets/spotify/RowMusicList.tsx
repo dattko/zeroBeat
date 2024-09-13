@@ -6,6 +6,8 @@ import styles from './RowMusicList.module.scss';
 import PlayTrack from './PlayTrack';
 import GradientSectionTitle from '@component/layouts/gradientTitle/GradientSectionTitle';
 import { formatTime } from '@/lib/spotify/utils';
+import SpotifyTrackMenu from '@/componenets/spotifyTrackMenu/SpotifyTrackMenu';
+import { addToQueue } from '@/lib/spotify/api';
 
 type MusicItem = SpotifyTrack | SpotifyAlbum | SpotifyPlaylist;
 
@@ -44,6 +46,17 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit, type, a
     }
   };
 
+  const handleAddToQueue = async (track: SpotifyTrack) => {
+    try {
+      // Spotify API를 사용하여 트랙을 재생 대기열에 추가하는 로직
+      await addToQueue(track.uri);
+      console.log('Track added to queue successfully');
+    } catch (error) {
+      console.error('Failed to add track to queue:', error);
+    }
+  };
+
+
   return (
     <div className={'section'}>
       {type !== 'album' && (
@@ -78,9 +91,11 @@ const RowMusicList: React.FC<RowMusicListProps> = ({ data, title, limit, type, a
                 <span className={`${styles.rowMusicInfoText} ${styles.grey} ${styles.duration}`}>
                   {formatTime(track.duration_ms)}
                 </span>
-                <button className={styles.iconBtn}>
-                  <img src="/icon/three-dot.svg" alt="재생" />
-                </button>
+                <SpotifyTrackMenu 
+                  track={track}
+                  className={styles.iconBtn}
+                  onAddToQueue={handleAddToQueue}
+                />
               </li>
             );
           })}

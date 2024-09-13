@@ -23,7 +23,7 @@
   object-fit: cover;
   margin-right: 30px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 50%;  // 아티스트 이미지는 보통 원형입니다
+  border-radius: 50%;  
 
   @media (max-width: 768px) {
     width: 160px;
@@ -65,9 +65,9 @@
   }
 }
 
-.topTracksList {
-  // 추가적인 스타일이 필요한 경우 여기에 작성
-}
+// .topTracksList {
+
+// }
 
 .albumGrid, .relatedArtistsGrid {
   display: grid;

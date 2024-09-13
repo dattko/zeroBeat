@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import styles from './BoxMusicList.module.scss';
 import GradientSectionTitle from '@component/layouts/gradientTitle/GradientSectionTitle';
 import PlayTrack from './PlayTrack';
+import SpotifyTrackMenu from '../spotifyTrackMenu/SpotifyTrackMenu';
 
 type MusicItem = SpotifyTrack | SpotifyAlbum | SpotifyArtist | SpotifyPlaylist;
 
@@ -115,6 +116,11 @@ const BoxMusicList: React.FC<BoxMusicListProps> = ({ data, title, type, name }) 
                 <span className={`${styles.albumInfoText} ${styles[type]}`}>
                   {item.album.name}
                 </span>}
+                {type === 'track' && (
+                  <div className={styles.btnBox}>
+                    <SpotifyTrackMenu track={item as SpotifyTrack} />
+                  </div>
+                )}
               </div>
             ))}
           </SwiperWrap>

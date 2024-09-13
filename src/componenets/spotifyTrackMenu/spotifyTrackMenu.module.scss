@@ -1,0 +1,66 @@
+.container {
+  position: relative;
+
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  @include responsive(768px) {
+    width: 30px;
+    min-width: 30px;
+  }
+  &:hover{
+    background-color: $light-gray
+  }
+  &.active{
+    background-color: $light-gray
+  }
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  top: calc(100% + 4px);
+  width: 140px;
+  background-color: $light-gray;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.menuItem {
+  padding: 8px 12px;
+  font-size: var(--f-s);
+  cursor: pointer;
+  color: $color;
+  &:hover {
+    background-color: $medium-gray;
+  }
+  &.active {
+    background-color: $medium-gray;
+  }
+}
+
+.subMenu {
+
+}
+
+.subMenuItem {
+  padding: 6px 12px;
+  cursor: pointer;
+  color: $g;
+  font-size: 10px;
+  &:hover {
+    color: $spotifyColor;
+  }
+}

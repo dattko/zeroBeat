@@ -47,7 +47,12 @@ async function axiosWithRetry(config: AxiosRequestConfig, retries = 3, backoff =
   }
 }
 
-export async function fetchSpotifyAPI(endpoint: string, requiresAuth: boolean = true, requiresPremium: boolean = false): Promise<any> {
+export async function fetchSpotifyAPI(
+  endpoint: string, 
+  requiresAuth: boolean = true, 
+  requiresPremium: boolean = false,
+  options: { method?: string; body?: string } = {}
+): Promise<any> {
   let token: string;
 
   if (requiresAuth) {
@@ -68,10 +73,12 @@ export async function fetchSpotifyAPI(endpoint: string, requiresAuth: boolean = 
 
   const config: AxiosRequestConfig = {
     url: endpoint,
-    method: 'GET',
+    method: options.method || 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
+    data: options.body,
   };
 
   try {
@@ -80,12 +87,13 @@ export async function fetchSpotifyAPI(endpoint: string, requiresAuth: boolean = 
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response?.status === 401 && !requiresAuth) {
       clientCredentialsToken = await getClientCredentialsToken();
-      return fetchSpotifyAPI(endpoint, requiresAuth, requiresPremium);
+      return fetchSpotifyAPI(endpoint, requiresAuth, requiresPremium, options);
     }
     console.error('Error fetching data from Spotify API:', error);
     throw error;
   }
 }
+
 
 export async function searchSpotify(query: string): Promise<SearchResults> {
   const data = await fetchSpotifyAPI(`/search?q=${encodeURIComponent(query)}&type=track,artist,album`, false);
@@ -212,4 +220,47 @@ export async function getAlbumTracks(albumId: string): Promise<SpotifyTrack[]> {
 export async function getPlaylistTracks(playlistId: string): Promise<SpotifyTrack[]> {
   const data = await fetchSpotifyAPI(`/playlists/${playlistId}/tracks`, false); 
   return data.items.map((item: any) => item.track); 
+}
+
+export async function addTrackToLiked(trackId: string): Promise<void> {
+  await fetchSpotifyAPI(`/me/tracks`, true, false, {
+    method: 'PUT',
+    body: JSON.stringify({ ids: [trackId] }),
+  });
+}
+
+export async function removeTrackFromLiked(trackId: string): Promise<void> {
+  await fetchSpotifyAPI(`/me/tracks`, true, false, {
+    method: 'DELETE',
+    body: JSON.stringify({ ids: [trackId] }),
+  });
+}
+
+export async function addTrackToPlaylist(playlistId: string, trackUri: string): Promise<void> {
+  await fetchSpotifyAPI(`/playlists/${playlistId}/tracks`, true, false, {
+    method: 'POST',
+    body: JSON.stringify({ uris: [trackUri] }),
+  });
+}
+
+export async function getUserPlaylists(limit: number = 20, offset: number = 0): Promise<SpotifyPlaylist[]> {
+  const response = await fetchSpotifyAPI(`/me/playlists?limit=${limit}&offset=${offset}`, true);
+  return response.items;
+}
+
+export async function isTrackLiked(trackId: string): Promise<boolean> {
+  const response = await fetchSpotifyAPI(`/me/tracks/contains?ids=${trackId}`, true);
+  return response[0];
+}
+
+export async function addToQueue(trackUri: string): Promise<void> {
+  try {
+    await fetchSpotifyAPI(`/me/player/queue?uri=${encodeURIComponent(trackUri)}`, true, true, {
+      method: 'POST'
+    });
+    console.log('트랙 추가 성공');
+  } catch (error) {
+    console.error('트랙 추가 실패 :', error);
+    throw error;
+  }
 }

@@ -24,6 +24,9 @@
     :global(.play-track) {
       display: flex;
     }
+    .btnBox{
+      display: block;
+    }
   }
   .albumImage {
     position: relative;
@@ -182,4 +185,12 @@
 
 .TrackAlbumImageArtist{
   border-radius: 50%;
+}
+
+
+.btnBox{
+  position: absolute;
+  right: 18px;
+  top: 20px;
+  display: none;
 }
