@@ -165,14 +165,14 @@ const SpotifyTrackMenu: React.FC<TrackMenuProps> = ({
               )}
             </ul>
           )}
-          {onAddToQueue && (
+          {/* {onAddToQueue && (
             <li 
               className={styles.menuItem}
               onClick={handleAddToQueue}
             >
               다음 곡으로 추가
             </li>
-          )}
+          )} */}
         </ul>
       )}
     </div>
