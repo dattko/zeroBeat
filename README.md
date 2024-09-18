@@ -15,14 +15,17 @@ ZeroBeat는 사용자가 Spotify와 상호작용할 수 있는 개인화된 음�
 
 ## 설치 및 실행
 1. 저장소 클론 :
+   
    ```bash
    git clone https://github.com/dimant/ZeroBeat.git
 
 2. 의존성 설치 :
-    ```bash
+
+   ```bash
     npm install
 
 4. 애플리케이션 실행 :
+
    ```bash
    npm run dev
 
