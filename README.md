@@ -19,11 +19,13 @@ ZeroBeat는 사용자가 Spotify와 상호작용할 수 있는 개인화된 음�
    git clone https://github.com/dimant/ZeroBeat.git
 
 2. 의존성 설치 :
- npm install
+    ```bash
+    npm install
 
-3. 애플리케이션 실행 : 
-npm run dev
+4. 애플리케이션 실행 :
+   ```bash
+   npm run dev
 
-## vercel 배포
-https://zero-beat.vercel.app/
+### vercel 배포
+[제로비트 사이트](https://zero-beat.vercel.app/)
 
