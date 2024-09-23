@@ -1,7 +1,7 @@
 'use client';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Header } from './header';
 import Content from '@component/mainBody';
 import ReduxProvider from '@redux/provider';
