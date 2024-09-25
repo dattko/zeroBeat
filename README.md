@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ZeroBeat
 
-## Getting Started
+ZeroBeat는 사용자가 Spotify와 상호작용할 수 있는 개인화된 음악 추천 플랫폼입니다. Spotify 데이터를 기반으로 사용자의 음악 통계를 시각화하고, 추천 음악 및 플레이리스트를 탐색할 수 있습니다.
 
-First, run the development server:
+## 주요 기능
+- **음악 통계 시각화**: Spotify 활동을 시각적으로 분석.
+- **음악 추천**: 개인화된 추천 및 플레이리스트 생성.
+- **Spotify 연동**: Spotify API와 통합하여 실시간 데이터 제공.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 기술 스택
+- **React**
+- **Redux**
+- **Spotify API**
+- **Vercel** (배포)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 설치 및 실행
+1. 저장소 클론 :
+   
+   ```bash
+   git clone https://github.com/dimant/ZeroBeat.git
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. 의존성 설치 :
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+   ```bash
+    npm install
 
-## Learn More
+4. 애플리케이션 실행 :
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npm run dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* 스포티파이 개발자 대시보드의 id / 시크릿 코드 / 리다이렉션 url 입력하셔야 정상 작동 됩니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### vercel 배포
+[제로비트 사이트](https://zero-beat.vercel.app/)
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

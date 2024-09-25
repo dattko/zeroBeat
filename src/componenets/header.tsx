@@ -34,12 +34,12 @@ export const Header = () => {
             )}
             
           </div>
-          <div className="main-my-info-id">
-            {session ? <span>{session.user.name}</span>
+          {/* <div className="main-my-info-id"> */}
+            {session ? <span  className='user-name'>{session.user.name}</span>
             :
             <Link href="/login" className='main-header_login'> 로그인하기 </Link>
             }
-          </div>
+          {/* </div> */}
           {session && (
               <Zicon
               name="logout"
