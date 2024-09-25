@@ -5,7 +5,7 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "target": "es2015", // 또는 es2016, es2017, es2018, es2019, es2020, esnext
+    "target": "es2015", 
     "downlevelIteration": true,
     "esModuleInterop": true,
     "module": "esnext",
